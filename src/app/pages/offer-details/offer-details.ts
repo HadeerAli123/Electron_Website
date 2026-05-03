@@ -1,0 +1,150 @@
+import { Component, OnInit, inject, ChangeDetectorRef, NgZone } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { OffersService } from '../../core/services/offers.service';
+import { CartService } from '../../core/services/cart.service';
+import { ToastrService } from 'ngx-toastr';
+import { BackButton } from '../../shared/components/back-button/back-button';
+
+@Component({
+  selector: 'app-offer-details',
+  standalone: true,
+  imports: [CommonModule, RouterLink, BackButton],
+  templateUrl: './offer-details.html',
+  styleUrl: './offer-details.css',
+})
+export class OfferDetails implements OnInit {
+  private offersService = inject(OffersService);
+  private cartService = inject(CartService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+  private toastr = inject(ToastrService);
+
+  offer: any = null;
+  loading = true;
+  isAddingToCart = false;
+  addingProductId: number | null = null;
+  selectedVariants: { [productId: number]: number } = {};
+  copiedCode = false;
+
+  ngOnInit() {
+    const id = this.route.snapshot.params['id'];
+    if (id) this.loadOfferDetails(+id);
+  }
+
+  loadOfferDetails(id: number) {
+    this.loading = true;
+    this.offersService.getOfferDetails(id).subscribe({
+      next: (res) => {
+        this.ngZone.run(() => {
+          this.offer = res?.data;
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
+      },
+      error: () => {
+        this.ngZone.run(() => {
+          this.loading = false;
+          this.router.navigate(['/offers']);
+          this.cdr.detectChanges();
+        });
+      }
+    });
+  }
+
+  selectVariant(productId: number, variantId: number) {
+    this.selectedVariants[productId] = variantId;
+    this.cdr.detectChanges();
+  }
+
+  /** Copy coupon code to clipboard with feedback */
+  copyCoupon(code: string): void {
+    if (!code) return;
+
+    const fallbackCopy = () => {
+      const textarea = document.createElement('textarea');
+      textarea.value = code;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) {
+        console.warn('Copy failed', e);
+      }
+      document.body.removeChild(textarea);
+    };
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(code).catch(() => fallbackCopy());
+    } else {
+      fallbackCopy();
+    }
+
+    this.copiedCode = true;
+    this.toastr.success('تم نسخ الكود ✅');
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.ngZone.run(() => {
+        this.copiedCode = false;
+        this.cdr.detectChanges();
+      });
+    }, 2500);
+  }
+
+  addToCart(productId: number, variants: any[] = []) {
+    if (this.isAddingToCart) return;
+
+    const raw = this.offer?.products?.find((p: any) => p.id === productId);
+    const variantId = this.selectedVariants[productId];
+
+    if (variants?.length > 0 && !variantId) {
+      this.toastr.warning('من فضلك اختر المواصفات أولاً');
+      return;
+    }
+
+   const mappedProduct = {
+  ...raw,
+  price: raw?.discounted_price ?? raw?.original_price ?? 0,
+  sale_price: raw?.discounted_price ?? null,
+  cover_image: raw?.cover_image ?? '',
+  stock: undefined,
+};
+    const variantObj = (variants?.length && variantId)
+      ? variants.find((v: any) => v.id === variantId)
+      : undefined;
+
+    this.isAddingToCart = true;
+    this.addingProductId = productId;
+
+    this.cartService.addToCart(productId, 1, variantId, mappedProduct, variantObj).subscribe({
+      next: () => {
+        this.ngZone.run(() => {
+          this.isAddingToCart = false;
+          this.addingProductId = null;
+          this.toastr.success('تم إضافة المنتج للسلة ✅');
+          this.router.navigate(['/cart']);
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => {
+        this.ngZone.run(() => {
+          this.toastr.error(err?.error?.message ?? 'حدث خطأ أثناء الإضافة');
+          this.isAddingToCart = false;
+          this.addingProductId = null;
+          this.cdr.detectChanges();
+        });
+      }
+    });
+  }
+
+formatPrice(price: number): string {
+  if (!price && price !== 0) return '0.000';
+  return Number(price).toFixed(3);
+}
+
+}

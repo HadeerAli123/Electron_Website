@@ -1,0 +1,277 @@
+<div class="wp-page" dir="rtl">
+
+  <!-- Background decoration -->
+  <div class="wp-bg-decoration">
+    <div class="wp-blob wp-blob-1"></div>
+    <div class="wp-blob wp-blob-2"></div>
+  </div>
+
+  <div class="wp-container">
+
+    <!-- Header row: breadcrumb (right) + back button (far left) -->
+    <div class="wp-header-row mb-6 flex items-center justify-between">
+      <nav class="wp-breadcrumb flex items-center gap-2" aria-label="Breadcrumb">
+        <a routerLink="/" class="wp-bc-link inline-flex items-center gap-2 text-blue-700">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/>
+          </svg>
+          <span>الرئيسية</span>
+        </a>
+        <svg class="wp-bc-sep w-2.5 h-2.5 text-gray-400" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+        </svg>
+        <span class="wp-bc-current text-gray-700">المفضلة</span>
+      </nav>
+
+      <app-back-button label="رجوع" fallback="/" class="shrink-0"></app-back-button>
+    </div>
+
+    <!-- ════ Hero Header Card ════ -->
+    <header class="wp-hero">
+      <div class="wp-hero-content">
+        <div class="wp-hero-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+
+        <div class="wp-hero-text">
+          <h1 class="wp-hero-title">المفضلة</h1>
+          @if (count() > 0) {
+            <p class="wp-hero-subtitle">منتجاتك المحفوظة في مكان واحد للرجوع إليها بسهولة</p>
+          } @else {
+            <p class="wp-hero-subtitle">احفظ منتجاتك المفضلة هنا للرجوع إليها لاحقاً</p>
+          }
+        </div>
+      </div>
+
+      <!-- Stats pills (right side) -->
+      @if (count() > 0) {
+        <div class="wp-hero-stats">
+          <div class="wp-stat-pill">
+            <div class="wp-stat-ic wp-stat-ic-blue">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/>
+              </svg>
+            </div>
+            <div class="wp-stat-info">
+              <span class="wp-stat-val">{{ count() }}</span>
+              <span class="wp-stat-lbl">منتج</span>
+            </div>
+          </div>
+
+          @if (totalValue() > 0) {
+            <div class="wp-stat-pill">
+              <div class="wp-stat-ic wp-stat-ic-orange">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/>
+                </svg>
+              </div>
+              <div class="wp-stat-info">
+                <span class="wp-stat-val">{{ totalValue() | number: '1.0-3' }}</span>
+                <span class="wp-stat-lbl">{{ currencySymbol() }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </header>
+
+    <!-- ════ Toolbar ════ -->
+    @if (count() > 0) {
+      <div class="wp-toolbar">
+
+        <!-- Sort -->
+        <div class="wp-sort">
+          <span class="wp-sort-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"/>
+            </svg>
+            <span>ترتيب:</span>
+          </span>
+          <div class="wp-sort-btns">
+            <button
+              type="button"
+              class="wp-sort-btn"
+              [class.wp-sort-active]="sortBy() === 'recent'"
+              (click)="setSort('recent')">
+              الأحدث
+            </button>
+            <button
+              type="button"
+              class="wp-sort-btn"
+              [class.wp-sort-active]="sortBy() === 'price-asc'"
+              (click)="setSort('price-asc')">
+              الأقل سعراً
+            </button>
+            <button
+              type="button"
+              class="wp-sort-btn"
+              [class.wp-sort-active]="sortBy() === 'price-desc'"
+              (click)="setSort('price-desc')">
+              الأعلى سعراً
+            </button>
+            <button
+              type="button"
+              class="wp-sort-btn"
+              [class.wp-sort-active]="sortBy() === 'name'"
+              (click)="setSort('name')">
+              الاسم
+            </button>
+          </div>
+        </div>
+
+        <!-- Bulk actions -->
+        <div class="wp-bulk-actions">
+          <button type="button" class="wp-bulk-btn wp-bulk-add" (click)="addAllToCart()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+            </svg>
+            <span>إضافة الكل للسلة</span>
+          </button>
+          <button type="button" class="wp-bulk-btn wp-bulk-clear" (click)="clearAll()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+            </svg>
+            <span>مسح الكل</span>
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- ════ Items Grid ════ -->
+    @if (count() > 0) {
+      <div class="wp-grid" [class.wp-clearing]="isClearing()">
+        @for (item of sortedItems(); track item.id) {
+          <article class="wp-card" (click)="goToProduct(item)">
+
+            <!-- Image -->
+            <div class="wp-card-img-wrap">
+              @if (item.cover_image) {
+                <img [src]="getImageUrl(item.cover_image)" [alt]="item.name" loading="lazy" class="wp-card-img"/>
+              } @else {
+                <div class="wp-card-img-placeholder">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159"/>
+                  </svg>
+                </div>
+              }
+
+              <!-- Badges container -->
+              <div class="wp-card-badges">
+                @if (hasDiscount(item)) {
+                  <span class="wp-badge wp-badge-discount">-{{ getDiscountPercent(item) }}%</span>
+                }
+                @if (item.stock === 0) {
+                  <span class="wp-badge wp-badge-stock">نفد المخزون</span>
+                }
+              </div>
+
+              <!-- Remove button (heart) — top-left -->
+              <button
+                type="button"
+                class="wp-remove-btn"
+                (click)="removeItem($event, item)"
+                title="حذف من المفضلة"
+                aria-label="حذف من المفضلة">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </button>
+
+              <!-- 👁 Quick View overlay (center on hover) -->
+              <div class="wp-quick-view-overlay" (click)="$event.stopPropagation()">
+                <app-quick-view-button [product]="item" variant="overlay"></app-quick-view-button>
+              </div>
+            </div>
+
+            <!-- Body -->
+            <div class="wp-card-body">
+              @if (item.mark_name) {
+                <div class="wp-card-brand">{{ item.mark_name }}</div>
+              }
+
+              <h3 class="wp-card-name">{{ item.name }}</h3>
+
+              @if (item.model) {
+                <div class="wp-card-model">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/>
+                  </svg>
+                  <span>{{ item.model }}</span>
+                </div>
+              }
+
+              <!-- Price -->
+              @if (getPrice(item) > 0) {
+                <div class="wp-card-price">
+                  <div class="wp-price-current">
+                    <span class="wp-price-num">{{ getPrice(item) | number: '1.0-3' }}</span>
+                    <span class="wp-price-currency">{{ currencySymbol() }}</span>
+                  </div>
+                  @if (hasDiscount(item)) {
+                    <div class="wp-price-old">
+                      <span>{{ item.price | number: '1.0-3' }}</span>
+                    </div>
+                  }
+                </div>
+              }
+
+              <!-- Add to cart button -->
+              <button
+                type="button"
+                class="wp-add-cart-btn"
+                [disabled]="item.stock === 0 || addingToCartId() === item.id"
+                (click)="addToCart($event, item)">
+                @if (addingToCartId() === item.id) {
+                  <span class="wp-spinner"></span>
+                  <span>جاري الإضافة...</span>
+                } @else if (item.stock === 0) {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                  </svg>
+                  <span>غير متوفر</span>
+                } @else {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+                  </svg>
+                  <span>أضف للسلة</span>
+                }
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    }
+
+    <!-- ════ Empty state ════ -->
+    @else {
+      <div class="wp-empty">
+        <div class="wp-empty-icon">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
+          </svg>
+        </div>
+        <h2 class="wp-empty-title">قائمة المفضلة فارغة</h2>
+        <p class="wp-empty-desc">
+          لم تضف أي منتج للمفضلة بعد. اضغط على ❤️ بجانب أي منتج يعجبك لحفظه هنا
+        </p>
+        <div class="wp-empty-actions">
+          <a routerLink="/categories" class="wp-empty-btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6z"/>
+            </svg>
+            <span>تصفح الأصناف</span>
+          </a>
+          <a routerLink="/" class="wp-empty-btn-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/>
+            </svg>
+            <span>العودة للرئيسية</span>
+          </a>
+        </div>
+      </div>
+    }
+
+  </div>
+</div>

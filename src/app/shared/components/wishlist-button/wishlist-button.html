@@ -1,0 +1,44 @@
+<button
+  type="button"
+  class="wb-btn"
+  [class.wb-icon]="variant === 'icon'"
+  [class.wb-circle]="variant === 'circle'"
+  [class.wb-full]="variant === 'full'"
+  [class.wb-sm]="size === 'sm'"
+  [class.wb-md]="size === 'md'"
+  [class.wb-lg]="size === 'lg'"
+  [class.wb-active]="isActive()"
+  [class.wb-animating]="isAnimating()"
+  [attr.aria-label]="isActive() ? 'حذف من المفضلة' : 'إضافة للمفضلة'"
+  [attr.aria-pressed]="isActive()"
+  (click)="onClick($event)">
+
+  <!-- Heart icon — solid when active, outline when not -->
+  <span class="wb-icon-wrap">
+    <svg class="wb-heart wb-heart-outline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+
+    <svg class="wb-heart wb-heart-filled" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+
+    <!-- Burst particles for "add" animation -->
+    @if (isAnimating() && isActive()) {
+      <span class="wb-burst">
+        <span class="wb-particle wb-p1"></span>
+        <span class="wb-particle wb-p2"></span>
+        <span class="wb-particle wb-p3"></span>
+        <span class="wb-particle wb-p4"></span>
+        <span class="wb-particle wb-p5"></span>
+        <span class="wb-particle wb-p6"></span>
+      </span>
+    }
+  </span>
+
+  @if (variant === 'full') {
+    <span class="wb-label">
+      {{ isActive() ? 'تمت الإضافة للمفضلة' : 'إضافة للمفضلة' }}
+    </span>
+  }
+</button>

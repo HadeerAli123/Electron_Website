@@ -1,0 +1,136 @@
+<div class="bg-gray-100 flex justify-center py-10" dir="rtl">
+  <div class="w-full max-w-5xl bg-white rounded-xl overflow-hidden">
+
+    @if (isLoading) {
+      <div class="p-8 animate-pulse space-y-6">
+        <div class="h-20 bg-blue-200 rounded-lg"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="h-12 bg-gray-200 rounded-lg"></div>
+          <div class="h-12 bg-gray-200 rounded-lg"></div>
+          <div class="h-12 bg-gray-200 rounded-lg"></div>
+          <div class="h-12 bg-gray-200 rounded-lg"></div>
+        </div>
+      </div>
+    } @else if (user) {
+
+    
+      <div class="bg-blue-700 px-8 py-6 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+          <div class="text-white">
+            <h2 class="text-lg font-semibold mb-2">{{ user.name }}</h2>
+            <p class="text-sm opacity-80">عضو منذ {{ memberSince }}</p>
+          </div>
+        </div>
+        <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center text-blue-700 font-bold text-xl">
+          {{ userInitial }}
+        </div>
+      </div>
+
+      <div class="p-8">
+
+        @if (isBroker) {
+          <app-broker-stats [stats]="brokerStats"></app-broker-stats>
+        }
+
+       
+        <div class="flex justify-between items-center mt-8 mb-6">
+          <h3 class="text-[#0B54A5] font-bold">المعلومات الشخصية</h3>
+
+          @if (!isEditing) {
+           
+            <button (click)="startEdit()"
+              class="bg-[#0B54A5] text-white px-5 py-2 inline-flex items-center gap-2 rounded-md text-sm font-medium cursor-pointer hover:bg-[#094489] transition">
+              تعديل
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+              </svg>
+            </button>
+          } @else {
+           
+            <div class="flex gap-3">
+              <button (click)="cancelEdit()"
+                class="border border-gray-300 text-gray-600 px-5 py-2 rounded-md text-sm font-medium cursor-pointer hover:bg-gray-50 transition">
+                إلغاء
+              </button>
+              <button (click)="saveProfile()" [disabled]="isSaving"
+                class="bg-green-600 text-white px-5 py-2 inline-flex items-center gap-2 rounded-md text-sm font-medium cursor-pointer hover:bg-green-700 transition disabled:opacity-60">
+                @if (isSaving) {
+                  <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                  </svg>
+                  جاري الحفظ...
+                } @else {
+                  حفظ
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                }
+              </button>
+            </div>
+          }
+        </div>
+
+       
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">الاسم الكامل</label>
+            @if (isEditing) {
+              <input type="text" [(ngModel)]="editData.name"
+                class="w-full px-4 py-2 border-2 border-[#0B54A5] rounded-lg text-gray-700 focus:outline-none"/>
+            } @else {
+              <input type="text" [value]="user.name" disabled
+                class="w-full px-4 py-2 border rounded-lg bg-gray-100 text-gray-700"/>
+            }
+          </div>
+
+        
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">البريد الإلكتروني</label>
+            @if (isEditing) {
+              <input type="email" [(ngModel)]="editData.email"
+                class="w-full px-4 py-2 border-2 border-[#0B54A5] rounded-lg text-gray-700 focus:outline-none"/>
+            } @else {
+              <input type="email" [value]="user.email" disabled
+                class="w-full px-4 py-2 border rounded-lg bg-gray-100 text-gray-700"/>
+            }
+          </div>
+
+         
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">رقم الهاتف</label>
+            @if (isEditing) {
+              <input type="text" [(ngModel)]="editData.phone"
+                class="w-full px-4 py-2 border-2 border-[#0B54A5] rounded-lg text-gray-700 focus:outline-none"/>
+            } @else {
+              <input type="text" [value]="user.phone || 'غير محدد'" disabled
+                class="w-full px-4 py-2 border rounded-lg bg-gray-100 text-gray-700"/>
+            }
+          </div>
+
+         
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">الرقم القومي</label>
+            @if (isEditing) {
+              <input type="text" [(ngModel)]="editData.national_id"
+                class="w-full px-4 py-2 border-2 border-[#0B54A5] rounded-lg text-gray-700 focus:outline-none"/>
+            } @else {
+              <input type="text" [value]="user.national_id" disabled
+                class="w-full px-4 py-2 border rounded-lg bg-gray-100 text-gray-700"/>
+            }
+          </div>
+
+
+        </div>
+      </div>
+
+    } @else {
+      <div class="p-12 text-center">
+        <p class="text-red-500">حدث خطأ أثناء تحميل البيانات</p>
+      </div>
+    }
+
+  </div>
+</div>

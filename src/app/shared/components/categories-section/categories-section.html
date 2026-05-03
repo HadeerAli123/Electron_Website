@@ -1,0 +1,171 @@
+<section class="cats-section" dir="rtl">
+
+  <!-- Decorative background -->
+  <div class="cats-bg-decoration">
+    <div class="cats-blob cats-blob-1"></div>
+    <div class="cats-blob cats-blob-2"></div>
+  </div>
+
+  <div class="cats-container">
+
+    <!-- Header -->
+    <div class="cats-header">
+      <div class="cats-badge">
+        <span class="cats-badge-dot"></span>
+        <span>تصفح منتجاتنا</span>
+      </div>
+      <h2 class="cats-title">الأصناف المتوفرة</h2>
+      <p class="cats-desc">اكتشف مجموعتنا الواسعة من المنتجات بأسعار تنافسية</p>
+    </div>
+
+    <!-- Search -->
+    @if (showPagination) {
+      <div class="cats-search-wrap">
+        <div class="cats-search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+          </svg>
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="onSearch()"
+            placeholder="ابحث عن صنف..."
+            class="cats-search-input"/>
+          @if (searchQuery) {
+            <button (click)="clearSearch()" class="cats-search-clear" type="button" aria-label="مسح">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          }
+        </div>
+        @if (searchQuery && filteredCategories.length > 0) {
+          <p class="cats-search-result">{{ filteredCategories.length }} نتيجة</p>
+        }
+      </div>
+    }
+
+    <!-- Skeleton loader -->
+    @if (isLoading) {
+      <div class="cats-grid">
+        @for (i of [1,2,3,4,5,6,7,8]; track i) {
+          <div class="cat-card cat-skeleton">
+            <div class="cat-skel-img"></div>
+            <div class="cat-skel-body">
+              <div class="cat-skel-line cat-skel-line-1"></div>
+              <div class="cat-skel-line cat-skel-line-2"></div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @else if (paginatedCategories.length > 0) {
+
+      <!-- Categories grid -->
+      <div class="cats-grid">
+        @for (category of paginatedCategories; track category.id; let i = $index) {
+
+          <article
+            class="cat-card"
+            [class.cat-featured]="i === 0 && !searchQuery"
+            (click)="onCategoryClick(category)"
+            [style.animation-delay.ms]="i * 60">
+
+            <!-- Image -->
+            <div class="cat-card-img-wrap">
+              @if (category.image) {
+                <img [src]="category.image" [alt]="category.name" class="cat-card-img" loading="lazy"/>
+              } @else {
+                <div class="cat-card-initial">{{ category.name.charAt(0) }}</div>
+              }
+
+              <!-- Featured tag -->
+              @if (i === 0 && !searchQuery) {
+                <span class="cat-card-tag">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/>
+                  </svg>
+                  مميز
+                </span>
+              }
+            </div>
+
+            <!-- Body -->
+            <div class="cat-card-body">
+              <h3 class="cat-card-name">{{ category.name }}</h3>
+
+              @if (category.productCount !== undefined) {
+                <span class="cat-card-stat">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/>
+                  </svg>
+                  {{ category.productCount }} ماركة
+                </span>
+              }
+            </div>
+
+            <!-- Arrow -->
+            <div class="cat-card-arrow">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/>
+              </svg>
+            </div>
+          </article>
+
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (showPagination && totalPages > 1) {
+        <div class="cats-pagination-wrap">
+          <app-pagination
+            [currentPage]="currentPage"
+            [totalPages]="totalPages"
+            (pageChange)="onPageChange($event)">
+          </app-pagination>
+        </div>
+      }
+
+      <!-- CTA -->
+      @if (showButton) {
+        <div class="cats-cta-wrap">
+          <button (click)="onAllCategoriesClick()" class="cats-cta-btn" type="button">
+            <span class="cats-cta-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
+              </svg>
+            </span>
+            <span>جميع الأصناف</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+          </button>
+        </div>
+      }
+    }
+
+    <!-- Empty state -->
+    @else if (!isLoading) {
+      <div class="cats-empty">
+        @if (searchQuery) {
+          <div class="cats-empty-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+            </svg>
+          </div>
+          <p class="cats-empty-title">لا توجد نتائج لـ "{{ searchQuery }}"</p>
+          <button (click)="clearSearch()" class="cats-empty-action" type="button">مسح البحث</button>
+        } @else {
+          <div class="cats-empty-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6z"/>
+            </svg>
+          </div>
+          <p class="cats-empty-title">لا توجد أصناف متاحة حالياً</p>
+        }
+      </div>
+    }
+
+  </div>
+</section>

@@ -1,0 +1,201 @@
+@if (status === 'form') {
+  <div class="min-h-screen bg-muted flex items-center justify-center px-4" dir="rtl">
+    <div class="container mx-auto max-w-2xl bg-[#FAFAFA] px-5 py-10 shadow-2xl shadow-[#00000014] rounded-2xl">
+      <div class="bg-card container mx-auto max-w-xl rounded-xl shadow-lg overflow-hidden">
+
+        <div class="bg-[#0B54A5] text-[#FFFFFF] px-6 py-5 flex items-center justify-between">
+          <div class="text-right">
+            <h2 class="text-xl font-bold">تتبع طلبك</h2>
+            <p class="text-sm opacity-80 mt-1">أدخل كود الطلب لمعرفة حالته</p>
+          </div>
+           <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+        </div>
+
+        <div class="p-8 flex flex-col items-center">
+          <div class="w-16 h-16 rounded-2xl bg-[#0B54A514] flex items-center justify-center mb-5">
+            <svg class="w-8 h-8 text-[#0B54A5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7l9-4 9 4-9 4-9-4z M3 7v10l9 4 9-4V7"/>
+            </svg>
+          </div>
+
+          <h3 class="text-lg font-bold mb-2">أدخل كود الطلب</h3>
+          <p class="text-sm mb-6 text-center">يمكنك العثور على كود الطلب في رسالة التأكيد المرسلة إليك</p>
+
+          <input
+            #orderInput
+            type="text"
+            placeholder="مثال: ORD-123456"
+            class="w-full max-w-sm border rounded-xl px-4 py-3 text-center mb-4 focus:outline-none focus:ring-2 focus:ring-[#0B54A5]"
+          />
+
+          <button
+            (click)="trackOrder(orderInput.value)"
+            [disabled]="isLoading"
+            class="w-full max-w-sm bg-[#0B54A5] text-white py-3 rounded-xl font-semibold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed transition">
+            {{ isLoading ? 'جاري البحث...' : 'تتبع الطلب' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+}
+
+
+@if (status === 'found' && orderData) {
+  <div class="min-h-screen bg-gray-50 py-10 px-4" dir="rtl">
+        @if (!isLoggedIn) {
+      <div class="text-center bg-white p-10 rounded-2xl shadow-lg space-y-4">
+        <p class="text-xl font-bold text-gray-700">يجب تسجيل الدخول أولاً</p>
+        <p class="text-gray-500 text-sm">لتتبع طلبك يرجى تسجيل الدخول</p>
+        <a routerLink="/login"
+          class="inline-block bg-[#0B54A5] text-white px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition">
+          تسجيل الدخول
+        </a>
+      </div>
+    } @else {
+    <div class="container mx-auto max-w-4xl space-y-6">
+
+  
+      <div class="bg-[#0B54A5] text-white px-6 py-5 rounded-xl flex items-center justify-between">
+        <div class="text-right">
+          <h2 class="text-xl font-bold">تتبع طلبك</h2>
+          <p class="text-sm opacity-80 mt-1">{{ orderData.order_info.order_number }}</p>
+        </div>
+        <svg class="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7l9-4 9 4-9 4-9-4z M3 7v10l9 4 9-4V7"/>
+        </svg>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-6">
+        <h3 class="text-[#0B54A5] font-bold text-lg mb-4">معلومات الطلب</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-xs text-gray-500 mb-1">رقم الطلب</p>
+            <p class="font-bold text-sm text-[#0B54A5]">{{ orderData.order_info.order_number }}</p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-xs text-gray-500 mb-1">تاريخ الطلب</p>
+            <p class="font-bold text-sm">{{ orderData.order_info.order_date }}</p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-xs text-gray-500 mb-1">الحالة</p>
+            <p class="font-bold text-sm text-green-600">{{ orderData.order_info.status_arabic }}</p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-xs text-gray-500 mb-1">طريقة الدفع</p>
+            <p class="font-bold text-sm">{{ orderData.pricing.payment_type_arabic }}</p>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="bg-white rounded-xl shadow p-6">
+        <h3 class="text-[#0B54A5] font-bold text-lg mb-6">مراحل الطلب</h3>
+        <div class="relative">
+          @for (step of orderData.tracking_statuses; track step.step) {
+            <div class="flex gap-4 mb-6 last:mb-0">
+
+              <div class="flex flex-col items-center">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                  [class.bg-blue-700]="step.status === 'completed'"
+                  [class.bg-gray-200]="step.status === 'pending'"
+                >
+                  @if (step.status === 'completed') {
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                  } @else {
+                    <span class="text-gray-400 text-sm font-bold">{{ step.step }}</span>
+                  }
+                </div>
+                @if (step.step < orderData.tracking_statuses.length) {
+                  <div class="w-0.5 h-8 mt-1"
+                    [class.bg-blue-700]="step.status === 'completed'"
+                    [class.bg-gray-200]="step.status === 'pending'"
+                  ></div>
+                }
+              </div>
+
+              <div class="pt-1">
+                <p class="font-bold text-gray-800">{{ step.title }}</p>
+                <p class="text-sm text-gray-500">{{ step.description }}</p>
+                <p class="text-xs text-gray-400 mt-1">{{ step.date }} {{ step.time }}</p>
+              </div>
+
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-6">
+        <h3 class="text-[#0B54A5] font-bold text-lg mb-4">المنتجات</h3>
+        <div class="space-y-3">
+          @for (item of orderData.items; track item.id) {
+            <div class="flex items-center justify-between border-b pb-3 last:border-0">
+              <div>
+                <p class="font-semibold">{{ item.name }}</p>
+                <p class="text-sm text-gray-500">الكمية: {{ item.quantity }}</p>
+              </div>
+              <p class="font-bold text-[#0B54A5]">{{ item.total }} د.ك</p>
+            </div>
+          }
+        </div>
+        <div class="mt-4 pt-4 border-t flex justify-between items-center">
+          <p class="font-bold text-gray-700">الإجمالي</p>
+          <p class="font-extrabold text-[#0B54A5] text-lg">{{ orderData.pricing.total_amount }} د.ك</p>
+        </div>
+      </div>
+
+    
+      <div class="text-center">
+        <button (click)="reset()" class="px-8 py-3 border-2 border-[#0B54A5] text-[#0B54A5] rounded-xl font-semibold hover:bg-blue-50 transition cursor-pointer">
+          تتبع طلب آخر
+        </button>
+      </div>
+
+    </div>
+        }
+  </div>
+}
+
+
+@if (status === 'notfound') {
+  <div class="min-h-screen flex items-center justify-center px-4" dir="rtl">
+    <div class="container mx-auto max-w-4xl bg-[#FAFAFA] px-5 py-10 shadow-2xl shadow-[#00000014] rounded-2xl">
+      <div class="container mx-auto max-w-3xl rounded-xl shadow-lg overflow-hidden">
+
+        <div class="bg-[#0B54A5] text-[#FFFFFF] px-6 py-5 flex items-center justify-between">
+          <div class="text-right">
+            <h2 class="text-xl font-bold">تتبع طلبك</h2>
+            <p class="text-sm opacity-80 mt-1">أدخل كود الطلب لمعرفة حالته</p>
+          </div>
+          <svg class="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7l9-4 9 4-9 4-9-4z M3 7v10l9 4 9-4V7"/>
+          </svg>
+        </div>
+
+        <div class="bg-white w-full rounded-xl shadow-lg p-8 text-center">
+          <div class="w-20 h-20 mx-auto rounded-full bg-[#DA3030] flex items-center justify-center mb-4">
+            <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </div>
+          <div class="flex flex-col items-center gap-6">
+            <h3 class="text-xl font-bold">لم يتم العثور على الطلب</h3>
+            <p class="text-gray-500 font-semibold leading-relaxed max-w-md">
+              تأكد من كود الطلب وحاول مرة أخرى
+            </p>
+            <button (click)="reset()" class="px-8 py-3 bg-[#0B54A5] text-white rounded-xl font-semibold hover:opacity-90 transition cursor-pointer">
+              حاول مرة أخرى
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+}

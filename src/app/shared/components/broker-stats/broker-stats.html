@@ -1,0 +1,101 @@
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+  <div class="bg-white rounded-2xl shadow-sm p-6">
+    <div class="flex flex-row justify-between items-center">
+      <p class="text-sm font-semibold text-[#000000]">المبيعات الشهرية</p>
+      <div
+        class="w-8 h-8 rounded-lg bg-[#FFC107] flex items-center justify-center text-yellow-600 text-lg"
+      >
+        <svg
+          class="w-5 h-5 text-[#FFFFFF]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8" />
+        </svg>
+      </div>
+    </div>
+    <p class="text-xl font-bold text-[#0B54A5]">{{ stats.monthlySales }} عملية</p>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm p-6">
+    <div class="flex flex-row justify-between items-center">
+      <p class="text-sm font-semibold text-[#000000]">إجمالي العمولات</p>
+      <div
+        class="w-8 h-8 rounded-lg bg-[#28A745] flex items-center justify-center text-yellow-600 text-lg"
+      >
+        <svg
+          class="w-4 h-4 text-[#FFFFFF]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 1v22M17 5H9a4 4 0 000 8h6a4 4 0 010 8H6"
+          />
+        </svg>
+      </div>
+    </div>
+    <p class="text-xl font-bold text-[#0B54A5]">{{ stats.commissions | number }} د.ك</p>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm p-6">
+    <div class="flex flex-row justify-between items-center">
+      <p class="text-sm font-semibold text-[#000000]">رصيد المحفظة</p>
+      <div
+        class="w-8 h-8 rounded-lg bg-[#EE5629] flex items-center justify-center text-yellow-600 text-lg"
+      >
+        <svg
+          class="w-5 h-5 text-[#FFFFFF]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <rect
+            x="2"
+            y="5"
+            width="20"
+            height="14"
+            rx="2"
+            ry="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </div>
+    <p class="text-xl font-bold text-[#0B54A5]">{{ stats.balance | number }} د.ك</p>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm p-6">
+    <div class="flex flex-row justify-between items-center">
+      <p class="text-sm font-semibold text-[#000000]">عدد العملاء الحاليين</p>
+      <div
+        class="w-8 h-8 rounded-lg bg-[#0B54A5] flex items-center justify-center text-yellow-600 text-lg"
+      >
+        <svg
+          class="w-5 h-5 text-[#FFFFFF]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M17 20h5v-1a4 4 0 00-3-3.87M9 20H4v-1a4 4 0 013-3.87M16 7a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+      </div>
+    </div>
+    <p class="text-xl font-bold text-[#0B54A5]">{{ stats.clients }} عميل</p>
+  </div>
+
+ 
+</div>

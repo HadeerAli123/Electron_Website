@@ -1,0 +1,483 @@
+
+:host {
+  display: block;
+  font-family: 'Cairo', sans-serif;
+}
+
+
+.hiw-section {
+  position: relative;
+  background: linear-gradient(180deg, #f0f5ff 0%, #ffffff 50%, #f8faff 100%);
+  padding: 56px 0 72px;
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .hiw-section { padding: 88px 0 104px; }
+}
+
+/* ────────────────────────────────────────
+   Background decoration
+   ──────────────────────────────────────── */
+.hiw-bg-decoration {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hiw-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+}
+
+.hiw-blob-1 {
+  width: 380px;
+  height: 380px;
+  top: -120px;
+  left: 5%;
+  background: radial-gradient(circle, rgba(244, 121, 32, 0.15), transparent 70%);
+  animation: hiwBlobFloat 16s ease-in-out infinite;
+}
+
+.hiw-blob-2 {
+  width: 320px;
+  height: 320px;
+  bottom: -100px;
+  right: 5%;
+  background: radial-gradient(circle, rgba(11, 84, 165, 0.12), transparent 70%);
+  animation: hiwBlobFloat2 18s ease-in-out infinite;
+}
+
+@keyframes hiwBlobFloat {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(40px, 30px); }
+}
+
+@keyframes hiwBlobFloat2 {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-30px, -20px); }
+}
+
+.hiw-grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(11, 84, 165, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 84, 165, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 30%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 30%, transparent 70%);
+}
+
+/* ────────────────────────────────────────
+   Container
+   ──────────────────────────────────────── */
+.hiw-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (min-width: 1024px) {
+  .hiw-container { padding: 0 32px; }
+}
+
+/* ────────────────────────────────────────
+   Header
+   ──────────────────────────────────────── */
+.hiw-header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: hiwFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 1024px) {
+  .hiw-header { margin-bottom: 64px; }
+}
+
+@keyframes hiwFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hiw-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1.5px solid #fed7c1;
+  padding: 7px 14px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 12px rgba(244, 121, 32, 0.08);
+  font-size: 13px;
+  font-weight: 700;
+  color: #e85d00;
+}
+
+.hiw-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f47920;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.hiw-badge-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: rgba(244, 121, 32, 0.4);
+  animation: hiwDotPulse 2s ease-in-out infinite;
+}
+
+@keyframes hiwDotPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%      { transform: scale(1.6); opacity: 0; }
+}
+
+.hiw-title {
+  font-size: 30px;
+  font-weight: 900;
+  color: #0a237a;
+  margin: 0 0 12px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .hiw-title { font-size: 38px; }
+}
+
+@media (min-width: 1024px) {
+  .hiw-title { font-size: 46px; }
+}
+
+.hiw-title-accent {
+  display: inline-block;
+  background: linear-gradient(135deg, #f47920, #e85d00 50%, #c2410c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.hiw-title-accent::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f47920, #e85d00);
+  border-radius: 999px;
+  opacity: 0.3;
+}
+
+.hiw-desc {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  .hiw-desc { font-size: 15px; }
+}
+
+/* ────────────────────────────────────────
+   Steps grid
+   ──────────────────────────────────────── */
+.hiw-steps {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  position: relative;
+  padding-top: 8px; /* small breathing room — number is now INSIDE */
+}
+
+@media (min-width: 1024px) {
+  .hiw-steps {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding-top: 0;
+  }
+}
+
+/* ────────────────────────────────────────
+   Animated connector line (desktop only)
+   ──────────────────────────────────────── */
+.hiw-connector {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .hiw-connector {
+    display: block;
+    position: absolute;
+    top: 90px;
+    right: 12.5%;
+    left: 12.5%;
+    height: 2px;
+    z-index: 0;
+  }
+
+  .hiw-connector-line {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      #c3d9ef 0,
+      #c3d9ef 6px,
+      transparent 6px,
+      transparent 14px
+    );
+    opacity: 0.6;
+  }
+
+  .hiw-connector-dot {
+    position: absolute;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f47920, #e85d00);
+    transform: translateY(-50%);
+    box-shadow: 0 0 0 4px white, 0 4px 8px rgba(244, 121, 32, 0.3);
+    animation: hiwDotTravel 4s ease-in-out infinite;
+  }
+
+  .hiw-connector-dot-1 { animation-delay: 0s; }
+  .hiw-connector-dot-2 { animation-delay: 1.3s; }
+  .hiw-connector-dot-3 { animation-delay: 2.6s; }
+
+  @keyframes hiwDotTravel {
+    0%   { right: 0%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { right: 100%; opacity: 0; }
+  }
+}
+
+/* ────────────────────────────────────────
+   Step card
+   ──────────────────────────────────────── */
+.hiw-step {
+  position: relative;
+  z-index: 1;
+  background: white;
+  border: 1.5px solid #e8f0fb;
+  border-radius: 18px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: default;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s,
+              box-shadow 0.3s;
+  box-shadow: 0 2px 10px rgba(11, 84, 165, 0.04);
+  animation: hiwFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  overflow: hidden;
+}
+
+.hiw-step::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f47920, #e85d00);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
+}
+
+.hiw-step:hover {
+  transform: translateY(-6px);
+  border-color: #fed7c1;
+  box-shadow: 0 16px 32px rgba(244, 121, 32, 0.12);
+}
+
+.hiw-step:hover::before {
+  transform: scaleX(1);
+}
+
+@media (min-width: 1024px) {
+  .hiw-step {
+    padding: 28px 20px 24px;
+  }
+}
+
+/* ────────────────────────────────────────
+   Step number badge — INSIDE the card
+   ──────────────────────────────────────── */
+.hiw-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f47920, #e85d00);
+  color: white;
+  font-size: 13px;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+  box-shadow: 0 6px 14px rgba(244, 121, 32, 0.35);
+  letter-spacing: 0;
+  font-family: monospace;
+  transition: transform 0.25s;
+  margin-bottom: 14px;
+  align-self: flex-start; /* keeps number on the right side in RTL */
+}
+
+.hiw-step:hover .hiw-num {
+  transform: scale(1.08) rotate(-5deg);
+}
+
+@media (min-width: 1024px) {
+  .hiw-num {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+}
+
+/* ────────────────────────────────────────
+   Icon circle
+   ──────────────────────────────────────── */
+.hiw-ico-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #fff4ed, #ffedd5);
+  border: 1.5px solid #fed7c1;
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  isolation: isolate;
+}
+
+@media (min-width: 1024px) {
+  .hiw-ico-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+}
+
+.hiw-ico-glow {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244, 121, 32, 0.3), transparent 65%);
+  filter: blur(15px);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.hiw-ico {
+  color: #f47920;
+  display: grid;
+  place-items: center;
+  transition: color 0.3s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hiw-step:hover .hiw-ico-wrap {
+  background: linear-gradient(135deg, #f47920, #e85d00);
+  border-color: #f47920;
+  transform: scale(1.05) rotate(-3deg);
+  box-shadow: 0 12px 24px rgba(244, 121, 32, 0.3);
+}
+
+.hiw-step:hover .hiw-ico-glow {
+  opacity: 1;
+}
+
+.hiw-step:hover .hiw-ico {
+  color: white;
+  transform: scale(1.05);
+}
+
+/* ────────────────────────────────────────
+   Step title & description
+   ──────────────────────────────────────── */
+.hiw-step-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0a237a;
+  margin: 0 0 8px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  transition: color 0.25s;
+}
+
+@media (min-width: 1024px) {
+  .hiw-step-title { font-size: 15px; }
+}
+
+.hiw-step:hover .hiw-step-title {
+  color: #e85d00;
+}
+
+.hiw-step-desc {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.65;
+  font-weight: 500;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .hiw-step-desc { font-size: 12.5px; }
+}
+
+.hiw-step-arrow {
+  display: none;
+}
+
+/* ────────────────────────────────────────
+   Mobile fine-tuning
+   ──────────────────────────────────────── */
+@media (max-width: 639px) {
+  .hiw-section { padding: 40px 0 56px; }
+  .hiw-step { padding: 18px 12px; border-radius: 14px; }
+  .hiw-num { width: 32px; height: 32px; font-size: 12px; margin-bottom: 12px; }
+  .hiw-ico-wrap { width: 56px; height: 56px; border-radius: 15px; margin-bottom: 12px; }
+  .hiw-step-title { font-size: 13px; }
+  .hiw-step-desc { font-size: 11.5px; }
+}
+
+@media (max-width: 380px) {
+  .hiw-steps { gap: 10px; }
+  .hiw-step { padding: 16px 10px; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hiw-blob, .hiw-badge-dot::after,
+  .hiw-connector-dot, .hiw-step,
+  .hiw-step:hover, .hiw-step:hover .hiw-ico-wrap,
+  .hiw-step:hover .hiw-num {
+    animation: none !important;
+    transition: none !important;
+  }
+}

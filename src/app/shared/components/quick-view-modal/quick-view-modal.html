@@ -1,0 +1,216 @@
+<div class="qvm-backdrop" (click)="onBackdropClick($event)" dir="rtl">
+
+  <div class="qvm-container" role="dialog" aria-label="نظرة سريعة على المنتج">
+
+    <!-- Header -->
+    <div class="qvm-header">
+      <div class="qvm-header-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <span>نظرة سريعة</span>
+      </div>
+      <button type="button" class="qvm-close" (click)="close.emit()" aria-label="إغلاق">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body — split layout -->
+    <div class="qvm-body">
+
+      <!-- ════ LEFT: Gallery ════ -->
+      <div class="qvm-gallery">
+        <div class="qvm-main-img-wrap">
+          @if (currentImage()) {
+            <img
+              [src]="getImageUrl(currentImage())"
+              [alt]="productName()"
+              class="qvm-main-img"
+              loading="eager"/>
+          } @else {
+            <div class="qvm-img-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159"/>
+              </svg>
+            </div>
+          }
+
+          <!-- Discount badge -->
+          @if (hasDiscount()) {
+            <span class="qvm-discount-badge">-{{ discountPercent() }}%</span>
+          }
+
+          <!-- Out of stock badge -->
+          @if (!inStock()) {
+            <span class="qvm-stock-badge">نفد المخزون</span>
+          }
+
+          <!-- Gallery nav arrows -->
+          @if (hasGallery()) {
+            <button type="button" class="qvm-nav-btn qvm-nav-prev" (click)="prevImage()" aria-label="السابق">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+              </svg>
+            </button>
+            <button type="button" class="qvm-nav-btn qvm-nav-next" (click)="nextImage()" aria-label="التالي">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+              </svg>
+            </button>
+
+            <!-- Image counter -->
+            <span class="qvm-img-counter">
+              {{ selectedImageIndex() + 1 }} / {{ images().length }}
+            </span>
+          }
+        </div>
+
+        <!-- Thumbnails -->
+        @if (hasGallery()) {
+          <div class="qvm-thumbs">
+            @for (img of images(); track img; let i = $index) {
+              <button
+                type="button"
+                class="qvm-thumb"
+                [class.qvm-thumb-active]="selectedImageIndex() === i"
+                (click)="selectImage(i)"
+                [attr.aria-label]="'صورة ' + (i + 1)">
+                <img [src]="getImageUrl(img)" [alt]="'صورة ' + (i + 1)" loading="lazy"/>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- ════ RIGHT: Info ════ -->
+      <div class="qvm-info">
+
+        <!-- Brand -->
+        @if (product?.mark_name || (fullProduct()?.mark_name)) {
+          <div class="qvm-brand">{{ fullProduct()?.mark_name || product.mark_name }}</div>
+        }
+
+        <!-- Name -->
+        <h2 class="qvm-name">{{ productName() }}</h2>
+
+        <!-- Model -->
+        @if (product?.model || fullProduct()?.model) {
+          <div class="qvm-model">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/>
+            </svg>
+            <span>موديل: {{ fullProduct()?.model || product.model }}</span>
+          </div>
+        }
+
+        <!-- Price -->
+      @if (currentPrice() > 0) {
+  <div class="qvm-price-box">
+    <div class="qvm-price-row">
+      <span class="qvm-price-num">{{ currentPrice() | priceFormat }}</span>
+      <span class="qvm-price-currency">{{ currencySymbol() }}</span>
+    </div>
+    @if (hasDiscount()) {
+      <div class="qvm-price-old">
+        <span>{{ originalPrice() | priceFormat }} {{ currencySymbol() }}</span>
+        <span class="qvm-savings">
+          وفّرت {{ savings() | priceFormat }} {{ currencySymbol() }}
+        </span>
+      </div>
+    }
+  </div>
+}
+
+        <!-- Stock indicator -->
+        <div class="qvm-stock-info" [class.qvm-stock-out]="!inStock()">
+          @if (inStock()) {
+            <span class="qvm-stock-dot"></span>
+            <span>متوفر في المخزون</span>
+          } @else {
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+            </svg>
+            <span>غير متوفر حالياً</span>
+          }
+        </div>
+
+        <!-- Short description -->
+        @if (shortDescription()) {
+          <div class="qvm-desc">
+            <h4 class="qvm-desc-title">الوصف</h4>
+            <p>{{ shortDescription() }}</p>
+          </div>
+        }
+
+        <!-- Loading state for description -->
+        @if (isLoading() && !shortDescription()) {
+          <div class="qvm-desc-skeleton">
+            <div class="qvm-skel-line qvm-skel-w-90"></div>
+            <div class="qvm-skel-line qvm-skel-w-70"></div>
+          </div>
+        }
+
+        <!-- Quantity + Add to cart -->
+        @if (inStock()) {
+          <div class="qvm-actions">
+            <div class="qvm-qty">
+              <button type="button" class="qvm-qty-btn" (click)="decreaseQty()" [disabled]="quantity() <= 1" aria-label="نقصان">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
+                </svg>
+              </button>
+              <span class="qvm-qty-num">{{ quantity() }}</span>
+              <button type="button" class="qvm-qty-btn" (click)="increaseQty()" aria-label="زيادة">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                </svg>
+              </button>
+            </div>
+
+            <button
+              type="button"
+              class="qvm-cart-btn"
+              [disabled]="isAddingToCart()"
+              (click)="addToCart()">
+              @if (isAddingToCart()) {
+                <span class="qvm-spinner"></span>
+                <span>جاري الإضافة...</span>
+              } @else {
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+                </svg>
+                <span>أضف للسلة</span>
+              }
+            </button>
+
+            <!-- Wishlist heart -->
+            <app-wishlist-button
+              [product]="fullProduct() || product"
+              variant="circle"
+              size="lg"
+              class="qvm-wishlist">
+            </app-wishlist-button>
+          </div>
+        } @else {
+          <button type="button" class="qvm-cart-btn qvm-cart-disabled" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+            </svg>
+            <span>غير متوفر حالياً</span>
+          </button>
+        }
+
+        <!-- Full details link -->
+        <button type="button" class="qvm-details-link" (click)="goToFullDetails()">
+          <span>عرض التفاصيل الكاملة</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

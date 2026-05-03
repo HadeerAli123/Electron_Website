@@ -1,0 +1,77 @@
+<app-hero-section
+    hero = 'اعرف اكثر عنا '
+ title = '  {{ aboutTitle }}'
+>
+
+</app-hero-section>
+
+<section class="bg-white" dir="rtl">
+  <div class="max-w-7xl mx-auto px-4 py-14 md:py-20">
+
+<div class="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] 
+            gap-8 md:gap-12 mb-12 justify-items-center">
+
+  @if (isLoading) {
+    @for (i of [1,2,3,4]; track i) {
+      <div class="text-center animate-pulse">
+        <div class="h-6 bg-gray-200 rounded w-16 mx-auto mb-2"></div>
+        <div class="h-4 bg-gray-200 rounded w-20 mx-auto"></div>
+      </div>
+    }
+  } @else {
+    @for (stat of stats; track stat.id) {
+      <div class="text-center">
+        <div class="text-[#0B54A5] font-extrabold text-[18px] md:text-[20px]">
+          {{ stat.value }}
+        </div>
+        <div class="text-[#1A1A1A] text-xl font-semibold md:text-[14px] mt-1">
+          {{ stat.label }}
+        </div>
+      </div>
+    }
+  }
+
+</div>
+
+    <div class="flex justify-center mb-5">
+      <span
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0B54A514] text-[#0B54A5] text-xl font-semibold"
+      >
+         <img src="star-icon.png" alt="Welcome Icon" class="w-5 h-5 object-contain" />
+         {{ aboutTitle }}
+      </span>
+    </div>
+
+
+    <p class="text-center text-[#1A1A1A] font-bold
+         text-xl md:text-2xl mb-6
+         leading-7.5 md:leading-9
+         tracking-[0]
+         mx-auto">
+        {{ aboutDescription }}
+
+    </p>
+  </div>
+
+  <div class="bg-linear-to-r from-[#1668c514] via-white/10 to-[#1668c514] py-14 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+
+      <h2 class="text-[#0B54A5] font-extrabold text-[18px] md:text-[20px] mb-4">
+        هل أنت جاهز للبدء؟
+      </h2>
+
+      <p class="text-[#1A1A1A] font-bold text-[14px] md:text-[15px] mb-7">
+        تواصل معنا اليوم واحصل على أفضل العروض وخطط التقسيط المريحة
+      </p>
+
+  <a
+  routerLink="/contact-us"
+  class="inline-flex items-center justify-center px-6 py-2 rounded-lg bg-[#0B54A5]
+         text-white font-semibold hover:bg-[#09478c] transition"
+>
+  تواصل الان
+</a>
+
+    </div>
+  </div>
+</section>
