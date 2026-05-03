@@ -1,6 +1,6 @@
 
 export const environment = {
   production: true,
-  apiUrl: 'https://electronkw.com/dashboard/api',
+  apiUrl: 'https://electronkw2.com/dashboard/api',
 
 };
