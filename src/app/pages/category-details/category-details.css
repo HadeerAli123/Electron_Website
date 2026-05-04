@@ -407,28 +407,22 @@
   margin-bottom: 24px;
 }
 
+.cd-grid-products,
 .cd-grid-marks {
-  grid-template-columns: repeat(2, 1fr);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  justify-content: center;
 }
 
-.cd-grid-products {
-  grid-template-columns: repeat(2, 1fr);
+.cd-product,
+.cd-mark-card {
+  max-width: 320px;
+  width: 100%;
+  margin: 0 auto;
 }
 
-@media (min-width: 640px) {
-  .cd-grid-marks    { grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .cd-grid-products { grid-template-columns: repeat(3, 1fr); gap: 18px; }
-}
 
-@media (min-width: 1024px) {
-  .cd-grid-marks    { grid-template-columns: repeat(4, 1fr); gap: 20px; }
-  .cd-grid-products { grid-template-columns: repeat(4, 1fr); gap: 20px; }
-}
-
-@media (min-width: 1280px) {
-  .cd-grid-marks    { grid-template-columns: repeat(5, 1fr); }
-  .cd-grid-products { grid-template-columns: repeat(5, 1fr); }
-}
 
 
 .cd-mark-card {

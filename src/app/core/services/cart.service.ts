@@ -121,6 +121,8 @@ export interface CashOrderForm {
   shipping_apartment?: string;
   shipping_notes?: string;
   notes?: string;
+  full_address?: string;
+
 }
 
 export interface InstallmentOrderForm {
@@ -141,6 +143,7 @@ export interface CheckoutRequest {
   shipping_name?: string;
   shipping_phone?: string;
   shipping_city?: string;
+  full_address?: string;
   shipping_area?: string;
   shipping_block?: string;
   shipping_street?: string;
