@@ -140,6 +140,7 @@ export interface CheckoutRequest {
   installment_plan_id?: number;
   items?: { cart_item_id?: number; product_id?: number; quantity: number }[];
   total_amount: number;
+  offer_code?: string;
   shipping_name?: string;
   shipping_phone?: string;
   shipping_city?: string;
@@ -187,6 +188,37 @@ export interface Ministry {
   name_ar: string;
 }
 
+export interface VerifyOfferResponse {
+  success: boolean;
+  message: string;
+  data: {
+    offer: {
+      id: number;
+      offer_name: string;
+      description: string;
+      banner_image: string;
+      discount_percent: number;
+      offer_code: string;
+      expires_at: string;
+      expires_at_human: string;
+      days_left: number;
+      is_featured: boolean;
+      products: {
+        id: number;
+        name: string;
+        sku: string;
+        cover_image: string;
+        original_price: number;
+        discounted_price: number;
+        savings: number;
+        discount_percent: number;
+      }[];
+      products_count: number;
+      total_savings: number;
+    };
+  } | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private readonly http = inject(HttpClient);
@@ -213,18 +245,17 @@ export class CartService {
     })
   );
 
-// ✅ الصح
-readonly totalPrice$ = this.cart$.pipe(
-  map(cart =>
-    cart?.cart_items?.reduce((sum, item) => {
-      const unitPrice = item.final_price
-        ?? (item.product.sale_price ? +item.product.sale_price : +item.product.price);
-      return sum + unitPrice * item.quantity;
-    }, 0) ?? 0
-  )
-);
+  readonly totalPrice$ = this.cart$.pipe(
+    map(cart =>
+      cart?.cart_items?.reduce((sum, item) => {
+        const unitPrice = item.final_price
+          ?? (item.product.sale_price ? +item.product.sale_price : +item.product.price);
+        return sum + unitPrice * item.quantity;
+      }, 0) ?? 0
+    )
+  );
 
-  // ── ✅ Helper: headers مع Auth token ──────────────────────────────────────
+  // ── Helper: headers مع Auth token ──────────────────────────────────────────
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token') ?? '';
     return new HttpHeaders({
@@ -234,7 +265,7 @@ readonly totalPrice$ = this.cart$.pipe(
     });
   }
 
-  // ── ✅ Helper: headers بدون Auth (للـ public endpoints) ──────────────────
+  // ── Helper: headers بدون Auth (للـ public endpoints) ──────────────────────
   private getPublicHeaders(): HttpHeaders {
     return new HttpHeaders({
       'Content-Type': 'application/json',
@@ -252,12 +283,12 @@ readonly totalPrice$ = this.cart$.pipe(
     }
   }
 
-  // ─── Auth ─────────────────────────────────────────────────────────────────
+  // ─── Auth ──────────────────────────────────────────────────────────────────
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
   }
 
-  // ─── Guest Cart ───────────────────────────────────────────────────────────
+  // ─── Guest Cart ────────────────────────────────────────────────────────────
   getGuestCart(): GuestCartItem[] {
     try {
       const raw = localStorage.getItem(this.GUEST_CART_KEY);
@@ -278,34 +309,34 @@ readonly totalPrice$ = this.cart$.pipe(
     this.guestCountSubject.next(0);
   }
 
- addToGuestCart(
-  product: Product,
-  quantity: number,
-  variantId?: number,
-  variant?: any
-): void {
-  const items = this.getGuestCart();
+  addToGuestCart(
+    product: Product,
+    quantity: number,
+    variantId?: number,
+    variant?: any
+  ): void {
+    const items = this.getGuestCart();
 
-  const existing = items.find(
-    i =>
-      i.product_id === product.id &&
-      (variantId ? i.variant_id === variantId : !i.variant_id)  // match with OR without variant
-  );
+    const existing = items.find(
+      i =>
+        i.product_id === product.id &&
+        (variantId ? i.variant_id === variantId : !i.variant_id)
+    );
 
-  if (existing) {
-    existing.quantity += quantity;
-  } else {
-    items.push({
-      product_id: product.id,
-      variant_id: variantId,   // undefined if no variant — stored as undefined/null
-      quantity,
-      product,
-      variant: variant ?? null,
-    });
+    if (existing) {
+      existing.quantity += quantity;
+    } else {
+      items.push({
+        product_id: product.id,
+        variant_id: variantId,
+        quantity,
+        product,
+        variant: variant ?? null,
+      });
+    }
+
+    this.saveGuestCart(items);
   }
-
-  this.saveGuestCart(items);
-}
 
   mergeGuestCartAfterLogin(): Observable<any> {
     const guestItems = this.getGuestCart();
@@ -315,7 +346,7 @@ readonly totalPrice$ = this.cart$.pipe(
       this.http.post<ApiResponse<any>>(
         `${this.baseUrl}/cart/add`,
         { product_id: item.product_id, quantity: item.quantity, variant_id: item.variant_id },
-        { headers: this.getAuthHeaders() }  // ✅ مع token
+        { headers: this.getAuthHeaders() }
       ).pipe(catchError(() => of(null)))
     );
 
@@ -327,14 +358,14 @@ readonly totalPrice$ = this.cart$.pipe(
     );
   }
 
-  // ─── Installment Plans (public) ───────────────────────────────────────────
+  // ─── Installment Plans (public) ────────────────────────────────────────────
   getCartInstallmentPlans(
     products: { product_id: number; offer_code?: string }[]
   ) {
     return this.http.post<CartInstallmentResponse>(
       `${this.baseUrl}/cart/installment-plans`,
       { products },
-      { headers: this.getPublicHeaders() }  // ✅ public — بدون token
+      { headers: this.getPublicHeaders() }
     );
   }
 
@@ -351,12 +382,12 @@ readonly totalPrice$ = this.cart$.pipe(
       );
   }
 
-  // ─── Cart (auth required) ─────────────────────────────────────────────────
+  // ─── Cart (auth required) ──────────────────────────────────────────────────
   getUserCart(): Observable<CartSummary> {
     return this.http
       .get<ApiResponse<CartSummary>>(
         `${this.baseUrl}/cart/user-cart`,
-        { headers: this.getAuthHeaders() }  // ✅
+        { headers: this.getAuthHeaders() }
       )
       .pipe(
         map(res => res.data),
@@ -390,55 +421,53 @@ readonly totalPrice$ = this.cart$.pipe(
     return item.quantity > 1;
   }
 
-  // ✅ addToCart — مع auth header للـ logged in
-addToCart(
-  productId: number,
-  quantity: number,
-  variantId?: number,
-  product?: Product,
-  variant?: any
-): Observable<CartSummary | null> {
-  if (!this.isLoggedIn()) {
-    if (product) {
-      this.addToGuestCart(product, quantity, variantId, variant);
+  addToCart(
+    productId: number,
+    quantity: number,
+    variantId?: number,
+    product?: Product,
+    variant?: any
+  ): Observable<CartSummary | null> {
+    if (!this.isLoggedIn()) {
+      if (product) {
+        this.addToGuestCart(product, quantity, variantId, variant);
+      }
+      return of(null);
     }
-    return of(null);
-  }
 
-  return this.http
-    .post<ApiResponse<any>>(
-      `${this.baseUrl}/cart/add`,
-      {
-        product_id: productId,
-        quantity,
-        ...(variantId ? { variant_id: variantId } : {}), // only send if exists
-      },
-      { headers: this.getAuthHeaders() }
-    )
-    .pipe(
-      switchMap(() => this.getUserCart()),
-      catchError(err => throwError(() => err))
-    );
-}
+    return this.http
+      .post<ApiResponse<any>>(
+        `${this.baseUrl}/cart/add`,
+        {
+          product_id: productId,
+          quantity,
+          ...(variantId ? { variant_id: variantId } : {}),
+        },
+        { headers: this.getAuthHeaders() }
+      )
+      .pipe(
+        switchMap(() => this.getUserCart()),
+        catchError(err => throwError(() => err))
+      );
+  }
 
   removeCartItem(id: number): Observable<CartSummary> {
     return this.http
       .delete<ApiResponse<any>>(
         `${this.baseUrl}/cart/remove/${id}`,
-        { headers: this.getAuthHeaders() }  // ✅
+        { headers: this.getAuthHeaders() }
       )
       .pipe(switchMap(() => this.getUserCart()));
   }
 
   checkout(checkoutData: CheckoutRequest): Observable<OrderResponse> {
-    // guest → endpoint بدون auth | logged in → مع auth
     const url = this.isLoggedIn()
       ? `${this.baseUrl}/orders/create`
       : `${this.baseUrl}/orders/guest-create`;
 
     const headers = this.isLoggedIn()
-      ? this.getAuthHeaders()    // ✅ مع token
-      : this.getPublicHeaders(); // ✅ بدون token
+      ? this.getAuthHeaders()
+      : this.getPublicHeaders();
 
     return this.http
       .post<OrderResponse>(url, checkoutData, { headers })
@@ -459,10 +488,13 @@ addToCart(
     this.cartSubject.next(null);
   }
 
-verifyOfferCode(offerCode: string): Observable<any> {
-  return this.http.post(`${this.baseUrl}/special-offers/verify`, 
-    { offer_code: offerCode },
-    { headers: this.getAuthHeaders() } // أو اللي بتستخدميه للـ auth
-  );
-}
+  // ─── Special Offers ────────────────────────────────────────────────────────
+
+  verifyOfferCode(offerCode: string): Observable<VerifyOfferResponse> {
+    return this.http.post<VerifyOfferResponse>(
+      `${this.baseUrl}/special-offers/verify`,
+      { offer_code: offerCode },
+      { headers: this.getAuthHeaders() }
+    );
+  }
 }

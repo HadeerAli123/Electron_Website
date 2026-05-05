@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { SiteSettingService } from '../../core/services/site-setting.service';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -21,6 +21,7 @@ import {
   InstallmentRequest,
   CashOrderForm,
   InstallmentOrderForm,
+  VerifyOfferResponse,
 } from '../../core/services/cart.service';
 
 @Component({
@@ -33,6 +34,7 @@ import {
 export class CartComponent implements OnInit, OnDestroy {
   private readonly cartService = inject(CartService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly destroy$ = new Subject<void>();
   private readonly toastr = inject(ToastrService);
   private siteSettingService = inject(SiteSettingService);
@@ -112,7 +114,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
   // Salary modal
   readonly showSalaryModal = signal(false);
-
   readonly salaryInput = signal<number | null>(null);
   readonly salaryError = signal('');
   readonly pendingOrderId = signal<number | null>(null);
@@ -124,7 +125,7 @@ export class CartComponent implements OnInit, OnDestroy {
   readonly couponSuccess = signal(false);
   readonly couponLoading = signal(false);
 
-
+  // ───────────────── PRICE PARSER ─────────────────
   private parsePrice(value: any): number {
     if (value === null || value === undefined || value === '') return 0;
     if (typeof value === 'number') return isNaN(value) ? 0 : value;
@@ -155,7 +156,6 @@ export class CartComponent implements OnInit, OnDestroy {
     () => this.cart()?.cart_items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0,
   );
 
-
   readonly finalTotal = computed(() => {
     const items = this.cart()?.cart_items ?? [];
     this.backendCartData();
@@ -165,7 +165,6 @@ export class CartComponent implements OnInit, OnDestroy {
     }, 0);
   });
 
- 
   readonly subtotal = computed(() => {
     const items = this.cart()?.cart_items ?? [];
     const backendData = this.backendCartData();
@@ -196,7 +195,6 @@ export class CartComponent implements OnInit, OnDestroy {
     return this.installmentPlans().find((p) => p.id === planId) ?? null;
   });
 
-  
   readonly installmentTotal = computed(() => {
     const plan = this.selectedPlan();
     if (!plan) return this.finalTotal();
@@ -208,7 +206,6 @@ export class CartComponent implements OnInit, OnDestroy {
   );
 
   // ───────────────── SHIPPING / TAX / GRAND TOTAL ─────────────────
-
   currencySymbol(): string {
     return this.setting()?.shipping_data?.currency_symbol || 'د.ك';
   }
@@ -239,7 +236,6 @@ export class CartComponent implements OnInit, OnDestroy {
     return shipping;
   });
 
-  
   readonly taxAmount = computed(() => {
     if (this.selectedPayment() !== 'cash') return 0;
     const subtotal = this.finalTotal();
@@ -247,7 +243,6 @@ export class CartComponent implements OnInit, OnDestroy {
     return Math.round(subtotal * (taxRate / 100) * 1000) / 1000;
   });
 
-  
   readonly grandTotal = computed(() => {
     if (this.selectedPayment() === 'installment') {
       return this.installmentTotal();
@@ -303,7 +298,7 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // logged in
+    // ── Logged in flow ──
     this.cartService
       .getUserCart()
       .pipe(takeUntil(this.destroy$))
@@ -342,10 +337,13 @@ export class CartComponent implements OnInit, OnDestroy {
                   this.backendCartData.set(res.data.cart ?? null);
                 },
                 error: (err) => {
-                  console.error('❌ Installment plans error:', err);
+                  console.error('Installment plans error:', err);
                 },
               });
           }
+
+          // ── تطبيق pending coupon بعد اللوجن ──
+          this.applyPendingCouponIfExists();
         },
         error: () => {
           this.cart.set(null);
@@ -357,6 +355,17 @@ export class CartComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  // ───────────────── PENDING COUPON (بعد redirect من اللوجن) ─────────────────
+  private applyPendingCouponIfExists(): void {
+    const pendingCoupon = sessionStorage.getItem('pendingCoupon');
+    if (!pendingCoupon || !this.cartService.isLoggedIn()) return;
+
+    sessionStorage.removeItem('pendingCoupon');
+    this.couponCode.set(pendingCoupon);
+
+    setTimeout(() => this.applyCoupon(), 400);
   }
 
   // ───────────────── QUANTITY ─────────────────
@@ -412,7 +421,6 @@ export class CartComponent implements OnInit, OnDestroy {
     return this.cartService.canDecrease(item);
   }
 
- 
   getItemDisplayPrice(item: CartItem): number {
     const itemFinalPrice = this.parsePrice((item as any).final_price);
     if (itemFinalPrice > 0) return itemFinalPrice;
@@ -562,85 +570,91 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cashFormErrors.set(errors);
     return Object.keys(errors).length === 0;
   }
-submitCashOrder(): void {
-  if (!this.validateCashForm()) return;
 
-  const isGuest = !this.cartService.isLoggedIn();
+  submitCashOrder(): void {
+    if (!this.validateCashForm()) return;
 
-  // ← جيبي الـ offer_code من الـ cart items
-  const offerCode = this.cart()?.cart_items?.find(i => i.offer_code)?.offer_code ?? null;
+    const isGuest = !this.cartService.isLoggedIn();
 
-  const items =
-    this.cart()?.cart_items?.map((item) =>
-      isGuest
-        ? { product_id: item.product_id, quantity: item.quantity }
-        : { product_id: item.product_id, cart_item_id: item.id, quantity: item.quantity },
-    ) ?? [];
+    // ✅ جيب offer_code من أول cart item عنده offer_code
+    const offerCode = this.cart()?.cart_items?.find((i) => i.offer_code)?.offer_code ?? null;
 
-  const data: CheckoutRequest = {
-    payment_type: 'cash',
-    total_amount: this.grandTotal(),
-    items,
-    ...(offerCode ? { offer_code: offerCode } : {}), // ← بعتي الكود
-    ...this.cashForm(),
-  };
+    const items =
+      this.cart()?.cart_items?.map((item) =>
+        isGuest
+          ? { product_id: item.product_id, quantity: item.quantity }
+          : { product_id: item.product_id, cart_item_id: item.id, quantity: item.quantity },
+      ) ?? [];
 
-  this.checkoutLoading.set(true);
+    const data: CheckoutRequest = {
+      payment_type: 'cash',
+      total_amount: this.grandTotal(),
+      items,
+      // ✅ بنبعت offer_code للـ backend عشان يسجل في OfferCodeUsage
+      ...(offerCode ? { offer_code: offerCode } : {}),
+      ...this.cashForm(),
+    };
 
-  this.cartService
-    .checkout(data)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: () => {
-        this.checkoutLoading.set(false);
-        this.showCashModal.set(false);
-        this.showShippingInfoModal.set(true);
-        this.cartService.clearCart();
-        this.cartService.clearGuestCart();
-        this.cart.set(null);
-        this.toastr.success('تم إنشاء الطلب بنجاح!');
-      },
-      error: (err) => {
-        this.checkoutLoading.set(false);
-        this.toastr.error(err?.error?.message || 'حدث خطأ أثناء إنشاء الطلب');
-      },
-    });
-}
+    this.checkoutLoading.set(true);
 
-submitInstallmentOrder(): void {
-  if (!this.validateInstallmentForm()) return;
+    this.cartService
+      .checkout(data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.checkoutLoading.set(false);
+          this.showCashModal.set(false);
+          this.showShippingInfoModal.set(true);
+          this.cartService.clearCart();
+          this.cartService.clearGuestCart();
+          this.cart.set(null);
+          // ✅ امسح الكود بعد نجاح الأوردر
+          this.couponCode.set('');
+          this.couponSuccess.set(false);
+          this.toastr.success('تم إنشاء الطلب بنجاح!');
+        },
+        error: (err) => {
+          this.checkoutLoading.set(false);
+          this.toastr.error(err?.error?.message || 'حدث خطأ أثناء إنشاء الطلب');
+        },
+      });
+  }
 
-  const isGuest = !this.cartService.isLoggedIn();
+  submitInstallmentOrder(): void {
+    if (!this.validateInstallmentForm()) return;
 
-  // ← جيبي الـ offer_code من الـ cart items
-  const offerCode = this.cart()?.cart_items?.find(i => i.offer_code)?.offer_code ?? null;
+    const isGuest = !this.cartService.isLoggedIn();
 
-  const items =
-    this.cart()?.cart_items?.map((item) =>
-      isGuest
-        ? { product_id: item.product_id, quantity: item.quantity }
-        : { product_id: item.product_id, cart_item_id: item.id, quantity: item.quantity },
-    ) ?? [];
+    // ✅ جيب offer_code من أول cart item عنده offer_code
+    const offerCode = this.cart()?.cart_items?.find((i) => i.offer_code)?.offer_code ?? null;
 
-  const form = this.installmentForm();
+    const items =
+      this.cart()?.cart_items?.map((item) =>
+        isGuest
+          ? { product_id: item.product_id, quantity: item.quantity }
+          : { product_id: item.product_id, cart_item_id: item.id, quantity: item.quantity },
+      ) ?? [];
 
-  const data: CheckoutRequest = {
-    payment_type: 'installment',
-    installment_plan_id: this.selectedInstallmentPlan()!,
-    total_amount: this.installmentTotal(),
-    items,
-    ...(offerCode ? { offer_code: offerCode } : {}), // ← بعتي الكود
-    phone: form.phone,
-    shipping_phone: form.phone,
-    shipping_name: form.full_name,
-    monthly_salary: form.monthly_salary,
-    ministry_id: form.ministry_id,
-    civil_id: form.civil_id,
-    work_phone: form.work_phone,
-    notes: form.notes,
-  };
+    const form = this.installmentForm();
 
-  this.checkoutLoading.set(true);
+    const data: CheckoutRequest = {
+      payment_type: 'installment',
+      installment_plan_id: this.selectedInstallmentPlan()!,
+      total_amount: this.installmentTotal(),
+      items,
+      // ✅ بنبعت offer_code للـ backend عشان يسجل في OfferCodeUsage
+      ...(offerCode ? { offer_code: offerCode } : {}),
+      phone: form.phone,
+      shipping_phone: form.phone,
+      shipping_name: form.full_name,
+      monthly_salary: form.monthly_salary,
+      ministry_id: form.ministry_id,
+      civil_id: form.civil_id,
+      work_phone: form.work_phone,
+      notes: form.notes,
+    };
+
+    this.checkoutLoading.set(true);
 
     this.cartService
       .checkout(data)
@@ -652,6 +666,9 @@ submitInstallmentOrder(): void {
           this.cartService.clearCart();
           this.cartService.clearGuestCart();
           this.cart.set(null);
+          // ✅ امسح الكود بعد نجاح الأوردر
+          this.couponCode.set('');
+          this.couponSuccess.set(false);
           this.toastr.success('تم إنشاء الطلب بنجاح!');
           this.showInstallmentSuccessModal.set(true);
         },
@@ -752,156 +769,208 @@ submitInstallmentOrder(): void {
   }
 
   // ───────────────── COUPON ─────────────────
- applyCoupon(): void {
+  applyCoupon(): void {
     const code = this.couponCode().trim();
- 
-    // ── خطوة 1: تحقق من الكود ──
+
+    // ── 1. الكود فاضي ──
     if (!code) {
       this.couponError.set('يرجى إدخال كود الخصم');
       this.couponSuccess.set(false);
       return;
     }
- 
-    // ── خطوة 2: لازم يكون logged in ──
+
+    // ── 2. Guest → redirect للوجن مع حفظ الكود ──
     if (!this.cartService.isLoggedIn()) {
-      this.couponError.set('يرجى تسجيل الدخول أولاً لاستخدام كود الخصم');
+      sessionStorage.setItem('pendingCoupon', code);
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: '/cart' },
+      });
+      return;
+    }
+
+    const currentCart = this.cart();
+    if (!currentCart) return;
+
+    // ── 3. الكارت فيه أوفر مختلف؟ ──
+    const existingOfferCode = currentCart.cart_items
+      .map((i) => i.offer_code)
+      .find((c) => !!c && c !== code);
+
+    if (existingOfferCode) {
+      this.couponError.set(
+        `الكارت يحتوي على عرض مختلف (${existingOfferCode})، لا يمكن تطبيق عرضين في نفس الوقت`,
+      );
       this.couponSuccess.set(false);
       return;
     }
-    const currentCart = this.cart();
-    if (!currentCart) {
-      this.couponLoading.set(false);
-      return;
-    }
 
-    const items = currentCart.cart_items;
+    this.couponLoading.set(true);
+    this.couponError.set(null);
 
-    const baselineRequest$ = this.cartService.getCartInstallmentPlans(
-      items.map((i) => ({ product_id: i.product_id })),
-    );
-
-    const couponRequests$ = items.map((item) =>
-      this.cartService
-        .getCartInstallmentPlans([
-          {
-            product_id: item.product_id,
-            offer_code: code,
-          },
-        ])
-        .pipe(
-          map((res) => ({
-            product_id: item.product_id,
-            backendProduct:
-              res.data.cart?.products?.find((p) => p.id === item.product_id) ?? null,
-          })),
-          catchError(() =>
-            of({
-              product_id: item.product_id,
-              backendProduct: null as BackendCartProduct | null,
-            }),
-          ),
-        ),
-    );
-
-    forkJoin({
-      baseline: baselineRequest$,
-      couponResults: forkJoin(couponRequests$),
-    })
+    // ── 4. verifyOffer → تأكد الكود صح وما اتستخدمش قبل ──
+    // ✅ الـ backend بيرجع 200 مع success: false لو الكود مستخدم قبل
+    // فالـ next handler هيمسكه ويعرض "لقد استخدمت هذا الكود من قبل"
+    this.cartService
+      .verifyOfferCode(code)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ({ baseline, couponResults }) => {
-          const baselineProducts = baseline.data.cart?.products ?? [];
+        next: (verifyRes: VerifyOfferResponse) => {
+          if (!verifyRes.success) {
+            // ✅ هيتنفذ لو الكود مستخدم قبل أو أي حالة success: false مع 200
+            this.couponError.set(verifyRes.message || 'كود الخصم غير صالح');
+            this.couponSuccess.set(false);
+            this.couponLoading.set(false);
+            return;
+          }
 
-          const anySuccess = couponResults.some(
-            (r) => r.backendProduct?.discount_applied,
-          );
+          // برودكتس الأوفر (لو فاضية = الأوفر شامل كل البرودكتس)
+          const offerProductIds: number[] =
+            verifyRes.data?.offer?.products?.map((p) => p.id) ?? [];
 
-          if (!anySuccess) {
+          const items = currentCart.cart_items;
+
+          // ── 5. الكود شامل برودكتس في الكارت؟ ──
+          const matchingItems =
+            offerProductIds.length === 0
+              ? items
+              : items.filter((i) => offerProductIds.includes(i.product_id));
+
+          if (matchingItems.length === 0) {
             this.couponError.set('كود الخصم غير صالح لأي منتج في السلة');
             this.couponSuccess.set(false);
             this.couponLoading.set(false);
             return;
           }
 
-          const finalProducts: BackendCartProduct[] = items.map((item) => {
-            const couponResult = couponResults.find(
-              (r) => r.product_id === item.product_id,
-            );
+          // ── 6. جيب الأسعار مع + بدون الكود ──
+          const baselineRequest$ = this.cartService.getCartInstallmentPlans(
+            items.map((i) => ({ product_id: i.product_id })),
+          );
 
-            if (couponResult?.backendProduct?.discount_applied) {
-              return couponResult.backendProduct;
-            }
+          const couponRequests$ = matchingItems.map((item) =>
+            this.cartService
+              .getCartInstallmentPlans([{ product_id: item.product_id, offer_code: code }])
+              .pipe(
+                map((res) => ({
+                  product_id: item.product_id,
+                  backendProduct:
+                    res.data.cart?.products?.find((p) => p.id === item.product_id) ?? null,
+                })),
+                catchError(() =>
+                  of({
+                    product_id: item.product_id,
+                    backendProduct: null as BackendCartProduct | null,
+                  }),
+                ),
+              ),
+          );
 
-            const baselineProduct = baselineProducts.find(
-              (p) => p.id === item.product_id,
-            );
+          forkJoin({
+            baseline: baselineRequest$,
+            couponResults: forkJoin(couponRequests$),
+          })
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: ({ baseline, couponResults }) => {
+                const baselineProducts = baseline.data.cart?.products ?? [];
 
-            if (baselineProduct) return baselineProduct;
+                const anySuccess = couponResults.some(
+                  (r) => r.backendProduct?.discount_applied,
+                );
 
-            const itemPrice = this.parsePrice(item.price) ||
-                              this.parsePrice(item.product?.net_price) ||
-                              this.parsePrice(item.product?.price);
+                if (!anySuccess) {
+                  this.couponError.set('كود الخصم غير صالح لأي منتج في السلة');
+                  this.couponSuccess.set(false);
+                  this.couponLoading.set(false);
+                  return;
+                }
 
-            return {
-              id: item.product_id,
-              name: item.product.name,
-              sku: '',
-              original_price: itemPrice,
-              final_price: itemPrice,
-              discount_applied: false,
-              offer_code: null,
-              discount_percent: 0,
-              discount_amount: 0,
-            } as BackendCartProduct;
-          });
+                // ── 7. بناء finalProducts مع merge الخصم ──
+                const finalProducts: BackendCartProduct[] = items.map((item) => {
+                  const couponResult = couponResults.find(
+                    (r) => r.product_id === item.product_id,
+                  );
 
-          //  cart_items
-          const updatedItems: CartItem[] = currentCart.cart_items.map((item) => {
-            const fp = finalProducts.find((p) => p.id === item.product_id);
-            if (!fp) return item;
+                  if (couponResult?.backendProduct?.discount_applied) {
+                    return couponResult.backendProduct;
+                  }
 
-            return {
-              ...item,
-              final_price: Number(fp.final_price),
-              offer_code: fp.discount_applied ? code : item.offer_code,
-            };
-          });
+                  const baselineProduct = baselineProducts.find(
+                    (p) => p.id === item.product_id,
+                  );
+                  if (baselineProduct) return baselineProduct;
 
-          this.cart.set({ ...currentCart, cart_items: updatedItems });
+                  const itemPrice =
+                    this.parsePrice(item.price) ||
+                    this.parsePrice(item.product?.net_price) ||
+                    this.parsePrice(item.product?.price);
 
-          //   totals
-          const subtotal = finalProducts.reduce((sum, fp) => {
-            const item = currentCart.cart_items.find((i) => i.product_id === fp.id);
-            const qty = item?.quantity ?? 1;
-            return sum + Number(fp.final_price) * qty;
-          }, 0);
+                  return {
+                    id: item.product_id,
+                    name: item.product.name,
+                    sku: '',
+                    original_price: itemPrice,
+                    final_price: itemPrice,
+                    discount_applied: false,
+                    offer_code: null,
+                    discount_percent: 0,
+                    discount_amount: 0,
+                  } as BackendCartProduct;
+                });
 
-          const totalDiscount = finalProducts.reduce((sum, fp) => {
-            if (!fp.discount_applied) return sum;
-            const item = currentCart.cart_items.find((i) => i.product_id === fp.id);
-            const qty = item?.quantity ?? 1;
-            const diff = Number(fp.original_price) - Number(fp.final_price);
-            return sum + diff * qty;
-          }, 0);
+                // ── تحديث cart_items بالأسعار الجديدة والـ offer_code ──
+                const updatedItems: CartItem[] = currentCart.cart_items.map((item) => {
+                  const fp = finalProducts.find((p) => p.id === item.product_id);
+                  if (!fp) return item;
+                  return {
+                    ...item,
+                    final_price: Number(fp.final_price),
+                    offer_code: fp.discount_applied ? code : item.offer_code,
+                  };
+                });
 
-          const mergedCart: BackendCartData = {
-            products: finalProducts,
-            products_count: finalProducts.length,
-            subtotal,
-            total_discount: totalDiscount,
-            total: subtotal,
-          };
+                this.cart.set({ ...currentCart, cart_items: updatedItems });
 
-          this.backendCartData.set(mergedCart);
+                // ── تحديث backendCartData للـ totals ──
+                const subtotal = finalProducts.reduce((sum, fp) => {
+                  const item = currentCart.cart_items.find((i) => i.product_id === fp.id);
+                  return sum + Number(fp.final_price) * (item?.quantity ?? 1);
+                }, 0);
 
-          this.installmentPlans.set(baseline.data.installment_plans ?? []);
+                const totalDiscount = finalProducts.reduce((sum, fp) => {
+                  if (!fp.discount_applied) return sum;
+                  const item = currentCart.cart_items.find((i) => i.product_id === fp.id);
+                  const diff = Number(fp.original_price) - Number(fp.final_price);
+                  return sum + diff * (item?.quantity ?? 1);
+                }, 0);
 
-          this.couponSuccess.set(true);
-          this.couponError.set(null);
-          this.couponLoading.set(false);
+                this.backendCartData.set({
+                  products: finalProducts,
+                  products_count: finalProducts.length,
+                  subtotal,
+                  total_discount: totalDiscount,
+                  total: subtotal,
+                });
+
+                this.installmentPlans.set(baseline.data.installment_plans ?? []);
+                this.couponSuccess.set(true);
+                this.couponError.set(null);
+                this.couponLoading.set(false);
+              },
+              error: () => {
+                this.couponError.set('حدث خطأ، حاول مرة أخرى');
+                this.couponSuccess.set(false);
+                this.couponLoading.set(false);
+              },
+            });
         },
-        error: () => {
-          this.couponError.set('حدث خطأ، حاول مرة أخرى');
+        error: (err: any) => {
+          // 401 → غير مسجّل
+          // 410 → الأوفر منتهي
+          // 403 → الأوفر غير متاح
+          // 404 → الكود مش موجود
+          const msg = err?.error?.message || 'كود الخصم غير صالح';
+          this.couponError.set(msg);
           this.couponSuccess.set(false);
           this.couponLoading.set(false);
         },
@@ -937,10 +1006,9 @@ submitInstallmentOrder(): void {
     const adminFee = +(plan.admin_fee ?? 0);
     const downPayment = +(plan.down_payment ?? 0);
 
-    return subtotal + (subtotal * interestRate) + adminFee + downPayment;
+    return subtotal + subtotal * interestRate + adminFee + downPayment;
   }
 
- 
   calculatePlanMonthly(plan: InstallmentPlan): number {
     const total = this.calculatePlanTotal(plan);
     const downPayment = +(plan.down_payment ?? 0);
