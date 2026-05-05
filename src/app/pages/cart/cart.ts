@@ -344,6 +344,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
           // ── تطبيق pending coupon بعد اللوجن ──
           this.applyPendingCouponIfExists();
+          this.applyPendingOfferCouponIfExists();
         },
         error: () => {
           this.cart.set(null);
@@ -368,6 +369,15 @@ export class CartComponent implements OnInit, OnDestroy {
     setTimeout(() => this.applyCoupon(), 400);
   }
 
+  private applyPendingOfferCouponIfExists(): void {
+  const pendingCoupon = sessionStorage.getItem('pendingOfferCoupon');
+  if (!pendingCoupon || !this.cartService.isLoggedIn()) return;
+
+  sessionStorage.removeItem('pendingOfferCoupon');
+  this.couponCode.set(pendingCoupon);
+
+  setTimeout(() => this.applyCoupon(), 400);
+}
   // ───────────────── QUANTITY ─────────────────
   increaseQty(item: CartItem): void {
     if (!this.cartService.canIncrease(item)) return;
