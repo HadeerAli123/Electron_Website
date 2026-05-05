@@ -84,6 +84,7 @@ export class CartComponent implements OnInit, OnDestroy {
   readonly cashForm = signal<CashOrderForm>({
     shipping_name: '',
     shipping_phone: '',
+    full_address: '',
     shipping_city: '',
     shipping_area: '',
     shipping_block: '',
@@ -562,11 +563,9 @@ export class CartComponent implements OnInit, OnDestroy {
       errors.shipping_phone = 'رقم الهاتف يجب أن يكون 8 أرقام';
     }
 
-    if (!f.shipping_city?.trim()) errors.shipping_city = 'هذا الحقل مطلوب';
-    if (!f.shipping_area?.trim()) errors.shipping_area = 'هذا الحقل مطلوب';
-    if (!f.shipping_block?.trim()) errors.shipping_block = 'هذا الحقل مطلوب';
-    if (!f.shipping_street?.trim()) errors.shipping_street = 'هذا الحقل مطلوب';
-    if (!f.shipping_building?.trim()) errors.shipping_building = 'هذا الحقل مطلوب';
+    if (!f.full_address?.trim()) errors.full_address = 'هذا الحقل مطلوب';
+  
+
 
     this.cashFormErrors.set(errors);
     return Object.keys(errors).length === 0;

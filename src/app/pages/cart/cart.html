@@ -454,11 +454,7 @@
       </div>
 
       <div class="cart-modal-body">
-        <div class="cart-form-section-tag">
-          <span class="cart-form-section-bar"></span>
-          <span class="cart-form-section-text">حقول إجبارية</span>
-        </div>
-
+      
         <div class="cart-form-grid">
           <div class="cart-form-field">
             <label class="cart-form-label">اسم المستلم <span class="req">*</span></label>
@@ -479,7 +475,7 @@
           </div>
 
           <div class="cart-form-field">
-            <label class="cart-form-label">المدينة <span class="req">*</span></label>
+            <label class="cart-form-label">المدينة <span class="opt">(اختياري)</span></label>
             <input type="text" placeholder="المدينة" [value]="cashForm().shipping_city"
                    (input)="updateCashForm('shipping_city', $any($event.target).value)"
                    class="cart-form-input" [class.error]="cashFormErrors().shipping_city"/>
@@ -488,24 +484,17 @@
 
           <div class="cart-form-field">
             <label class="cart-form-label">العنوان <span class="req">*</span></label>
-            <input type="text" placeholder="المنطقة" [value]="cashForm().shipping_area"
-                   (input)="updateCashForm('shipping_area', $any($event.target).value)"
-                   class="cart-form-input" [class.error]="cashFormErrors().shipping_area"/>
-            @if (cashFormErrors().shipping_area) { <p class="cart-form-error">{{ cashFormErrors().shipping_area }}</p> }
+            <input type="text" placeholder="المنطقة" [value]="cashForm().full_address"
+                   (input)="updateCashForm('full_address', $any($event.target).value)"
+                   class="cart-form-input" [class.error]="cashFormErrors().full_address"/>
+            @if (cashFormErrors().full_address) { <p class="cart-form-error">{{ cashFormErrors().full_address }}</p> }
           </div>
 
 
 
         </div>
 
-        <div class="cart-form-divider">
-          <div class="cart-form-divider-line"></div>
-          <div class="cart-form-section-tag optional" style="margin-bottom:0">
-            <span class="cart-form-section-bar"></span>
-            <span class="cart-form-section-text">حقول اختيارية</span>
-          </div>
-          <div class="cart-form-divider-line"></div>
-        </div>
+     
 
 
         <div class="cart-form-grid">
@@ -520,6 +509,8 @@
             @if (cashFormErrors().shipping_block) { <p class="cart-form-error">{{ cashFormErrors().shipping_block }}</p> }
           </div>
 
+
+          
           <div class="cart-form-field">
             <label class="cart-form-label">الشارع <span class="opt">(اختياري)</span></label>
             <input type="text" placeholder="اسم الشارع" [value]="cashForm().shipping_street"
@@ -528,13 +519,21 @@
             @if (cashFormErrors().shipping_street) { <p class="cart-form-error">{{ cashFormErrors().shipping_street }}</p> }
           </div>
 
-          <div class="cart-form-field cart-form-field-full">
+          <div class="cart-form-field ">
             <label class="cart-form-label">رقم البناية <span class="opt">(اختياري)</span></label>
             <input type="text" placeholder="رقم البناية" [value]="cashForm().shipping_building"
                    (input)="updateCashForm('shipping_building', $any($event.target).value)"
                    class="cart-form-input" [class.error]="cashFormErrors().shipping_building"/>
             @if (cashFormErrors().shipping_building) { <p class="cart-form-error">{{ cashFormErrors().shipping_building }}</p> }
           </div>
+   <div class="cart-form-field">
+            <label class="cart-form-label">المنطقه <span class="opt">(اختياري)</span> </label>
+            <input type="text" placeholder="المنطقة" [value]="cashForm().shipping_area"
+                   (input)="updateCashForm('shipping_area', $any($event.target).value)"
+                   class="cart-form-input" [class.error]="cashFormErrors().shipping_area"/>
+            @if (cashFormErrors().shipping_area) { <p class="cart-form-error">{{ cashFormErrors().shipping_area }}</p> }
+          </div>
+          
           <div class="cart-form-field">
             <label class="cart-form-label">رقم الدور <span class="opt">(اختياري)</span></label>
             <input type="text" placeholder="رقم الدور" [value]="cashForm().shipping_floor ?? ''"
