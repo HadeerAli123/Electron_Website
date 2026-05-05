@@ -489,11 +489,7 @@ export class CartService {
   }
 
   // ─── Special Offers ────────────────────────────────────────────────────────
-  /**
-   * POST /api/special-offers/verify
-   * يتحقق من صحة الكود، انتهاء الصلاحية، والاستخدام السابق.
-   * يتطلب Auth token.
-   */
+
   verifyOfferCode(offerCode: string): Observable<VerifyOfferResponse> {
     return this.http.post<VerifyOfferResponse>(
       `${this.baseUrl}/special-offers/verify`,
