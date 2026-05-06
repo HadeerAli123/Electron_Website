@@ -1,0 +1,275 @@
+@if (isVisible()) {
+  <div class="invoice-overlay" (click)="closeOnBackdrop($event)">
+    <div class="invoice-wrapper" #invoiceWrapper>
+      <!-- Print Button -->
+      <button class="print-btn no-print" (click)="printInvoice()">
+        <span class="print-icon">🖨️</span>
+        طباعة الفاتورة
+      </button>
+
+      <button class="close-btn no-print" (click)="close()">✕</button>
+
+      <div class="invoice-header">
+        <div class="header-right">
+          <div class="company-logo">
+            @if (order()?.setting?.logo) {
+              <img [src]="order()?.setting?.logo" alt="logo" class="logo-img" />
+            } @else {
+              <span class="logo-text">{{ order()?.setting?.name_ar || 'الشركة' }}</span>
+            }
+          </div>
+          <div class="company-details">
+            <strong>{{ order()?.setting?.name_ar }}</strong
+            ><br />
+            {{ order()?.setting?.address }}<br />
+            هاتف: {{ order()?.setting?.phone }} | بريد: {{ order()?.setting?.email }}
+          </div>
+        </div>
+        <div class="header-left">
+          <div class="order-number">رقم الفاتورة: {{ order()?.order?.order_number }}</div>
+          <div class="order-date">{{ formatDate(order()?.order?.created_at) }}</div>
+        </div>
+      </div>
+
+      <div class="invoice-content">
+        <div class="status-bar">
+          <span class="status-badge" [ngClass]="getStatusClass(order()?.order?.status)">
+            {{ getStatusLabel(order()?.order?.status) }}
+          </span>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>👤 معلومات العميل</h3>
+            <div class="info-line">
+              <span class="info-label">الاسم:</span>
+              <span class="info-value">{{ order()?.order?.user?.name }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">البريد:</span>
+              <span class="info-value">{{ order()?.order?.user?.email }}</span>
+            </div>
+            @if (order()?.order?.user?.phone) {
+              <div class="info-line">
+                <span class="info-label">الهاتف:</span>
+                <span class="info-value">{{ order()?.order?.user?.phone }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="info-card">
+            <h3>📍 عنوان التوصيل</h3>
+            @if (order()?.order?.shipping_name) {
+              <div class="info-line">
+                <span class="info-label">المستلم:</span>
+                <span class="info-value">{{ order()?.order?.shipping_name }}</span>
+              </div>
+            }
+            @if (order()?.order?.shipping_phone) {
+              <div class="info-line">
+                <span class="info-label">الهاتف:</span>
+                <span class="info-value">{{ order()?.order?.shipping_phone }}</span>
+              </div>
+            }
+            @if (order()?.order?.shipping_city) {
+              <div class="info-line">
+                <span class="info-label">المدينة:</span>
+                <span class="info-value">{{ order()?.order?.shipping_city }}</span>
+              </div>
+            }
+            @if (order()?.order?.shipping_area) {
+              <div class="info-line">
+                <span class="info-label">المنطقة:</span>
+                <span class="info-value">{{ order()?.order?.shipping_area }}</span>
+              </div>
+            }
+            @if (order()?.order?.full_address) {
+              <div class="info-line">
+                <span class="info-label">العنوان:</span>
+                <span class="info-value">{{ order()?.order?.full_address }}</span>
+              </div>
+            }
+            @if (order()?.order?.shipping_block) {
+              <div class="info-line">
+                <span class="info-label">القطعة:</span>
+                <span class="info-value">{{ order()?.order?.shipping_block }}</span>
+              </div>
+            }
+            @if (order()?.order?.shipping_street) {
+              <div class="info-line">
+                <span class="info-label">الشارع:</span>
+                <span class="info-value">{{ order()?.order?.shipping_street }}</span>
+              </div>
+            }
+            @if (order()?.order?.shipping_building) {
+              <div class="info-line">
+                <span class="info-label">البناية:</span>
+                <span class="info-value">{{ order()?.order?.shipping_building }}</span>
+              </div>
+            }
+            @if (order()?.order?.shipping_floor) {
+              <div class="info-line">
+                <span class="info-label">الدور:</span>
+                <span class="info-value">{{ order()?.order?.shipping_floor }}</span>
+              </div>
+            }
+            @if (order()?.order?.shipping_apartment) {
+              <div class="info-line">
+                <span class="info-label">الشقة:</span>
+                <span class="info-value">{{ order()?.order?.shipping_apartment }}</span>
+              </div>
+            }
+            @if (order()?.order?.shipping_notes) {
+              <div class="info-line">
+                <span class="info-label">ملاحظات:</span>
+                <span class="info-value note">{{ order()?.order?.shipping_notes }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="items-title">📦 تفاصيل الطلب</div>
+
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th class="text-center" style="width: 50px">#</th>
+              <th>المنتج</th>
+              <th class="text-center" style="width: 80px">الكمية</th>
+              <th class="text-left" style="width: 130px">السعر</th>
+              <th class="text-left" style="width: 130px">الإجمالي</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of order()?.order?.order_item; track item.id; let i = $index) {
+              <tr>
+                <td class="text-center">{{ i + 1 }}</td>
+                <td>
+                  <div class="item-info">
+                    @if (item.product?.cover_image) {
+                      <img
+                        [src]="item.product?.cover_image"
+                        [alt]="item.product?.name"
+                        class="item-img"
+                      />
+                    }
+                    <div>
+                      <div class="item-name">{{ item.product?.name }}</div>
+                      @if (item.product?.sku) {
+                        <div class="item-sku">SKU: {{ item.product?.sku }}</div>
+                      }
+                    </div>
+                  </div>
+                </td>
+                <td class="text-center qty">{{ item.quantity }}</td>
+                <td class="text-left">{{ item.price | number: '1.3-3' }} {{ currency() }}</td>
+                <td class="text-left price-total">
+                  {{ toNumber(item.price) * item.quantity | number: '1.3-3' }} {{ currency() }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <div class="totals-section">
+          <div class="totals-box">
+            <div class="total-row subtotal">
+              <span class="total-label">المجموع الفرعي:</span>
+              <span class="total-value"
+                >{{ order()?.order?.total_amount | number: '1.3-3' }} {{ currency() }}</span
+              >
+            </div>
+            <div class="total-row">
+              <span class="total-label">تكلفة الشحن:</span>
+              <span class="total-value"
+                >{{ order()?.order?.shipping_cost | number: '1.3-3' }} {{ currency() }}</span
+              >
+            </div>
+            <div class="total-row">
+              <span class="total-label">الضريبة:</span>
+              <span class="total-value"
+                >{{ order()?.order?.tax_amount | number: '1.3-3' }} {{ currency() }}</span
+              >
+            </div>
+            <div class="total-row final">
+              <span class="total-label">الإجمالي النهائي:</span>
+              <span class="total-value"
+                >{{ order()?.order?.grand_total | number: '1.3-3' }} {{ currency() }}</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="payment-box">
+          <h4>💳 معلومات الدفع</h4>
+          <div class="payment-grid">
+            <div class="payment-item">
+              <strong>طريقة الدفع</strong>
+              <span>{{ getPaymentLabel(order()?.order?.payment_type) }}</span>
+            </div>
+            @if (
+              order()?.order?.payment_type === 'installment' && order()?.order?.installment_plan
+            ) {
+              <div class="payment-item">
+                <strong>خطة التقسيط</strong>
+                <span>{{ order()?.order?.installment_plan?.name }}</span>
+              </div>
+              <div class="payment-item">
+                <strong>القسط الشهري</strong>
+                <span
+                  >{{ order()?.order?.installment_plan?.monthly_amount | number: '1.3-3' }}
+                  {{ currency() }}</span
+                >
+              </div>
+              <div class="payment-item">
+                <strong>المدة</strong>
+                <span>{{ order()?.order?.installment_plan?.duration_months }} شهر</span>
+              </div>
+            }
+            @if (order()?.order?.monthly_salary) {
+              <div class="payment-item">
+                <strong>الراتب الشهري</strong>
+                <span>{{ order()?.order?.monthly_salary | number: '1.3-3' }} {{ currency() }}</span>
+              </div>
+            }
+            @if (order()?.order?.civil_id) {
+              <div class="payment-item">
+                <strong>الرقم المدني</strong>
+                <span>{{ order()?.order?.civil_id }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        @if (order()?.order?.notes || order()?.order?.admin_notes) {
+          <div class="notes-box">
+            <h4>📝 ملاحظات</h4>
+            <ul>
+              @if (order()?.order?.notes) {
+                <li>{{ order()?.order?.notes }}</li>
+              }
+              @if (order()?.order?.admin_notes) {
+                <li>{{ order()?.order?.admin_notes }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        <div class="notes-box">
+          <h4>📌 ملاحظات هامة</h4>
+          <ul>
+            <li>الرجاء الاحتفاظ بهذه الفاتورة كإثبات للشراء</li>
+            <li>يمكنك استرجاع أو استبدال المنتجات خلال 14 يوم من تاريخ الاستلام</li>
+            <li>الضمان ساري وفقاً لشروط وأحكام الشركة المصنعة</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="invoice-footer">
+        <strong>شكراً لتسوقكم معنا</strong>
+        <div>{{ order()?.setting?.phone }} | {{ order()?.setting?.email }}</div>
+        <div class="footer-sub">هذه فاتورة إلكترونية ولا تحتاج إلى ختم أو توقيع</div>
+      </div>
+    </div>
+  </div>
+}

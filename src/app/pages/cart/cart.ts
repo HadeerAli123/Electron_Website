@@ -9,6 +9,9 @@ import { ToastrService } from 'ngx-toastr';
 import { Ministry } from '../../core/services/cart.service';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { PriceFormatPipe } from '../../shared/components/pipes/price-format.pipe';
+import { ViewChild } from '@angular/core';
+import { OrderInvoiceModal } from '../../shared/order-invoice-modal/order-invoice-modal';
+
 
 import {
   CartService,
@@ -27,11 +30,12 @@ import {
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, BackButton, PriceFormatPipe],
+  imports: [CommonModule, RouterModule, FormsModule, BackButton, PriceFormatPipe , OrderInvoiceModal],
   templateUrl: './cart.html',
   styleUrls: ['./cart.css'],
 })
 export class CartComponent implements OnInit, OnDestroy {
+  @ViewChild('invoiceModal') invoiceModal!: OrderInvoiceModal;
   private readonly cartService = inject(CartService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -611,18 +615,18 @@ export class CartComponent implements OnInit, OnDestroy {
       .checkout(data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
-          this.checkoutLoading.set(false);
-          this.showCashModal.set(false);
-          this.showShippingInfoModal.set(true);
-          this.cartService.clearCart();
-          this.cartService.clearGuestCart();
-          this.cart.set(null);
-          // ✅ امسح الكود بعد نجاح الأوردر
-          this.couponCode.set('');
-          this.couponSuccess.set(false);
-          this.toastr.success('تم إنشاء الطلب بنجاح!');
-        },
+     next: (response: any) => {
+  this.checkoutLoading.set(false);
+  this.showCashModal.set(false);
+  this.cartService.clearCart();
+  this.cartService.clearGuestCart();
+  this.cart.set(null);
+  this.couponCode.set('');
+  this.couponSuccess.set(false);
+  this.toastr.success('تم إنشاء الطلب بنجاح!');
+const orderId = response?.data?.id;
+this.invoiceModal.open(orderId);
+},
         error: (err) => {
           this.checkoutLoading.set(false);
           this.toastr.error(err?.error?.message || 'حدث خطأ أثناء إنشاء الطلب');
@@ -670,18 +674,20 @@ export class CartComponent implements OnInit, OnDestroy {
       .checkout(data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
-          this.checkoutLoading.set(false);
-          this.showInstallmentFormModal.set(false);
-          this.cartService.clearCart();
-          this.cartService.clearGuestCart();
-          this.cart.set(null);
-          // ✅ امسح الكود بعد نجاح الأوردر
-          this.couponCode.set('');
-          this.couponSuccess.set(false);
-          this.toastr.success('تم إنشاء الطلب بنجاح!');
-          this.showInstallmentSuccessModal.set(true);
-        },
+   
+next: (response: any) => {
+  this.checkoutLoading.set(false);
+  this.showInstallmentFormModal.set(false);
+  this.cartService.clearCart();
+  this.cartService.clearGuestCart();
+  this.cart.set(null);
+  this.couponCode.set('');
+  this.couponSuccess.set(false);
+  this.toastr.success('تم إنشاء الطلب بنجاح!');
+  this.showInstallmentSuccessModal.set(false);  
+const orderId = response?.data?.id;
+  this.invoiceModal.open(orderId);
+},
         error: (err) => {
           this.checkoutLoading.set(false);
           this.toastr.error(err?.error?.message || 'حدث خطأ أثناء إنشاء الطلب');

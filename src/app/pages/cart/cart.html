@@ -877,6 +877,14 @@
         </button>
       </div>
 
+       
+      <div class="cart-modal-body">
+        <div class="cart-form-section-tag">
+          <span class="cart-form-section-bar"></span>
+          <span class="cart-form-section-text">حقول إجبارية</span>
+        </div>
+   
+
       <div class="cart-modal-body">
         <div class="cart-form-grid">
           <div class="cart-form-field">
@@ -919,7 +927,35 @@
             }
           </div>
 
-          <div class="cart-form-field">
+       
+
+          <div class="cart-form-field cart-form-field-full">
+            <label class="cart-form-label">العنوان <span class="req">*</span></label>
+            <input
+              type="text"
+              placeholder="العنوان الكامل للتوصيل"
+              [value]="cashForm().full_address"
+              (input)="updateCashForm('full_address', $any($event.target).value)"
+              class="cart-form-input"
+              [class.error]="cashFormErrors().full_address"
+            />
+            @if (cashFormErrors().full_address) {
+              <p class="cart-form-error">{{ cashFormErrors().full_address }}</p>
+            }
+          </div>
+        </div>
+        <div class="cart-form-divider">
+          <div class="cart-form-divider-line"></div>
+          <div class="cart-form-section-tag optional" style="margin-bottom:0">
+            <span class="cart-form-section-bar"></span>
+            <span class="cart-form-section-text">حقول اختيارية</span>
+          </div>
+          <div class="cart-form-divider-line"></div>
+        </div>
+
+
+        <div class="cart-form-grid">
+   <div class="cart-form-field">
             <label class="cart-form-label">المدينة <span class="opt">(اختياري)</span></label>
             <input
               type="text"
@@ -934,23 +970,7 @@
             }
           </div>
 
-          <div class="cart-form-field">
-            <label class="cart-form-label">العنوان <span class="req">*</span></label>
-            <input
-              type="text"
-              placeholder="المنطقة"
-              [value]="cashForm().full_address"
-              (input)="updateCashForm('full_address', $any($event.target).value)"
-              class="cart-form-input"
-              [class.error]="cashFormErrors().full_address"
-            />
-            @if (cashFormErrors().full_address) {
-              <p class="cart-form-error">{{ cashFormErrors().full_address }}</p>
-            }
-          </div>
-        </div>
 
-        <div class="cart-form-grid">
           <div class="cart-form-field">
             <label class="cart-form-label">القطعة <span class="opt">(اختياري)</span></label>
             <input
@@ -1038,6 +1058,7 @@
             >
             <textarea
               placeholder="ملاحظات خاصة بالتوصيل"
+               type="text"
               [value]="cashForm().shipping_notes ?? ''"
               (input)="updateCashForm('shipping_notes', $any($event.target).value)"
               rows="2"
@@ -1045,7 +1066,7 @@
             ></textarea>
           </div>
 
-          <div class="cart-form-field">
+          <div class="cart-form-field cart-form-field-full">
             <label class="cart-form-label">ملاحظات عامة <span class="opt">(اختياري)</span></label>
             <textarea
               placeholder="ملاحظات عامة"
@@ -1120,6 +1141,7 @@
           </button>
         </div>
       </div>
+   </div>
     </div>
   </div>
 }
@@ -1523,3 +1545,4 @@
     </div>
   </div>
 }
+<app-order-invoice-modal #invoiceModal />
