@@ -10,11 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import {
-  CategoriesService,
-  ProductDetail,
-  ProductVariant,
-} from '../../core/services/categories.service';
+import { CategoriesService, ProductDetail } from '../../core/services/categories.service';
 import { CartService } from '../../core/services/cart.service';
 import { ToastrService } from 'ngx-toastr';
 import { SiteSettingService } from '../../core/services/site-setting.service';
@@ -25,7 +21,7 @@ import { PriceFormatPipe } from '../../shared/components/pipes/price-format.pipe
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule,PriceFormatPipe, RouterLink, FormsModule, WishlistButton, BackButton],
+  imports: [CommonModule, PriceFormatPipe, RouterLink, FormsModule, WishlistButton, BackButton],
   templateUrl: './product-details.html',
   styleUrl: './product-details.css',
 })
@@ -33,30 +29,18 @@ export class ProductDetails implements OnInit {
   @ViewChild('mainImg') mainImg?: ElementRef<HTMLImageElement>;
 
   product?: ProductDetail;
-  variants: ProductVariant[] = [];
-  grouped_attributes: Record<
-    string,
-    { attribute_id: number; values: { attribute_value_id: number; value: string }[] }
-  > = {};
 
   selectedImage: string = '';
-  selectedAttributes: Record<string, string> = {};
-  selectedVariant?: ProductVariant;
-
-  /** Currently shown image index (for counter + nav) */
   currentImageIndex: number = 0;
 
-  /** Image zoom magnifier state */
+  // Image zoom
   isZooming: boolean = false;
   zoomOrigin: string = 'center center';
 
   quantity: number = 1;
-  selectedPayment: 'cash' | 'installment' = 'cash';
-  selectedMonths: number = 0;
   isAddingToCart = false;
   isLoading = true;
 
-  /** Copy-link feedback */
   linkCopied: boolean = false;
 
   private readonly toastr = inject(ToastrService);
@@ -92,24 +76,13 @@ export class ProductDetails implements OnInit {
           }
 
           this.product = fullDetail.product;
-          this.variants = fullDetail.variants ?? [];
-          this.grouped_attributes = fullDetail.grouped_attributes ?? {};
+
+          // اختيار الصورة الأولى
           if (this.product.images?.length) {
             this.selectedImage = this.product.images[0].image_path ?? '';
             this.currentImageIndex = 0;
           } else if (this.product.cover_image) {
             this.selectedImage = this.product.cover_image;
-          }
-
-          Object.keys(this.grouped_attributes).forEach((key) => {
-            const values = this.grouped_attributes[key].values;
-            if (values?.length) {
-              this.selectedAttributes[key] = values[0].value;
-            }
-          });
-
-          if (Object.keys(this.grouped_attributes).length) {
-            this.updateVariant();
           }
 
           this.isLoading = false;
@@ -152,7 +125,6 @@ export class ProductDetails implements OnInit {
     this.selectedImage = this.product.images[this.currentImageIndex].image_path ?? '';
   }
 
-  /** Magnifier zoom — moves transform-origin based on cursor position */
   onImageHover(event: MouseEvent) {
     if (window.innerWidth < 640) return;
     const target = event.currentTarget as HTMLElement;
@@ -169,43 +141,7 @@ export class ProductDetails implements OnInit {
   }
 
   // ══════════════════════════════════════════
-  // Variants
-  // ══════════════════════════════════════════
-
-updateVariant() {
-  if (!this.variants.length) return;
-
-  const found = this.variants.find((v) =>
-    Object.keys(this.selectedAttributes).some(
-      (attrKey) => v.attributes?.[attrKey]?.value === this.selectedAttributes[attrKey]
-    )
-  );
-  this.selectedVariant = found;
-}
-
-  selectAttribute(attrKey: string, value: string) {
-    this.selectedAttributes[attrKey] = value;
-    this.updateVariant();
-    this.cdr.detectChanges();
-  }
-
-  hasAttributes(): boolean {
-    return Object.keys(this.grouped_attributes).filter((k) => k !== 'default').length > 0;
-  }
-
-  get visibleAttributes(): Record<
-    string,
-    { attribute_id: number; values: { attribute_value_id: number; value: string }[] }
-  > {
-    const result: typeof this.grouped_attributes = {};
-    Object.keys(this.grouped_attributes).forEach((key) => {
-      if (key !== 'default') result[key] = this.grouped_attributes[key];
-    });
-    return result;
-  }
-
-  // ══════════════════════════════════════════
-  // Pricing & Discounts
+  // Pricing & Info
   // ══════════════════════════════════════════
 
   getDisplayPrice(): number {
@@ -213,56 +149,45 @@ updateVariant() {
     return this.categoriesService.getDisplayPrice(this.product);
   }
 
-getOriginalPrice(): number {
-  if (!this.product) return 0;
-  return this.parsePrice(this.product.price);
-}
-
-
-private parsePrice(value: any): number {
-  if (value === null || value === undefined || value === '') return 0;
-  if (typeof value === 'number') return isNaN(value) ? 0 : value;
-
-  let str = String(value).trim();
-
-  if (str.includes(',') && str.includes('.')) {
-    if (str.lastIndexOf('.') < str.lastIndexOf(',')) {
-      str = str.replace(/\./g, '').replace(',', '.');
-    } else {
-      str = str.replace(/,/g, '');
-    }
-  } else if (str.includes(',')) {
-    str = str.replace(/,/g, '');
-  } else if (str.includes('.')) {
-    const afterDot = str.split('.')[1];
-    if (afterDot && afterDot.length === 3 && /^\d{3}$/.test(afterDot)) {
-      str = str.replace('.', '');
-    }
+  getOriginalPrice(): number {
+    if (!this.product) return 0;
+    return this.parsePrice(this.product.price);
   }
 
-  const num = parseFloat(str);
-  return isNaN(num) ? 0 : num;
-}
+  private parsePrice(value: any): number {
+    if (value === null || value === undefined || value === '') return 0;
+    if (typeof value === 'number') return isNaN(value) ? 0 : value;
 
-  /** True if there's a discount (offer or net_price < price) */
+    let str = String(value).trim();
+    if (str.includes(',') && str.includes('.')) {
+      if (str.lastIndexOf('.') < str.lastIndexOf(',')) {
+        str = str.replace(/\./g, '').replace(',', '.');
+      } else {
+        str = str.replace(/,/g, '');
+      }
+    } else if (str.includes(',')) {
+      str = str.replace(/,/g, '');
+    } else if (str.includes('.')) {
+      const afterDot = str.split('.')[1];
+      if (afterDot && afterDot.length === 3 && /^\d{3}$/.test(afterDot)) {
+        str = str.replace('.', '');
+      }
+    }
+    const num = parseFloat(str);
+    return isNaN(num) ? 0 : num;
+  }
+
   hasDiscount(): boolean {
     if (!this.product) return false;
+    if (this.product.offers?.length && !this.product.offers[0].is_expired) return true;
 
-    // Check via offers
-    if (this.product.offers?.length && !this.product.offers[0].is_expired) {
-      return true;
-    }
-
-    // Check via price difference
-    const original = parseFloat(String(this.product.price ?? 0));
+    const original = this.getOriginalPrice();
     const current = this.getDisplayPrice();
     return original > 0 && current > 0 && original > current;
   }
 
-  /** Discount percentage as integer */
   discountPercent(): number {
     if (!this.product) return 0;
-
     if (this.product.offers?.length && !this.product.offers[0].is_expired) {
       return Math.round(this.product.offers[0].discount_percent || 0);
     }
@@ -275,25 +200,23 @@ private parsePrice(value: any): number {
     return 0;
   }
 
-  /** Savings amount in currency */
   getSavings(): number {
     const original = this.getOriginalPrice();
     const current = this.getDisplayPrice();
     return Math.max(0, original - current);
   }
 
-  // ══════════════════════════════════════════
-  // Product Info
-  // ══════════════════════════════════════════
-
   getProductName(): string {
     if (!this.product) return '';
     return this.categoriesService.getProductDisplayName(this.product);
   }
 
-  getMonthlyPayment(): number {
-    if (!this.product || !this.selectedMonths) return 0;
-    return Math.ceil(this.getDisplayPrice() / this.selectedMonths);
+  // ══════════════════════════════════════════
+  // Stock - دائمًا متوفر
+  // ══════════════════════════════════════════
+
+  canAddToCart(): boolean {
+    return true; // دائمًا متوفر
   }
 
   // ══════════════════════════════════════════
@@ -303,16 +226,11 @@ private parsePrice(value: any): number {
   increaseQuantity() {
     this.quantity++;
   }
+
   decreaseQuantity() {
     if (this.quantity > 1) this.quantity--;
   }
 
-canAddToCart(): boolean {
-  if (!this.product) return false;
-  if (!this.variants.length) return this.product.stock > 0;
-  if (!this.selectedVariant) return this.product.stock > 0;
-  return this.selectedVariant.stock > 0;
-}
   // ══════════════════════════════════════════
   // Shipping
   // ══════════════════════════════════════════
@@ -326,41 +244,22 @@ canAddToCart(): boolean {
   }
 
   get hasFreeShipping(): boolean {
-    return (
-      this.freeShippingMin > 0 && this.getDisplayPrice() * this.quantity >= this.freeShippingMin
-    );
-  }
-
-  goBack() {
-    window.history.back();
+    return this.freeShippingMin > 0 && this.getDisplayPrice() * this.quantity >= this.freeShippingMin;
   }
 
   // ══════════════════════════════════════════
   // Cart
   // ══════════════════════════════════════════
-
-  addToCart() {
+    addToCart() {
     if (!this.product || this.isAddingToCart) return;
-
-    if (!this.canAddToCart()) {
-      this.toastr.error('❌ المنتج غير متوفر أو لم يتم اختيار المواصفات');
-      return;
-    }
-
-    if (this.selectedVariant && this.selectedVariant.stock < this.quantity) {
-      this.toastr.error(`الكمية المطلوبة غير متوفرة. المتوفر: ${this.selectedVariant.stock}`);
-      return;
-    }
 
     this.isAddingToCart = true;
 
     this.cartService
       .addToCart(
-        this.product.id,
-        this.quantity,
-        this.selectedVariant?.variant_id,
-        this.product as any,
-        this.selectedVariant,
+        this.product.id,      // productId
+        this.quantity,        // quantity
+        this.product as any   // product object (مهم للـ Guest Cart)
       )
       .subscribe({
         next: () => {
@@ -373,64 +272,44 @@ canAddToCart(): boolean {
         error: (err) => {
           this.ngZone.run(() => {
             console.error(err);
-            this.toastr.error('حدث خطأ أثناء الإضافة');
+            this.toastr.error(err.error?.message || 'حدث خطأ أثناء الإضافة');
             this.isAddingToCart = false;
             this.cdr.detectChanges();
           });
         },
       });
   }
-
   // ══════════════════════════════════════════
   // Share
   // ══════════════════════════════════════════
 
-  /** Copy current page URL to clipboard with feedback */
   copyLink(): void {
     const url = window.location.href;
-
-    const fallbackCopy = () => {
+    navigator.clipboard?.writeText(url).catch(() => {
       const textarea = document.createElement('textarea');
       textarea.value = url;
       textarea.style.position = 'fixed';
       textarea.style.opacity = '0';
       document.body.appendChild(textarea);
       textarea.select();
-      try {
-        document.execCommand('copy');
-      } catch (e) {
-        console.warn('Copy failed', e);
-      }
+      document.execCommand('copy');
       document.body.removeChild(textarea);
-    };
-
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(url).catch(() => fallbackCopy());
-    } else {
-      fallbackCopy();
-    }
+    });
 
     this.linkCopied = true;
     this.cdr.detectChanges();
 
     setTimeout(() => {
-      this.ngZone.run(() => {
-        this.linkCopied = false;
-        this.cdr.detectChanges();
-      });
+      this.linkCopied = false;
+      this.cdr.detectChanges();
     }, 2000);
   }
 
-  /** Build WhatsApp share URL with product name + page URL */
   getWhatsappShareUrl(): string {
     const url = encodeURIComponent(window.location.href);
     const text = encodeURIComponent(`شاهد هذا المنتج: ${this.getProductName()}`);
     return `https://wa.me/?text=${text}%20${url}`;
   }
-
-  // ══════════════════════════════════════════
-  // Misc
-  // ══════════════════════════════════════════
 
   currencySymbol(): string {
     return this.siteSettingService.getCurrencySymbol();

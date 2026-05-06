@@ -80,19 +80,26 @@ export class WishlistPage {
   goToProduct(item: WishlistItem): void {
     this.router.navigate(['/product', item.id]);
   }
-
   addToCart(event: Event, item: WishlistItem): void {
     event.stopPropagation();
-    if (item.stock === 0 || this.addingToCartId() === item.id) return;
+    
+    // إزالة التحقق من المخزون (المنتج دائمًا متوفر)
+    if (this.addingToCartId() === item.id) return;
 
     this.addingToCartId.set(item.id);
-    this.cart.addToCart(item.id, 1, undefined, item as any).subscribe({
+
+    this.cart.addToCart(
+      item.id, 
+      1, 
+      item as any          // product object فقط
+    ).subscribe({
       next: () => {
         this.toastr.success('تم إضافة المنتج للسلة ✅');
         this.addingToCartId.set(null);
       },
-      error: () => {
-        this.toastr.error('حدث خطأ أثناء الإضافة');
+      error: (err) => {
+        console.error(err);
+        this.toastr.error(err?.error?.message || 'حدث خطأ أثناء الإضافة');
         this.addingToCartId.set(null);
       }
     });
@@ -100,22 +107,34 @@ export class WishlistPage {
 
   /** Add all items to cart */
   addAllToCart(): void {
-    const inStock = this.items().filter(i => (i.stock ?? 0) > 0);
-    if (!inStock.length) {
-      this.toastr.warning('لا توجد منتجات متوفرة لإضافتها للسلة');
+    const allItems = this.items(); // إزالة فلتر المخزون
+    
+    if (!allItems.length) {
+      this.toastr.warning('لا توجد منتجات في قائمة الرغبات');
       return;
     }
+
     let added = 0;
-    inStock.forEach(item => {
-      this.cart.addToCart(item.id, 1, undefined, item as any).subscribe({
+
+    allItems.forEach(item => {
+      this.cart.addToCart(
+        item.id, 
+        1, 
+        item as any
+      ).subscribe({
         next: () => {
           added++;
-          if (added === inStock.length) {
+          if (added === allItems.length) {
             this.toastr.success(`تم إضافة ${added} منتج للسلة ✅`);
           }
+        },
+        error: (err) => {
+          console.error(err);
+          added++; // نستمر حتى لو فشل 
         }
       });
     });
+  
   }
 
   // ─── Helpers ──────────────────────────────────

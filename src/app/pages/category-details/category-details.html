@@ -7,8 +7,6 @@
 
 <div class="cd-page" dir="rtl">
 
-  
-
 <div class="cd-header-row">
 
   <!-- 1. Breadcrumb (right side in RTL) -->
@@ -112,7 +110,6 @@
     }
   </div>
 
- 
   @if (isFilterOpen && viewMode === 'products') {
     <div class="cd-filter-panel">
       <div class="cd-filter-header">
@@ -168,14 +165,12 @@
     </div>
   }
 
- 
   @if (isSearching) {
     <div class="cd-searching">
       <div class="cd-spinner"></div>
       <span>جاري البحث...</span>
     </div>
   }
-
 
   @if (!isLoading && !isSearching && viewMode === 'marks') {
 
@@ -246,7 +241,6 @@
     }
   }
 
- 
   @if (!isLoading && !isSearching && viewMode === 'products') {
 
     @if (displayProducts.length === 0) {
@@ -268,9 +262,10 @@
           <div
             (click)="goToProductDetails(product.id)"
             class="cd-product"
-            [class.out-of-stock]="product.stock === 0"
             [style.animation-delay]="(i * 50) + 'ms'"
           >
+            <!-- [تعديل] حذف [class.out-of-stock] — المنتج دايمًا متاح -->
+
             <!-- Image -->
             <div class="cd-product-img-wrap">
               @if (getProductImage(product)) {
@@ -296,14 +291,11 @@
                 }
               </div>
 
-              @if (product.stock > 0) {
-                <span class="cd-badge cd-badge-stock">
-                  <span class="cd-stock-dot"></span>
-                  متوفر
-                </span>
-              } @else {
-                <span class="cd-badge cd-badge-out">نفد</span>
-              }
+              <!-- [تعديل] حذف شرط stock — badge "متوفر" يظهر دايمًا بدون شرط -->
+              <span class="cd-badge cd-badge-stock">
+                <span class="cd-stock-dot"></span>
+                متوفر
+              </span>
 
               <div class="cd-wishlist-overlay" (click)="$event.stopPropagation()">
                 <app-wishlist-button [product]="product" variant="circle" size="md"></app-wishlist-button>
@@ -329,7 +321,6 @@
               <div class="cd-product-price-row">
                 <div class="cd-product-price">
                   <span>{{ getDisplayPrice(product) | priceFormat }} {{ currencySymbol() }}</span>
-
                 </div>
                 <button
                   (click)="$event.stopPropagation(); goToProductDetails(product.id)"

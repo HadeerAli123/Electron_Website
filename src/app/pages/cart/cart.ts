@@ -274,7 +274,7 @@ export class CartComponent implements OnInit, OnDestroy {
             quantity: item.quantity,
             price: net > 0 ? net : price,
             product: item.product,
-            variant: item.variant,
+            // [تعديل] حذف variant — لم نعد نمرر الفاريانت في بيانات السلة
           };
         }),
       };
@@ -310,18 +310,18 @@ export class CartComponent implements OnInit, OnDestroy {
             return;
           }
 
-          const cartWithVariants = {
+          // [تعديل] حذف available_variants من الـ mapping — لم نعد نحتاج بيانات الفاريانت
+          const cartWithoutVariants = {
             ...cart,
             cart_items: cart.cart_items.map((item) => ({
               ...item,
-              available_variants: item.product?.available_variants ?? [],
             })),
           };
 
-          this.cart.set(cartWithVariants);
+          this.cart.set(cartWithoutVariants);
           this.loading.set(false);
 
-          const items = cartWithVariants.cart_items ?? [];
+          const items = cartWithoutVariants.cart_items ?? [];
           if (items.length) {
             const products = items.map((i) => ({
               product_id: i.product_id,
@@ -370,7 +370,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   // ───────────────── QUANTITY ─────────────────
   increaseQty(item: CartItem): void {
-    if (!this.cartService.canIncrease(item)) return;
+    // [تعديل] حذف شرط canIncrease المرتبط بالمخزون — الكمية تزيد دايمًا بدون قيود
     const cartValue = this.cart();
     if (!cartValue) return;
 
@@ -385,14 +385,15 @@ export class CartComponent implements OnInit, OnDestroy {
         product_id: i.product_id,
         quantity: i.quantity,
         product: i.product,
-        variant: i.variant,
       }));
       this.cartService.saveGuestCart(guestItems);
     }
   }
 
   decreaseQty(item: CartItem): void {
-    if (!this.cartService.canDecrease(item)) return;
+    // [تعديل] حذف شرط canDecrease المرتبط بالمخزون — الحد الأدنى للكمية هو 1 فقط
+    if (item.quantity <= 1) return;
+
     const cartValue = this.cart();
     if (!cartValue) return;
 
@@ -407,18 +408,19 @@ export class CartComponent implements OnInit, OnDestroy {
         product_id: i.product_id,
         quantity: i.quantity,
         product: i.product,
-        variant: i.variant,
       }));
       this.cartService.saveGuestCart(guestItems);
     }
   }
 
+  // [تعديل] canIncrease دايمًا true — المخزون ثابت 10000 في الـ backend
   canIncrease(item: CartItem): boolean {
-    return this.cartService.canIncrease(item);
+    return true;
   }
 
+  // [تعديل] canDecrease بيتحقق من الكمية > 1 فقط بدون أي منطق مخزون
   canDecrease(item: CartItem): boolean {
-    return this.cartService.canDecrease(item);
+    return item.quantity > 1;
   }
 
   getItemDisplayPrice(item: CartItem): number {
@@ -478,7 +480,7 @@ export class CartComponent implements OnInit, OnDestroy {
             quantity: item.quantity,
             price: net > 0 ? net : price,
             product: item.product,
-            variant: item.variant,
+            // [تعديل] حذف variant من guest cart items
           };
         }),
       };
@@ -564,8 +566,6 @@ export class CartComponent implements OnInit, OnDestroy {
     }
 
     if (!f.full_address?.trim()) errors.full_address = 'هذا الحقل مطلوب';
-  
-
 
     this.cashFormErrors.set(errors);
     return Object.keys(errors).length === 0;
@@ -576,9 +576,9 @@ export class CartComponent implements OnInit, OnDestroy {
 
     const isGuest = !this.cartService.isLoggedIn();
 
-    // ✅ جيب offer_code من أول cart item عنده offer_code
     const offerCode = this.cart()?.cart_items?.find((i) => i.offer_code)?.offer_code ?? null;
 
+    // [تعديل] حذف variant من items — الطلب يُرسل بدون بيانات الفاريانت
     const items =
       this.cart()?.cart_items?.map((item) =>
         isGuest
@@ -590,7 +590,6 @@ export class CartComponent implements OnInit, OnDestroy {
       payment_type: 'cash',
       total_amount: this.grandTotal(),
       items,
-      // ✅ بنبعت offer_code للـ backend عشان يسجل في OfferCodeUsage
       ...(offerCode ? { offer_code: offerCode } : {}),
       ...this.cashForm(),
     };
@@ -608,7 +607,6 @@ export class CartComponent implements OnInit, OnDestroy {
           this.cartService.clearCart();
           this.cartService.clearGuestCart();
           this.cart.set(null);
-          // ✅ امسح الكود بعد نجاح الأوردر
           this.couponCode.set('');
           this.couponSuccess.set(false);
           this.toastr.success('تم إنشاء الطلب بنجاح!');
@@ -625,9 +623,9 @@ export class CartComponent implements OnInit, OnDestroy {
 
     const isGuest = !this.cartService.isLoggedIn();
 
-    // ✅ جيب offer_code من أول cart item عنده offer_code
     const offerCode = this.cart()?.cart_items?.find((i) => i.offer_code)?.offer_code ?? null;
 
+    // [تعديل] حذف variant من items — الطلب يُرسل بدون بيانات الفاريانت
     const items =
       this.cart()?.cart_items?.map((item) =>
         isGuest
@@ -642,7 +640,6 @@ export class CartComponent implements OnInit, OnDestroy {
       installment_plan_id: this.selectedInstallmentPlan()!,
       total_amount: this.installmentTotal(),
       items,
-      // ✅ بنبعت offer_code للـ backend عشان يسجل في OfferCodeUsage
       ...(offerCode ? { offer_code: offerCode } : {}),
       phone: form.phone,
       shipping_phone: form.phone,
@@ -666,7 +663,6 @@ export class CartComponent implements OnInit, OnDestroy {
           this.cartService.clearCart();
           this.cartService.clearGuestCart();
           this.cart.set(null);
-          // ✅ امسح الكود بعد نجاح الأوردر
           this.couponCode.set('');
           this.couponSuccess.set(false);
           this.toastr.success('تم إنشاء الطلب بنجاح!');
@@ -772,14 +768,12 @@ export class CartComponent implements OnInit, OnDestroy {
   applyCoupon(): void {
     const code = this.couponCode().trim();
 
-    // ── 1. الكود فاضي ──
     if (!code) {
       this.couponError.set('يرجى إدخال كود الخصم');
       this.couponSuccess.set(false);
       return;
     }
 
-    // ── 2. Guest → redirect للوجن مع حفظ الكود ──
     if (!this.cartService.isLoggedIn()) {
       sessionStorage.setItem('pendingCoupon', code);
       this.router.navigate(['/login'], {
@@ -791,7 +785,6 @@ export class CartComponent implements OnInit, OnDestroy {
     const currentCart = this.cart();
     if (!currentCart) return;
 
-    // ── 3. الكارت فيه أوفر مختلف؟ ──
     const existingOfferCode = currentCart.cart_items
       .map((i) => i.offer_code)
       .find((c) => !!c && c !== code);
@@ -807,29 +800,23 @@ export class CartComponent implements OnInit, OnDestroy {
     this.couponLoading.set(true);
     this.couponError.set(null);
 
-    // ── 4. verifyOffer → تأكد الكود صح وما اتستخدمش قبل ──
-    // ✅ الـ backend بيرجع 200 مع success: false لو الكود مستخدم قبل
-    // فالـ next handler هيمسكه ويعرض "لقد استخدمت هذا الكود من قبل"
     this.cartService
       .verifyOfferCode(code)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (verifyRes: VerifyOfferResponse) => {
           if (!verifyRes.success) {
-            // ✅ هيتنفذ لو الكود مستخدم قبل أو أي حالة success: false مع 200
             this.couponError.set(verifyRes.message || 'كود الخصم غير صالح');
             this.couponSuccess.set(false);
             this.couponLoading.set(false);
             return;
           }
 
-          // برودكتس الأوفر (لو فاضية = الأوفر شامل كل البرودكتس)
           const offerProductIds: number[] =
             verifyRes.data?.offer?.products?.map((p) => p.id) ?? [];
 
           const items = currentCart.cart_items;
 
-          // ── 5. الكود شامل برودكتس في الكارت؟ ──
           const matchingItems =
             offerProductIds.length === 0
               ? items
@@ -842,7 +829,6 @@ export class CartComponent implements OnInit, OnDestroy {
             return;
           }
 
-          // ── 6. جيب الأسعار مع + بدون الكود ──
           const baselineRequest$ = this.cartService.getCartInstallmentPlans(
             items.map((i) => ({ product_id: i.product_id })),
           );
@@ -885,7 +871,6 @@ export class CartComponent implements OnInit, OnDestroy {
                   return;
                 }
 
-                // ── 7. بناء finalProducts مع merge الخصم ──
                 const finalProducts: BackendCartProduct[] = items.map((item) => {
                   const couponResult = couponResults.find(
                     (r) => r.product_id === item.product_id,
@@ -918,7 +903,6 @@ export class CartComponent implements OnInit, OnDestroy {
                   } as BackendCartProduct;
                 });
 
-                // ── تحديث cart_items بالأسعار الجديدة والـ offer_code ──
                 const updatedItems: CartItem[] = currentCart.cart_items.map((item) => {
                   const fp = finalProducts.find((p) => p.id === item.product_id);
                   if (!fp) return item;
@@ -931,7 +915,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
                 this.cart.set({ ...currentCart, cart_items: updatedItems });
 
-                // ── تحديث backendCartData للـ totals ──
                 const subtotal = finalProducts.reduce((sum, fp) => {
                   const item = currentCart.cart_items.find((i) => i.product_id === fp.id);
                   return sum + Number(fp.final_price) * (item?.quantity ?? 1);
@@ -965,10 +948,6 @@ export class CartComponent implements OnInit, OnDestroy {
             });
         },
         error: (err: any) => {
-          // 401 → غير مسجّل
-          // 410 → الأوفر منتهي
-          // 403 → الأوفر غير متاح
-          // 404 → الكود مش موجود
           const msg = err?.error?.message || 'كود الخصم غير صالح';
           this.couponError.set(msg);
           this.couponSuccess.set(false);

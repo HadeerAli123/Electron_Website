@@ -94,34 +94,33 @@ export class OfferDetails implements OnInit {
         this.cdr.detectChanges();
       });
     }, 2500);
-  }
-
-  addToCart(productId: number, variants: any[] = []) {
+  }  addToCart(productId: number) {
     if (this.isAddingToCart) return;
 
     const raw = this.offer?.products?.find((p: any) => p.id === productId);
-    const variantId = this.selectedVariants[productId];
 
-    if (variants?.length > 0 && !variantId) {
-      this.toastr.warning('من فضلك اختر المواصفات أولاً');
+    if (!raw) {
+      this.toastr.error('حدث خطأ: المنتج غير موجود');
       return;
     }
 
-   const mappedProduct = {
-  ...raw,
-  price: raw?.discounted_price ?? raw?.original_price ?? 0,
-  sale_price: raw?.discounted_price ?? null,
-  cover_image: raw?.cover_image ?? '',
-  stock: undefined,
-};
-    const variantObj = (variants?.length && variantId)
-      ? variants.find((v: any) => v.id === variantId)
-      : undefined;
+    // إعداد المنتج بطريقة بسيطة
+    const mappedProduct = {
+      ...raw,
+      price: raw?.discounted_price ?? raw?.original_price ?? 0,
+      sale_price: raw?.discounted_price ?? null,
+      cover_image: raw?.cover_image ?? '',
+      stock: undefined,        // المخزون دائمًا متوفر
+    };
 
     this.isAddingToCart = true;
     this.addingProductId = productId;
 
-    this.cartService.addToCart(productId, 1, variantId, mappedProduct, variantObj).subscribe({
+    this.cartService.addToCart(
+      productId, 
+      1, 
+      mappedProduct as any
+    ).subscribe({
       next: () => {
         this.ngZone.run(() => {
           this.isAddingToCart = false;
@@ -133,6 +132,7 @@ export class OfferDetails implements OnInit {
       },
       error: (err) => {
         this.ngZone.run(() => {
+          console.error(err);
           this.toastr.error(err?.error?.message ?? 'حدث خطأ أثناء الإضافة');
           this.isAddingToCart = false;
           this.addingProductId = null;
@@ -141,7 +141,6 @@ export class OfferDetails implements OnInit {
       }
     });
   }
-
 formatPrice(price: number): string {
   if (!price && price !== 0) return '0.000';
   return Number(price).toFixed(3);

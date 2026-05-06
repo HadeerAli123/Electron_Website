@@ -420,18 +420,14 @@ export class CartService {
   canDecrease(item: CartItem): boolean {
     return item.quantity > 1;
   }
-
   addToCart(
     productId: number,
-    quantity: number,
-    variantId?: number,
-    product?: Product,
-    variant?: any
+    quantity: number = 1,
+    product?: Product
   ): Observable<CartSummary | null> {
+
     if (!this.isLoggedIn()) {
-      if (product) {
-        this.addToGuestCart(product, quantity, variantId, variant);
-      }
+      if (product) this.addToGuestCart(product, quantity);
       return of(null);
     }
 
@@ -440,8 +436,8 @@ export class CartService {
         `${this.baseUrl}/cart/add`,
         {
           product_id: productId,
-          quantity,
-          ...(variantId ? { variant_id: variantId } : {}),
+          quantity: quantity
+          // variant_id تم حذفه تماماً
         },
         { headers: this.getAuthHeaders() }
       )
@@ -450,7 +446,6 @@ export class CartService {
         catchError(err => throwError(() => err))
       );
   }
-
   removeCartItem(id: number): Observable<CartSummary> {
     return this.http
       .delete<ApiResponse<any>>(

@@ -265,25 +265,25 @@
             </div>
           </div>
 
-          <button
-            type="button"
-            (click)="addToCart(product.id, product.variants)"
-            [disabled]="isAddingToCart && addingProductId === product.id"
-            class="od-cart-btn"
-          >
-            @if (isAddingToCart && addingProductId === product.id) {
-              <svg class="od-cart-spinner" width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3"/>
-                <path d="M12 2a10 10 0 0110 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-              </svg>
-              <span>جاري...</span>
-            } @else {
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
-              </svg>
-              <span>أضف للسلة</span>
-            }
-          </button>
+         <button
+  type="button"
+  (click)="addToCart(product.id)"  
+  [disabled]="isAddingToCart && addingProductId === product.id"
+  class="od-cart-btn"
+>
+  @if (isAddingToCart && addingProductId === product.id) {
+    <svg class="od-cart-spinner" width="14" height="14" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3"/>
+      <path d="M12 2a10 10 0 0110 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <span>جاري...</span>
+  } @else {
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+    </svg>
+    <span>أضف للسلة</span>
+  }
+</button>
         </div>
 
       </div>

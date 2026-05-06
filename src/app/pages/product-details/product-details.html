@@ -1,9 +1,7 @@
 <div class="pd-page" dir="rtl">
 
   @if (isLoading) {
-    <!-- ══════════════════════════════════════════
-         Skeleton Loading
-         ══════════════════════════════════════════ -->
+    <!-- Skeleton Loading -->
     <div class="pd-inner">
       <div class="pd-skel-bc"></div>
       <div class="pd-skel-grid">
@@ -29,7 +27,7 @@
   @if (!isLoading && product) {
     <div class="pd-inner">
 
-     
+      <!-- Breadcrumb -->
       <div class="pd-header-row mb-6 flex items-center justify-between">
         <nav class="pd-breadcrumb flex items-center gap-2" aria-label="Breadcrumb">
           <a routerLink="/categories" class="pd-bc-link inline-flex items-center gap-2 text-blue-700">
@@ -62,14 +60,11 @@
         <app-back-button label="رجوع" fallback="/" class="shrink-0"></app-back-button>
       </div>
 
-      <!-- ══════════════════════════════════════════
-           Main Grid
-           ══════════════════════════════════════════ -->
+      <!-- Main Grid -->
       <div class="pd-main-grid">
 
-        <!-- ═══════════ Gallery ═══════════ -->
+        <!-- Gallery -->
         <div class="pd-gallery">
-
           <div class="pd-gallery-wrap">
 
             <!-- Main image -->
@@ -95,7 +90,6 @@
                 </div>
               }
 
-              <!-- Image counter -->
               @if (product.images && product.images.length > 1) {
                 <div class="pd-img-counter">
                   <span>{{ currentImageIndex + 1 }}</span>
@@ -104,7 +98,6 @@
                 </div>
               }
 
-              <!-- Navigation arrows -->
               @if (product.images && product.images.length > 1) {
                 <button (click)="prevImage()" class="pd-nav-btn pd-nav-prev" type="button" aria-label="الصورة السابقة">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -118,14 +111,12 @@
                 </button>
               }
 
-              <!-- Zoom indicator -->
               <div class="pd-zoom-hint">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"/>
                 </svg>
               </div>
 
-              <!-- Top badges -->
               <div class="pd-img-badges">
                 @if (product.is_new) {
                   <span class="pd-badge pd-badge-new">جديد</span>
@@ -155,28 +146,21 @@
               </div>
             }
 
-            <!-- Video -->
             @if (product.video) {
               <div class="pd-video-wrap">
                 <video [src]="product.video" controls class="pd-video"></video>
               </div>
             }
-
           </div>
         </div>
 
-        <!-- ═══════════ Info Side ═══════════ -->
+        <!-- Info Side -->
         <div class="pd-info">
 
           <!-- Tags -->
           <div class="pd-tags-row">
             @if (product.mark_name) {
-              <span class="pd-tag pd-tag-primary">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/>
-                </svg>
-                {{ product.mark_name }}
-              </span>
+              <span class="pd-tag pd-tag-primary">{{ product.mark_name }}</span>
             }
             @if (product.class_name) {
               <span class="pd-tag">{{ product.class_name }}</span>
@@ -189,7 +173,7 @@
           <!-- Title -->
           <h1 class="pd-title">{{ getProductName() }}</h1>
 
-          <!-- Meta info (model + barcode + stock) -->
+          <!-- Meta -->
           <div class="pd-meta">
             @if (product.model) {
               <div class="pd-meta-item">
@@ -205,35 +189,32 @@
             }
             <div class="pd-meta-item">
               <span class="pd-meta-label">الحالة</span>
-              <span class="pd-stock-pill" [class.pd-stock-out]="!canAddToCart()">
+              <span class="pd-stock-pill">
                 <span class="pd-stock-dot"></span>
-                {{ canAddToCart() ? 'متوفر' : 'نفد المخزون' }}
+                متوفر
               </span>
             </div>
           </div>
 
-          <!-- Price card -->
-       <div class="pd-price-card">
-  <div class="pd-price-label">السعر</div>
-  <div class="pd-price-row">
-    <div class="pd-price-current">
-      <span class="pd-price-num">{{ getDisplayPrice() | priceFormat }}</span>
-      <span class="pd-price-currency">{{ currencySymbol() }}</span>
-    </div>
+          <!-- Price -->
+          <div class="pd-price-card">
+            <div class="pd-price-label">السعر</div>
+            <div class="pd-price-row">
+              <div class="pd-price-current">
+                <span class="pd-price-num">{{ getDisplayPrice() | priceFormat }}</span>
+                <span class="pd-price-currency">{{ currencySymbol() }}</span>
+              </div>
 
-    @if (hasDiscount()) {
-      <div class="pd-price-old">
-        {{ getOriginalPrice() | priceFormat }} {{ currencySymbol() }}
-      </div>
-      <span class="pd-savings-pill">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2L4 8v10a2 2 0 002 2h12a2 2 0 002-2V8l-8-6z"/>
-        </svg>
-        وفر {{ getSavings() | priceFormat }} {{ currencySymbol() }}
-      </span>
-    }
-  </div>
-</div>
+              @if (hasDiscount()) {
+                <div class="pd-price-old">
+                  {{ getOriginalPrice() | priceFormat }} {{ currencySymbol() }}
+                </div>
+                <span class="pd-savings-pill">
+                  وفر {{ getSavings() | priceFormat }} {{ currencySymbol() }}
+                </span>
+              }
+            </div>
+          </div>
 
           <!-- Description -->
           @if (product.description) {
@@ -246,54 +227,7 @@
             </div>
           }
 
-          <!-- Variants / Specs -->
-          @if (hasAttributes()) {
-            <div class="pd-section">
-              <div class="pd-section-header">
-                <span class="pd-section-bar"></span>
-                <h3 class="pd-section-title">المواصفات</h3>
-              </div>
-
-              <div class="pd-variants">
-                @for (attr of visibleAttributes | keyvalue; track attr.key) {
-                  <div class="pd-variant-group">
-                    <div class="pd-variant-label">
-                      <span class="pd-variant-name">{{ attr.key }}</span>
-                      <span class="pd-variant-selected">{{ selectedAttributes[attr.key] }}</span>
-                    </div>
-                    <div class="pd-variant-options">
-                      @for (val of attr.value.values; track val.attribute_value_id) {
-                        <button
-                          type="button"
-                          (click)="selectAttribute(attr.key, val.value)"
-                          class="pd-variant-btn"
-                          [class.active]="selectedAttributes[attr.key] === val.value"
-                        >
-                          <span>{{ val.value }}</span>
-                          @if (selectedAttributes[attr.key] === val.value) {
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                            </svg>
-                          }
-                        </button>
-                      }
-                    </div>
-                  </div>
-                }
-
-@if (variants.length > 0 && !selectedVariant && hasAttributes()) {
-                  <div class="pd-variant-warn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
-                    </svg>
-                    <span>هذه التركيبة غير متوفرة، اختر مواصفات أخرى</span>
-                  </div>
-                }
-              </div>
-            </div>
-          }
-
-          <!-- Shipping info -->
+          <!-- Shipping -->
           <div class="pd-shipping">
             @if (hasFreeShipping) {
               <div class="pd-shipping-free">
@@ -329,13 +263,13 @@
           <!-- Quantity + Add to cart -->
           <div class="pd-action-bar">
             <div class="pd-qty">
-              <button (click)="decreaseQuantity()" class="pd-qty-btn" type="button" [disabled]="quantity <= 1" aria-label="نقصان">
+              <button (click)="decreaseQuantity()" class="pd-qty-btn" type="button" [disabled]="quantity <= 1">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
                 </svg>
               </button>
               <span class="pd-qty-num">{{ quantity }}</span>
-              <button (click)="increaseQuantity()" class="pd-qty-btn" type="button" aria-label="زيادة">
+              <button (click)="increaseQuantity()" class="pd-qty-btn" type="button">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
                 </svg>
@@ -345,7 +279,7 @@
             <div class="pd-actions-row">
               <button
                 (click)="addToCart()"
-                [disabled]="!canAddToCart() || isAddingToCart"
+                [disabled]="isAddingToCart"
                 class="pd-cart-btn"
                 type="button"
               >
@@ -356,36 +290,25 @@
                     <path d="M12 2a10 10 0 0110 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
                   </svg>
                   <span>جاري الإضافة...</span>
-                } @else if (canAddToCart()) {
+                } @else {
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
                   </svg>
                   <span>أضف للسلة</span>
-                  <span class="pd-cart-arrow">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/>
-                    </svg>
-                  </span>
-                } @else {
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                  </svg>
-                  <span>غير متوفر</span>
                 }
               </button>
 
-              <!--  Wishlist button -->
               @if (product) {
                 <app-wishlist-button [product]="product" variant="full" size="lg" class="pd-wishlist"></app-wishlist-button>
               }
             </div>
           </div>
 
-          <!-- Share buttons -->
+          <!-- Share -->
           <div class="pd-share">
             <span class="pd-share-label">مشاركة:</span>
             <div class="pd-share-btns">
-              <button (click)="copyLink()" class="pd-share-btn" [class.copied]="linkCopied" type="button" aria-label="نسخ الرابط">
+              <button (click)="copyLink()" class="pd-share-btn" [class.copied]="linkCopied" type="button">
                 @if (linkCopied) {
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
@@ -396,7 +319,7 @@
                   </svg>
                 }
               </button>
-              <a [href]="getWhatsappShareUrl()" target="_blank" class="pd-share-btn pd-share-wa" aria-label="مشاركة عبر واتساب">
+              <a [href]="getWhatsappShareUrl()" target="_blank" class="pd-share-btn pd-share-wa">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.297-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                 </svg>
@@ -407,9 +330,7 @@
         </div>
       </div>
 
-      <!-- ══════════════════════════════════════════
-           Trust Indicators
-           ══════════════════════════════════════════ -->
+      <!-- Trust Indicators -->
       <section class="pd-trust">
         <div class="pd-trust-grid">
           <div class="pd-trust-item">

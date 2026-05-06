@@ -222,7 +222,8 @@ savings = computed(() => {
 
   // ─── Cart ──────────────────────────────────
   addToCart(): void {
-  if (!this.inStock() || this.isAddingToCart()) return;
+  if (this.isAddingToCart()) return;
+
   const p = this.fullProduct() ?? this.product;
   if (!p?.id) return;
 
@@ -230,21 +231,27 @@ savings = computed(() => {
 
   const sanitizedProduct = {
     ...p,
-    price: this.originalPrice(),       // 80000 بدل "80.000"
+    price: this.originalPrice(),       
     net_price: this.parsePrice(p.net_price),
     sale_price: this.parsePrice(p.sale_price),
+    stock: undefined,   // المخزون دائمًا متوفر
   };
 
   this.cartService
-    .addToCart(p.id, this.quantity(), undefined, sanitizedProduct as any)
+    .addToCart(
+      p.id, 
+      this.quantity(), 
+      sanitizedProduct as any     // ← بدون variant
+    )
     .subscribe({
       next: () => {
         this.toastr.success('تم إضافة المنتج للسلة ✅');
         this.isAddingToCart.set(false);
         setTimeout(() => this.close.emit(), 600);
       },
-      error: () => {
-        this.toastr.error('حدث خطأ أثناء الإضافة');
+      error: (err) => {
+        console.error(err);
+        this.toastr.error(err?.error?.message || 'حدث خطأ أثناء الإضافة');
         this.isAddingToCart.set(false);
       }
     });
