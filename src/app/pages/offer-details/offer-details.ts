@@ -126,6 +126,10 @@ export class OfferDetails implements OnInit {
           this.isAddingToCart = false;
           this.addingProductId = null;
           this.toastr.success('تم إضافة المنتج للسلة ✅');
+   if (this.offer?.offer_code) {
+      sessionStorage.setItem('pendingOfferCoupon', this.offer.offer_code);
+    }
+
           this.router.navigate(['/cart']);
           this.cdr.detectChanges();
         });

@@ -1,12 +1,22 @@
 <div class="cart-page" dir="rtl">
-
   <!-- Hero Header -->
   <section class="cart-hero">
     <div class="cart-hero-content">
       <div class="cart-hero-text">
         <div class="cart-hero-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+            />
           </svg>
         </div>
         <div>
@@ -34,12 +44,11 @@
     </div>
 
     <svg class="cart-hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 Z" fill="#f5f7fa"/>
+      <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 Z" fill="#f5f7fa" />
     </svg>
   </section>
 
   <div class="cart-container">
-
     @if (loading()) {
       <div class="cart-loading">
         <div class="cart-loading-spinner"></div>
@@ -47,7 +56,6 @@
       </div>
     } @else if (cart()?.cart_items?.length) {
       <div class="cart-grid">
-
         <!-- Items -->
         <div class="cart-items">
           @for (item of cart()?.cart_items; track item.id; let i = $index) {
@@ -58,9 +66,13 @@
                      [class.removing]="removingId() === item.id"
                      [style.animation-delay]="(i * 60) + 'ms'">
               <div class="cart-item-inner">
-
                 <div class="cart-item-img-wrap">
-                  <img [src]="item.product.cover_image" [alt]="item.product.name" class="cart-item-img" loading="lazy"/>
+                  <img
+                    [src]="item.product.cover_image"
+                    [alt]="item.product.name"
+                    class="cart-item-img"
+                    loading="lazy"
+                  />
                 </div>
 
                 <div class="cart-item-body">
@@ -70,13 +82,29 @@
                       <!-- [تعديل] حذف عرض الفاريانتس بالكامل — لم نعد نعرض قيم الفاريانت -->
                     </div>
 
-                    <button (click)="removeItem(item.id)" [disabled]="removingId() === item.id"
-                            class="cart-item-remove" type="button" aria-label="حذف">
+                    <button
+                      (click)="removeItem(item.id)"
+                      [disabled]="removingId() === item.id"
+                      class="cart-item-remove"
+                      type="button"
+                      aria-label="حذف"
+                    >
                       @if (removingId() === item.id) {
                         <span class="removing-spinner"></span>
                       } @else {
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2.5"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                          />
                         </svg>
                       }
                     </button>
@@ -84,19 +112,30 @@
 
                   <div class="cart-item-price-block">
                     @if (backendProduct && backendProduct.discount_applied) {
-                      <span class="cart-item-price-old">{{ backendProduct.original_price | priceFormat }} {{ currencySymbol() }}</span>
+                      <span class="cart-item-price-old"
+                        >{{ backendProduct.original_price | priceFormat }}
+                        {{ currencySymbol() }}</span
+                      >
                       <div>
-                        <span class="cart-item-price-new">{{ backendProduct.final_price | priceFormat }}</span>
+                        <span class="cart-item-price-new">{{
+                          backendProduct.final_price | priceFormat
+                        }}</span>
                         <span class="cart-item-price-currency">{{ currencySymbol() }}</span>
                       </div>
                       <span class="cart-item-discount-pill">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 8v10a2 2 0 002 2h12a2 2 0 002-2V8l-8-6z"/></svg>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2L4 8v10a2 2 0 002 2h12a2 2 0 002-2V8l-8-6z" />
+                        </svg>
                         خصم {{ backendProduct.discount_percent }}%
-                        @if (backendProduct.offer_code) { · {{ backendProduct.offer_code }} }
+                        @if (backendProduct.offer_code) {
+                          · {{ backendProduct.offer_code }}
+                        }
                       </span>
                     } @else {
                       <div>
-                        <span class="cart-item-price-new">{{ getItemDisplayPrice(item) | priceFormat }}</span>
+                        <span class="cart-item-price-new">{{
+                          getItemDisplayPrice(item) | priceFormat
+                        }}</span>
                         <span class="cart-item-price-currency">{{ currencySymbol() }}</span>
                       </div>
                     }
@@ -127,7 +166,20 @@
         <aside class="cart-summary">
           <div class="cart-summary-header">
             <div class="cart-summary-header-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"
+                />
+              </svg>
             </div>
             <h2>ملخص الطلب</h2>
           </div>
@@ -136,24 +188,83 @@
             <!-- Coupon -->
             <div class="cart-coupon-section">
               <label class="cart-coupon-label">
-                <svg class="cart-coupon-label-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/></svg>
+                <svg
+                  class="cart-coupon-label-icon"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
+                  />
+                </svg>
                 كود الخصم
               </label>
               <div class="cart-coupon-row">
-                <input type="text" [value]="couponCode()" (input)="onCouponInput($any($event.target).value)" placeholder="أدخل كود الخصم" class="cart-coupon-input"/>
-                <button (click)="applyCoupon()" [disabled]="couponLoading()" class="cart-coupon-btn" type="button">
-                  @if (couponLoading()) { <span class="cart-checkout-spinner"></span> } @else { تطبيق }
+                <input
+                  type="text"
+                  [value]="couponCode()"
+                  (input)="onCouponInput($any($event.target).value)"
+                  placeholder="أدخل كود الخصم"
+                  class="cart-coupon-input"
+                    [disabled]="couponSuccess()" 
+                    [class.applied]="couponSuccess()"
+                />
+                <button
+                  (click)="applyCoupon()"
+                  [disabled]="couponLoading() || couponSuccess()"
+                  class="cart-coupon-btn"
+                  type="button"
+                >
+                 @if (couponLoading()) {
+      <span class="cart-checkout-spinner"></span>
+    } @else if (couponSuccess()) {
+      ✓ مطبّق
+    } @else {
+      تطبيق
+    }
                 </button>
               </div>
               @if (couponError()) {
                 <p class="cart-coupon-msg error">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                    />
+                  </svg>
                   {{ couponError() }}
                 </p>
               }
               @if (couponSuccess()) {
                 <p class="cart-coupon-msg success">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M4.5 12.75l6 6 9-13.5"
+                    />
+                  </svg>
                   تم تطبيق كود الخصم بنجاح
                 </p>
               }
@@ -162,23 +273,73 @@
             <!-- Payment -->
             <div class="cart-payment-section">
               <h3 class="cart-payment-title">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"
+                  />
+                </svg>
                 طريقة الدفع
               </h3>
 
               <div class="cart-payment-options">
                 <label class="cart-payment-option" [class.selected]="selectedPayment() === 'cash'">
-                  <input type="radio" [checked]="selectedPayment() === 'cash'" (change)="selectPayment('cash')"/>
+                  <input
+                    type="radio"
+                    [checked]="selectedPayment() === 'cash'"
+                    (change)="selectPayment('cash')"
+                  />
                   <div class="cart-payment-option-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
                   </div>
                   <span class="cart-payment-option-name">الدفع كاش</span>
                 </label>
 
-                <label class="cart-payment-option" [class.selected]="selectedPayment() === 'installment'">
-                  <input type="radio" [checked]="selectedPayment() === 'installment'" (change)="selectPayment('installment')"/>
+                <label
+                  class="cart-payment-option"
+                  [class.selected]="selectedPayment() === 'installment'"
+                >
+                  <input
+                    type="radio"
+                    [checked]="selectedPayment() === 'installment'"
+                    (change)="selectPayment('installment')"
+                  />
                   <div class="cart-payment-option-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"
+                      />
+                    </svg>
                   </div>
                   <span class="cart-payment-option-name">الدفع بالتقسيط</span>
                 </label>
@@ -188,7 +349,13 @@
                 <div class="cart-plan-selected">
                   <div class="cart-plan-selected-row">
                     <span class="cart-plan-selected-name">{{ selectedPlan()!.name }}</span>
-                    <button (click)="showPlansModal.set(true)" class="cart-plan-change-btn" type="button">تغيير</button>
+                    <button
+                      (click)="showPlansModal.set(true)"
+                      class="cart-plan-change-btn"
+                      type="button"
+                    >
+                      تغيير
+                    </button>
                   </div>
                   <p class="cart-plan-selected-info">
                     {{ calculatePlanMonthly(selectedPlan()!) | priceFormat }} {{ currencySymbol() }} / شهر · {{ selectedPlan()!.duration_months }} شهر
@@ -198,7 +365,20 @@
 
               @if (selectedPayment() === 'installment' && !selectedPlan()) {
                 <div class="cart-plan-warn">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                    />
+                  </svg>
                   لم تختر خطة تقسيط بعد
                 </div>
               }
@@ -215,29 +395,50 @@
                 <span class="cart-sum-key">الشحن</span>
                 @if (shippingAmount() === 0 && shippingCost() > 0) {
                   <span class="cart-sum-val free">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                    <svg
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M4.5 12.75l6 6 9-13.5"
+                      />
+                    </svg>
                     مجاني
                   </span>
                 } @else if (shippingCost() === 0) {
                   <span class="cart-sum-val free">مجاني</span>
                 } @else {
-                  <span class="cart-sum-val">{{ shippingAmount() | priceFormat }} {{ currencySymbol() }}</span>
+                  <span class="cart-sum-val"
+                    >{{ shippingAmount() | priceFormat }} {{ currencySymbol() }}</span
+                  >
                 }
               </div>
 
               <div class="cart-sum-row">
                 <span class="cart-sum-key">الضريبة ({{ taxRateDisplay() }}%)</span>
-                <span class="cart-sum-val">{{ taxAmount() | priceFormat }} {{ currencySymbol() }}</span>
+                <span class="cart-sum-val"
+                  >{{ taxAmount() | priceFormat }} {{ currencySymbol() }}</span
+                >
               </div>
 
               @if (totalDiscount() > 0) {
                 <div class="cart-sum-row">
                   <span class="cart-sum-key">السعر قبل الخصم</span>
-                  <span class="cart-sum-val muted">{{ subtotal() | priceFormat }} {{ currencySymbol() }}</span>
+                  <span class="cart-sum-val muted"
+                    >{{ subtotal() | priceFormat }} {{ currencySymbol() }}</span
+                  >
                 </div>
                 <div class="cart-sum-row">
                   <span class="cart-sum-key">إجمالي الخصم</span>
-                  <span class="cart-sum-val discount">- {{ totalDiscount() | priceFormat }} {{ currencySymbol() }}</span>
+                  <span class="cart-sum-val discount"
+                    >- {{ totalDiscount() | priceFormat }} {{ currencySymbol() }}</span
+                  >
                 </div>
               }
             </div>
@@ -253,19 +454,26 @@
                 @if (selectedPlan()!.down_payment > 0) {
                   <div class="cart-plan-details-row">
                     <span>الدفعة الأولى</span>
-                    <span>{{ selectedPlan()!.down_payment | priceFormat }} {{ currencySymbol() }}</span>
+                    <span
+                      >{{ selectedPlan()!.down_payment | priceFormat }} {{ currencySymbol() }}</span
+                    >
                   </div>
                 }
                 @if (selectedPlan()!.total_interest > 0) {
                   <div class="cart-plan-details-row">
                     <span>إجمالي الفائدة</span>
-                    <span>{{ selectedPlan()!.total_interest | priceFormat }} {{ currencySymbol() }}</span>
+                    <span
+                      >{{ selectedPlan()!.total_interest | priceFormat }}
+                      {{ currencySymbol() }}</span
+                    >
                   </div>
                 }
                 @if (selectedPlan()!.admin_fee > 0) {
                   <div class="cart-plan-details-row">
                     <span>الرسوم الإدارية</span>
-                    <span>{{ selectedPlan()!.admin_fee | priceFormat }} {{ currencySymbol() }}</span>
+                    <span
+                      >{{ selectedPlan()!.admin_fee | priceFormat }} {{ currencySymbol() }}</span
+                    >
                   </div>
                 }
               </div>
@@ -284,19 +492,50 @@
 
             <!-- Actions -->
             <div class="cart-actions">
-              <button (click)="checkout()" [disabled]="!selectedPayment() || checkoutLoading()" class="cart-checkout-btn" type="button">
+              <button
+                (click)="checkout()"
+                [disabled]="!selectedPayment() || checkoutLoading()"
+                class="cart-checkout-btn"
+                type="button"
+              >
                 <span class="cart-checkout-shine"></span>
                 @if (checkoutLoading()) {
                   <span class="cart-checkout-spinner"></span>
                   <span>جاري المعالجة...</span>
                 } @else {
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"
+                    />
+                  </svg>
                   <span>إتمام الطلب</span>
                 }
               </button>
 
               <a routerLink="/categories" class="cart-continue-btn">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.75 19.5L8.25 12l7.5-7.5"
+                  />
+                </svg>
                 مواصلة التسوق
               </a>
             </div>
@@ -304,19 +543,57 @@
             <!-- Trust -->
             <div class="cart-trust">
               <div class="cart-trust-item">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
                 دفع آمن
               </div>
               <div class="cart-trust-item">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
                 شحن سريع
               </div>
               <div class="cart-trust-item">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
                 ضمان الاسترجاع
               </div>
             </div>
-
           </div>
         </aside>
       </div>
@@ -324,17 +601,42 @@
       <!-- Empty -->
       <div class="cart-empty">
         <div class="cart-empty-icon">
-          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+          <svg
+            width="56"
+            height="56"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+            />
+          </svg>
         </div>
         <h2>سلتك فارغة</h2>
         <p>لم تقم بإضافة أي منتجات بعد، استكشف منتجاتنا المميزة</p>
         <a routerLink="/categories" class="cart-empty-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
+            />
+          </svg>
           تصفح المنتجات
         </a>
       </div>
     }
-
   </div>
 </div>
 
@@ -348,13 +650,24 @@
           <p class="cart-modal-subtitle">اختر الخطة المناسبة لك</p>
         </div>
         <button (click)="cancelInstallment()" class="cart-modal-close" type="button">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
 
       <div class="cart-modal-body">
         @if (installmentPlans().length === 0) {
-          <p style="text-align:center;padding:30px;color:#dc2626;font-weight:700">لا توجد خطط تقسيط متاحة</p>
+          <p style="text-align: center; padding: 30px; color: #dc2626; font-weight: 700">
+            لا توجد خطط تقسيط متاحة
+          </p>
         } @else {
           @for (plan of installmentPlans(); track plan.id) {
             <div (click)="selectInstallmentPlan(plan.id)" class="cart-plan-card" [class.selected]="selectedInstallmentPlan() === plan.id">
@@ -405,8 +718,17 @@
         }
 
         <div class="cart-modal-actions">
-          <button (click)="closePlansModal()" [disabled]="!selectedInstallmentPlan()" class="cart-btn-primary" type="button">تأكيد الخطة</button>
-          <button (click)="cancelInstallment()" class="cart-btn-secondary" type="button">إلغاء</button>
+          <button
+            (click)="closePlansModal()"
+            [disabled]="!selectedInstallmentPlan()"
+            class="cart-btn-primary"
+            type="button"
+          >
+            تأكيد الخطة
+          </button>
+          <button (click)="cancelInstallment()" class="cart-btn-secondary" type="button">
+            إلغاء
+          </button>
         </div>
       </div>
     </div>
@@ -419,11 +741,27 @@
     <div class="cart-modal cart-success-modal">
       <div class="cart-success-body">
         <div class="cart-success-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
         </div>
         <h2 class="cart-success-title">تم إرسال طلب التقسيط 🎉</h2>
         <p class="cart-success-text">شكراً لطلبك! سيتم التواصل معك قريباً لمراجعة طلب التقسيط.</p>
-        <button (click)="showInstallmentSuccessModal.set(false)" class="cart-btn-primary" type="button" style="width:100%">إغلاق</button>
+        <button
+          (click)="showInstallmentSuccessModal.set(false)"
+          class="cart-btn-primary"
+          type="button"
+          style="width: 100%"
+        >
+          إغلاق
+        </button>
       </div>
     </div>
   </div>
@@ -439,7 +777,16 @@
           <p class="cart-modal-subtitle">أدخل عنوان التوصيل لإتمام الطلب</p>
         </div>
         <button (click)="showCashModal.set(false)" class="cart-modal-close" type="button">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
 
@@ -447,62 +794,121 @@
         <div class="cart-form-grid">
           <div class="cart-form-field">
             <label class="cart-form-label">اسم المستلم <span class="req">*</span></label>
-            <input type="text" placeholder="الاسم الكامل" [value]="cashForm().shipping_name"
-                   (input)="updateCashForm('shipping_name', $any($event.target).value)"
-                   class="cart-form-input" [class.error]="cashFormErrors().shipping_name"/>
-            @if (cashFormErrors().shipping_name) { <p class="cart-form-error">{{ cashFormErrors().shipping_name }}</p> }
+            <input
+              type="text"
+              placeholder="الاسم الكامل"
+              [value]="cashForm().shipping_name"
+              (input)="updateCashForm('shipping_name', $any($event.target).value)"
+              class="cart-form-input"
+              [class.error]="cashFormErrors().shipping_name"
+            />
+            @if (cashFormErrors().shipping_name) {
+              <p class="cart-form-error">{{ cashFormErrors().shipping_name }}</p>
+            }
           </div>
 
           <div class="cart-form-field">
             <label class="cart-form-label">هاتف المستلم <span class="req">*</span></label>
-            <input type="text" inputmode="numeric" placeholder="رقم الهاتف" maxlength="8"
-                   [value]="cashForm().shipping_phone"
-                   (input)="updateCashForm('shipping_phone', $any($event.target).value.replace(/[^0-9]/g, '').slice(0, 8))"
-                   (keypress)="allowOnlyNumbers($event)"
-                   class="cart-form-input" [class.error]="cashFormErrors().shipping_phone"/>
-            @if (cashFormErrors().shipping_phone) { <p class="cart-form-error">{{ cashFormErrors().shipping_phone }}</p> }
+            <input
+              type="text"
+              inputmode="numeric"
+              placeholder="رقم الهاتف"
+              maxlength="8"
+              [value]="cashForm().shipping_phone"
+              (input)="
+                updateCashForm(
+                  'shipping_phone',
+                  $any($event.target)
+                    .value.replace(/[^0-9]/g, '')
+                    .slice(0, 8)
+                )
+              "
+              (keypress)="allowOnlyNumbers($event)"
+              class="cart-form-input"
+              [class.error]="cashFormErrors().shipping_phone"
+            />
+            @if (cashFormErrors().shipping_phone) {
+              <p class="cart-form-error">{{ cashFormErrors().shipping_phone }}</p>
+            }
           </div>
 
           <div class="cart-form-field">
             <label class="cart-form-label">المدينة <span class="opt">(اختياري)</span></label>
-            <input type="text" placeholder="المدينة" [value]="cashForm().shipping_city"
-                   (input)="updateCashForm('shipping_city', $any($event.target).value)"
-                   class="cart-form-input" [class.error]="cashFormErrors().shipping_city"/>
-            @if (cashFormErrors().shipping_city) { <p class="cart-form-error">{{ cashFormErrors().shipping_city }}</p> }
+            <input
+              type="text"
+              placeholder="المدينة"
+              [value]="cashForm().shipping_city"
+              (input)="updateCashForm('shipping_city', $any($event.target).value)"
+              class="cart-form-input"
+              [class.error]="cashFormErrors().shipping_city"
+            />
+            @if (cashFormErrors().shipping_city) {
+              <p class="cart-form-error">{{ cashFormErrors().shipping_city }}</p>
+            }
           </div>
 
           <div class="cart-form-field">
             <label class="cart-form-label">العنوان <span class="req">*</span></label>
-            <input type="text" placeholder="المنطقة" [value]="cashForm().full_address"
-                   (input)="updateCashForm('full_address', $any($event.target).value)"
-                   class="cart-form-input" [class.error]="cashFormErrors().full_address"/>
-            @if (cashFormErrors().full_address) { <p class="cart-form-error">{{ cashFormErrors().full_address }}</p> }
+            <input
+              type="text"
+              placeholder="المنطقة"
+              [value]="cashForm().full_address"
+              (input)="updateCashForm('full_address', $any($event.target).value)"
+              class="cart-form-input"
+              [class.error]="cashFormErrors().full_address"
+            />
+            @if (cashFormErrors().full_address) {
+              <p class="cart-form-error">{{ cashFormErrors().full_address }}</p>
+            }
           </div>
         </div>
 
         <div class="cart-form-grid">
           <div class="cart-form-field">
             <label class="cart-form-label">القطعة <span class="opt">(اختياري)</span></label>
-            <input type="text" placeholder="رقم القطعة" [value]="cashForm().shipping_block"
-                   (input)="updateCashForm('shipping_block', $any($event.target).value)"
-                   class="cart-form-input" [class.error]="cashFormErrors().shipping_block"/>
-            @if (cashFormErrors().shipping_block) { <p class="cart-form-error">{{ cashFormErrors().shipping_block }}</p> }
+            <input
+              type="text"
+              placeholder="رقم القطعة"
+              [value]="cashForm().shipping_block"
+              (input)="updateCashForm('shipping_block', $any($event.target).value)"
+              class="cart-form-input"
+              [class.error]="cashFormErrors().shipping_block"
+            />
+            @if (cashFormErrors().shipping_block) {
+              <p class="cart-form-error">{{ cashFormErrors().shipping_block }}</p>
+            }
           </div>
+
 
           <div class="cart-form-field">
             <label class="cart-form-label">الشارع <span class="opt">(اختياري)</span></label>
-            <input type="text" placeholder="اسم الشارع" [value]="cashForm().shipping_street"
-                   (input)="updateCashForm('shipping_street', $any($event.target).value)"
-                   class="cart-form-input" [class.error]="cashFormErrors().shipping_street"/>
-            @if (cashFormErrors().shipping_street) { <p class="cart-form-error">{{ cashFormErrors().shipping_street }}</p> }
+            <input
+              type="text"
+              placeholder="اسم الشارع"
+              [value]="cashForm().shipping_street"
+              (input)="updateCashForm('shipping_street', $any($event.target).value)"
+              class="cart-form-input"
+              [class.error]="cashFormErrors().shipping_street"
+            />
+            @if (cashFormErrors().shipping_street) {
+              <p class="cart-form-error">{{ cashFormErrors().shipping_street }}</p>
+            }
           </div>
 
           <div class="cart-form-field">
+          <div class="cart-form-field">
             <label class="cart-form-label">رقم البناية <span class="opt">(اختياري)</span></label>
-            <input type="text" placeholder="رقم البناية" [value]="cashForm().shipping_building"
-                   (input)="updateCashForm('shipping_building', $any($event.target).value)"
-                   class="cart-form-input" [class.error]="cashFormErrors().shipping_building"/>
-            @if (cashFormErrors().shipping_building) { <p class="cart-form-error">{{ cashFormErrors().shipping_building }}</p> }
+            <input
+              type="text"
+              placeholder="رقم البناية"
+              [value]="cashForm().shipping_building"
+              (input)="updateCashForm('shipping_building', $any($event.target).value)"
+              class="cart-form-input"
+              [class.error]="cashFormErrors().shipping_building"
+            />
+            @if (cashFormErrors().shipping_building) {
+              <p class="cart-form-error">{{ cashFormErrors().shipping_building }}</p>
+            }
           </div>
 
           <div class="cart-form-field">
@@ -513,28 +919,51 @@
             @if (cashFormErrors().shipping_area) { <p class="cart-form-error">{{ cashFormErrors().shipping_area }}</p> }
           </div>
 
+
           <div class="cart-form-field">
             <label class="cart-form-label">رقم الدور <span class="opt">(اختياري)</span></label>
-            <input type="text" placeholder="رقم الدور" [value]="cashForm().shipping_floor ?? ''"
-                   (input)="updateCashForm('shipping_floor', $any($event.target).value)" class="cart-form-input"/>
+            <input
+              type="text"
+              placeholder="رقم الدور"
+              [value]="cashForm().shipping_floor ?? ''"
+              (input)="updateCashForm('shipping_floor', $any($event.target).value)"
+              class="cart-form-input"
+            />
           </div>
 
           <div class="cart-form-field">
             <label class="cart-form-label">رقم الشقة <span class="opt">(اختياري)</span></label>
-            <input type="text" placeholder="رقم الشقة" [value]="cashForm().shipping_apartment ?? ''"
-                   (input)="updateCashForm('shipping_apartment', $any($event.target).value)" class="cart-form-input"/>
+            <input
+              type="text"
+              placeholder="رقم الشقة"
+              [value]="cashForm().shipping_apartment ?? ''"
+              (input)="updateCashForm('shipping_apartment', $any($event.target).value)"
+              class="cart-form-input"
+            />
           </div>
 
           <div class="cart-form-field">
-            <label class="cart-form-label">ملاحظات التوصيل <span class="opt">(اختياري)</span></label>
-            <textarea placeholder="ملاحظات خاصة بالتوصيل" [value]="cashForm().shipping_notes ?? ''"
-                      (input)="updateCashForm('shipping_notes', $any($event.target).value)" rows="2" class="cart-form-textarea"></textarea>
+            <label class="cart-form-label"
+              >ملاحظات التوصيل <span class="opt">(اختياري)</span></label
+            >
+            <textarea
+              placeholder="ملاحظات خاصة بالتوصيل"
+              [value]="cashForm().shipping_notes ?? ''"
+              (input)="updateCashForm('shipping_notes', $any($event.target).value)"
+              rows="2"
+              class="cart-form-textarea"
+            ></textarea>
           </div>
 
           <div class="cart-form-field">
             <label class="cart-form-label">ملاحظات عامة <span class="opt">(اختياري)</span></label>
-            <textarea placeholder="ملاحظات عامة" [value]="cashForm().notes ?? ''"
-                      (input)="updateCashForm('notes', $any($event.target).value)" rows="2" class="cart-form-textarea"></textarea>
+            <textarea
+              placeholder="ملاحظات عامة"
+              [value]="cashForm().notes ?? ''"
+              (input)="updateCashForm('notes', $any($event.target).value)"
+              rows="2"
+              class="cart-form-textarea"
+            ></textarea>
           </div>
         </div>
 
@@ -545,11 +974,18 @@
           </div>
 
           @if (shippingAmount() === 0 && shippingCost() > 0) {
-            <div class="cart-modal-summary-row"><span>الشحن</span><span class="free">مجاني 🎉</span></div>
+            <div class="cart-modal-summary-row">
+              <span>الشحن</span><span class="free">مجاني 🎉</span>
+            </div>
           } @else if (shippingCost() === 0) {
-            <div class="cart-modal-summary-row"><span>الشحن</span><span class="free">مجاني</span></div>
+            <div class="cart-modal-summary-row">
+              <span>الشحن</span><span class="free">مجاني</span>
+            </div>
           } @else {
-            <div class="cart-modal-summary-row"><span>الشحن</span><span>{{ shippingAmount() | priceFormat }} {{ currencySymbol() }}</span></div>
+            <div class="cart-modal-summary-row">
+              <span>الشحن</span
+              ><span>{{ shippingAmount() | priceFormat }} {{ currencySymbol() }}</span>
+            </div>
           }
 
           @if (taxAmount() > 0) {
@@ -561,19 +997,37 @@
 
           <div class="cart-modal-summary-row total">
             <span class="cart-modal-summary-total-label">إجمالي الطلب</span>
-            <span class="cart-modal-summary-total-val">{{ grandTotal() | priceFormat }} {{ currencySymbol() }}</span>
+            <span class="cart-modal-summary-total-val"
+              >{{ grandTotal() | priceFormat }} {{ currencySymbol() }}</span
+            >
           </div>
         </div>
 
         <div class="cart-modal-actions">
-          <button (click)="submitCashOrder()" [disabled]="checkoutLoading()" class="cart-btn-primary" type="button">
+          <button
+            (click)="submitCashOrder()"
+            [disabled]="checkoutLoading()"
+            class="cart-btn-primary"
+            type="button"
+          >
             @if (checkoutLoading()) {
-              <span style="display:inline-flex;align-items:center;gap:6px;justify-content:center">
+              <span
+                style="display: inline-flex; align-items: center; gap: 6px; justify-content: center"
+              >
                 <span class="cart-checkout-spinner"></span> جاري الإرسال...
               </span>
-            } @else { تأكيد الطلب }
+            } @else {
+              تأكيد الطلب
+            }
           </button>
-          <button (click)="showCashModal.set(false)" [disabled]="checkoutLoading()" class="cart-btn-secondary" type="button">إلغاء</button>
+          <button
+            (click)="showCashModal.set(false)"
+            [disabled]="checkoutLoading()"
+            class="cart-btn-secondary"
+            type="button"
+          >
+            إلغاء
+          </button>
         </div>
       </div>
     </div>
@@ -586,11 +1040,29 @@
     <div class="cart-modal cart-success-modal">
       <div class="cart-success-body">
         <div class="cart-success-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
         </div>
         <h2 class="cart-success-title">تم تأكيد الطلب 🎉</h2>
-        <p class="cart-success-text">شكراً لطلبك! سيتم التواصل معك قريباً لتأكيد تفاصيل الشحن والدفع.</p>
-        <button (click)="showShippingInfoModal.set(false)" class="cart-btn-primary" type="button" style="width:100%">إغلاق</button>
+        <p class="cart-success-text">
+          شكراً لطلبك! سيتم التواصل معك قريباً لتأكيد تفاصيل الشحن والدفع.
+        </p>
+        <button
+          (click)="showShippingInfoModal.set(false)"
+          class="cart-btn-primary"
+          type="button"
+          style="width: 100%"
+        >
+          إغلاق
+        </button>
       </div>
     </div>
   </div>
@@ -605,8 +1077,21 @@
           <h2 class="cart-modal-title">بيانات التقسيط</h2>
           <p class="cart-modal-subtitle">أدخل بياناتك لإتمام طلب التقسيط</p>
         </div>
-        <button (click)="showInstallmentFormModal.set(false)" class="cart-modal-close" type="button">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        <button
+          (click)="showInstallmentFormModal.set(false)"
+          class="cart-modal-close"
+          type="button"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
 
@@ -619,10 +1104,12 @@
                 {{ calculatePlanMonthly(selectedPlan()!) | priceFormat }} {{ currencySymbol() }} / شهر · {{ selectedPlan()!.duration_months }} شهر
               </p>
             </div>
-            <div style="text-align:left">
+            <div style="text-align: left">
               <p class="cart-modal-plan-total-label">إجمالي التقسيط</p>
               <p>
-                <span class="cart-modal-plan-total">{{ calculatePlanTotal(selectedPlan()!) | priceFormat }}</span>
+                <span class="cart-modal-plan-total">{{
+                  calculatePlanTotal(selectedPlan()!) | priceFormat
+                }}</span>
                 <span class="cart-modal-plan-total-currency">{{ currencySymbol() }}</span>
               </p>
             </div>
@@ -632,52 +1119,109 @@
         <div class="cart-form-grid-3">
           <div class="cart-form-field">
             <label class="cart-form-label">رقم الهاتف <span class="req">*</span></label>
-            <input type="text" inputmode="numeric" placeholder="رقم هاتف العميل" maxlength="8"
-                   [value]="installmentForm().phone"
-                   (input)="updateInstallmentForm('phone', $any($event.target).value.replace(/[^0-9]/g, '').slice(0, 8))"
-                   (keypress)="allowOnlyNumbers($event)"
-                   class="cart-form-input" [class.error]="installmentFormErrors().phone"/>
-            @if (installmentFormErrors().phone) { <p class="cart-form-error">{{ installmentFormErrors().phone }}</p> }
+            <input
+              type="text"
+              inputmode="numeric"
+              placeholder="رقم هاتف العميل"
+              maxlength="8"
+              [value]="installmentForm().phone"
+              (input)="
+                updateInstallmentForm(
+                  'phone',
+                  $any($event.target)
+                    .value.replace(/[^0-9]/g, '')
+                    .slice(0, 8)
+                )
+              "
+              (keypress)="allowOnlyNumbers($event)"
+              class="cart-form-input"
+              [class.error]="installmentFormErrors().phone"
+            />
+            @if (installmentFormErrors().phone) {
+              <p class="cart-form-error">{{ installmentFormErrors().phone }}</p>
+            }
           </div>
 
           <div class="cart-form-field">
             <label class="cart-form-label">الراتب الشهري <span class="req">*</span></label>
             <div class="cart-form-input-wrap">
-              <input type="text" inputmode="decimal" placeholder="0.000"
-                     [value]="installmentForm().monthly_salary || ''"
-                     (input)="updateInstallmentForm('monthly_salary', $any($event.target).value.replace(/[^0-9.]/g, ''))"
-                     (keypress)="allowOnlyNumbers($event)"
-                     class="cart-form-input" [class.error]="installmentFormErrors().monthly_salary"/>
+              <input
+                type="text"
+                inputmode="decimal"
+                placeholder="0.000"
+                [value]="installmentForm().monthly_salary || ''"
+                (input)="
+                  updateInstallmentForm(
+                    'monthly_salary',
+                    $any($event.target).value.replace(/[^0-9.]/g, '')
+                  )
+                "
+                (keypress)="allowOnlyNumbers($event)"
+                class="cart-form-input"
+                [class.error]="installmentFormErrors().monthly_salary"
+              />
               <span class="cart-form-input-suffix">{{ currencySymbol() }}</span>
             </div>
-            @if (installmentFormErrors().monthly_salary) { <p class="cart-form-error">{{ installmentFormErrors().monthly_salary }}</p> }
+            @if (installmentFormErrors().monthly_salary) {
+              <p class="cart-form-error">{{ installmentFormErrors().monthly_salary }}</p>
+            }
           </div>
 
           <div class="cart-form-field cart-dropdown">
             <label class="cart-form-label">جهة العمل <span class="req">*</span></label>
-            <button type="button" (click)="ministryDropdownOpen.set(!ministryDropdownOpen())"
-                    class="cart-dropdown-trigger"
-                    [class.open]="ministryDropdownOpen()"
-                    [class.error]="installmentFormErrors().ministry_id && !ministryDropdownOpen()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-              <span [class.placeholder]="!installmentForm().ministry_id">{{ selectedMinistryName() }}</span>
+            <button
+              type="button"
+              (click)="ministryDropdownOpen.set(!ministryDropdownOpen())"
+              class="cart-dropdown-trigger"
+              [class.open]="ministryDropdownOpen()"
+              [class.error]="installmentFormErrors().ministry_id && !ministryDropdownOpen()"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+              <span [class.placeholder]="!installmentForm().ministry_id">{{
+                selectedMinistryName()
+              }}</span>
             </button>
 
             @if (ministryDropdownOpen()) {
               <div class="cart-dropdown-panel">
                 <div class="cart-dropdown-search">
-                  <input type="text" placeholder="ابحث عن جهة العمل..."
-                         [value]="ministrySearch()"
-                         (input)="ministrySearch.set($any($event.target).value)"
-                         (click)="$event.stopPropagation()"/>
+                  <input
+                    type="text"
+                    placeholder="ابحث عن جهة العمل..."
+                    [value]="ministrySearch()"
+                    (input)="ministrySearch.set($any($event.target).value)"
+                    (click)="$event.stopPropagation()"
+                  />
                 </div>
                 <div class="cart-dropdown-options">
                   @for (ministry of filteredMinistries(); track ministry.id) {
-                    <button type="button" (click)="selectMinistry(ministry.id)" class="cart-dropdown-option"
-                            [class.selected]="installmentForm().ministry_id === ministry.id">
+                    <button
+                      type="button"
+                      (click)="selectMinistry(ministry.id)"
+                      class="cart-dropdown-option"
+                      [class.selected]="installmentForm().ministry_id === ministry.id"
+                    >
                       {{ ministry.name_ar }}
                       @if (installmentForm().ministry_id === ministry.id) {
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
                       }
                     </button>
                   } @empty {
@@ -687,49 +1231,96 @@
               </div>
             }
 
-            @if (installmentFormErrors().ministry_id) { <p class="cart-form-error">{{ installmentFormErrors().ministry_id }}</p> }
+            @if (installmentFormErrors().ministry_id) {
+              <p class="cart-form-error">{{ installmentFormErrors().ministry_id }}</p>
+            }
           </div>
 
           <div class="cart-form-field">
             <label class="cart-form-label">الاسم الكامل</label>
-            <input type="text" placeholder="الاسم الرباعي" [value]="installmentForm().full_name ?? ''"
-                   (input)="updateInstallmentForm('full_name', $any($event.target).value)" class="cart-form-input"/>
-            @if (installmentFormErrors().full_name) { <p class="cart-form-error">{{ installmentFormErrors().full_name }}</p> }
+            <input
+              type="text"
+              placeholder="الاسم الرباعي"
+              [value]="installmentForm().full_name ?? ''"
+              (input)="updateInstallmentForm('full_name', $any($event.target).value)"
+              class="cart-form-input"
+            />
+            @if (installmentFormErrors().full_name) {
+              <p class="cart-form-error">{{ installmentFormErrors().full_name }}</p>
+            }
           </div>
 
           <div class="cart-form-field">
             <label class="cart-form-label">الرقم المدني <span class="opt">(اختياري)</span></label>
-            <input type="text" inputmode="numeric" (keypress)="allowOnlyNumbers($event)" maxlength="12"
-                   placeholder="الرقم المدني" [value]="installmentForm().civil_id ?? ''"
-                   (input)="updateInstallmentForm('civil_id', $any($event.target).value)"
-                   class="cart-form-input"/>
-            @if (installmentFormErrors().civil_id) { <p class="cart-form-error">{{ installmentFormErrors().civil_id }}</p> }
+            <input
+              type="text"
+              inputmode="numeric"
+              (keypress)="allowOnlyNumbers($event)"
+              maxlength="12"
+              placeholder="الرقم المدني"
+              [value]="installmentForm().civil_id ?? ''"
+              (input)="updateInstallmentForm('civil_id', $any($event.target).value)"
+              class="cart-form-input"
+            />
+            @if (installmentFormErrors().civil_id) {
+              <p class="cart-form-error">{{ installmentFormErrors().civil_id }}</p>
+            }
           </div>
 
           <div class="cart-form-field">
             <label class="cart-form-label">هاتف العمل</label>
-            <input type="tel" inputmode="numeric" maxlength="12" (keypress)="allowOnlyNumbers($event)"
-                   placeholder="هاتف جهة العمل" [value]="installmentForm().work_phone ?? ''"
-                   (input)="updateInstallmentForm('work_phone', $any($event.target).value)" class="cart-form-input"/>
-            @if (installmentFormErrors().work_phone) { <p class="cart-form-error">{{ installmentFormErrors().work_phone }}</p> }
+            <input
+              type="tel"
+              inputmode="numeric"
+              maxlength="12"
+              (keypress)="allowOnlyNumbers($event)"
+              placeholder="هاتف جهة العمل"
+              [value]="installmentForm().work_phone ?? ''"
+              (input)="updateInstallmentForm('work_phone', $any($event.target).value)"
+              class="cart-form-input"
+            />
+            @if (installmentFormErrors().work_phone) {
+              <p class="cart-form-error">{{ installmentFormErrors().work_phone }}</p>
+            }
           </div>
         </div>
 
-        <div class="cart-form-field" style="margin-bottom:16px">
+        <div class="cart-form-field" style="margin-bottom: 16px">
           <label class="cart-form-label">ملاحظات عامة <span class="opt">(اختياري)</span></label>
-          <textarea placeholder="ملاحظات إضافية" [value]="installmentForm().notes ?? ''"
-                    (input)="updateInstallmentForm('notes', $any($event.target).value)" rows="2" class="cart-form-textarea"></textarea>
+          <textarea
+            placeholder="ملاحظات إضافية"
+            [value]="installmentForm().notes ?? ''"
+            (input)="updateInstallmentForm('notes', $any($event.target).value)"
+            rows="2"
+            class="cart-form-textarea"
+          ></textarea>
         </div>
 
         <div class="cart-modal-actions">
-          <button (click)="submitInstallmentOrder()" [disabled]="checkoutLoading()" class="cart-btn-primary" type="button">
+          <button
+            (click)="submitInstallmentOrder()"
+            [disabled]="checkoutLoading()"
+            class="cart-btn-primary"
+            type="button"
+          >
             @if (checkoutLoading()) {
-              <span style="display:inline-flex;align-items:center;gap:6px;justify-content:center">
+              <span
+                style="display: inline-flex; align-items: center; gap: 6px; justify-content: center"
+              >
                 <span class="cart-checkout-spinner"></span> جاري الإرسال...
               </span>
-            } @else { إرسال الطلب }
+            } @else {
+              إرسال الطلب
+            }
           </button>
-          <button (click)="showInstallmentFormModal.set(false)" [disabled]="checkoutLoading()" class="cart-btn-secondary" type="button">إلغاء</button>
+          <button
+            (click)="showInstallmentFormModal.set(false)"
+            [disabled]="checkoutLoading()"
+            class="cart-btn-secondary"
+            type="button"
+          >
+            إلغاء
+          </button>
         </div>
       </div>
     </div>
@@ -750,7 +1341,16 @@
       <div class="cart-modal-body">
         <div class="cart-callout">
           <div class="cart-callout-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
           </div>
           <div>
             <p class="cart-callout-title">تم إنشاء الطلب رقم #{{ pendingOrderId() }}</p>
@@ -776,25 +1376,49 @@
           </div>
         }
 
-        <div class="cart-form-field" style="margin-bottom:14px">
+        <div class="cart-form-field" style="margin-bottom: 14px">
           <label class="cart-form-label">الراتب الشهري</label>
           <div class="cart-form-input-wrap">
-            <input type="number" min="1" step="0.001" placeholder="أدخل راتبك الشهري"
-                   (input)="onSalaryChange($any($event.target).value)" class="cart-form-input"/>
+            <input
+              type="number"
+              min="1"
+              step="0.001"
+              placeholder="أدخل راتبك الشهري"
+              (input)="onSalaryChange($any($event.target).value)"
+              class="cart-form-input"
+            />
             <span class="cart-form-input-suffix">{{ currencySymbol() }}</span>
           </div>
-          @if (salaryError()) { <p class="cart-form-error">{{ salaryError() }}</p> }
+          @if (salaryError()) {
+            <p class="cart-form-error">{{ salaryError() }}</p>
+          }
         </div>
 
         <div class="cart-modal-actions">
-          <button (click)="submitSalary()" [disabled]="installmentSubmitLoading()" class="cart-btn-primary" type="button">
+          <button
+            (click)="submitSalary()"
+            [disabled]="installmentSubmitLoading()"
+            class="cart-btn-primary"
+            type="button"
+          >
             @if (installmentSubmitLoading()) {
-              <span style="display:inline-flex;align-items:center;gap:6px;justify-content:center">
+              <span
+                style="display: inline-flex; align-items: center; gap: 6px; justify-content: center"
+              >
                 <span class="cart-checkout-spinner"></span> جاري الإرسال...
               </span>
-            } @else { إرسال الطلب }
+            } @else {
+              إرسال الطلب
+            }
           </button>
-          <button (click)="closeSalaryModal()" [disabled]="installmentSubmitLoading()" class="cart-btn-secondary" type="button">تخطي</button>
+          <button
+            (click)="closeSalaryModal()"
+            [disabled]="installmentSubmitLoading()"
+            class="cart-btn-secondary"
+            type="button"
+          >
+            تخطي
+          </button>
         </div>
 
         <p class="cart-skip-note">يمكنك إرسال طلب التقسيط لاحقاً من صفحة الطلبات</p>
