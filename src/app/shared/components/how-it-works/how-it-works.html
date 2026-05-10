@@ -1,0 +1,95 @@
+<section class="hiw-section" dir="rtl">
+
+  <!-- Background decoration -->
+  <div class="hiw-bg-decoration">
+    <div class="hiw-blob hiw-blob-1"></div>
+    <div class="hiw-blob hiw-blob-2"></div>
+    <div class="hiw-grid-pattern"></div>
+  </div>
+
+  <div class="hiw-container">
+
+    <!-- Header -->
+    <div class="hiw-header">
+      <div class="hiw-badge">
+        <span class="hiw-badge-dot"></span>
+        <span>كيف تعمل الخدمة؟</span>
+      </div>
+      <h2 class="hiw-title">
+        اشتر الآن،
+        <span class="hiw-title-accent">ادفع لاحقاً!</span>
+      </h2>
+      <p class="hiw-desc">عملية شراء بسيطة وسريعة في 4 خطوات فقط</p>
+    </div>
+
+    <!-- Steps -->
+    <div class="hiw-steps">
+
+      <!-- Animated connector (desktop only) -->
+      <div class="hiw-connector">
+        <div class="hiw-connector-line"></div>
+        <div class="hiw-connector-dot hiw-connector-dot-1"></div>
+        <div class="hiw-connector-dot hiw-connector-dot-2"></div>
+        <div class="hiw-connector-dot hiw-connector-dot-3"></div>
+      </div>
+
+      @for (step of steps; track step.number; let i = $index) {
+        <article class="hiw-step" [style.animation-delay.ms]="i * 120">
+
+          <!-- Step number -->
+          <div class="hiw-num">
+            <span>{{ step.number }}</span>
+          </div>
+
+          <!-- Icon circle -->
+          <div class="hiw-ico-wrap">
+            <div class="hiw-ico-glow"></div>
+            <div class="hiw-ico">
+              @switch (step.icon) {
+                @case ('cart') {
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="8" cy="21" r="1"/>
+                    <circle cx="19" cy="21" r="1"/>
+                    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.72a2 2 0 0 0 2-1.58L23 6H6"/>
+                  </svg>
+                }
+                @case ('doc') {
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="9" y1="13" x2="15" y2="13"/>
+                    <line x1="9" y1="17" x2="13" y2="17"/>
+                  </svg>
+                }
+                @case ('check') {
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 12l2 2 4-4"/>
+                    <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.39 0 4.68.94 6.36 2.64"/>
+                  </svg>
+                }
+                @case ('zap') {
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>
+                  </svg>
+                }
+              }
+            </div>
+          </div>
+
+          <!-- Step content -->
+          <h3 class="hiw-step-title">{{ step.title }}</h3>
+          <p class="hiw-step-desc">{{ step.desc }}</p>
+
+          <!-- Step indicator (mobile arrow / progress dot) -->
+          <div class="hiw-step-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+          </div>
+
+        </article>
+      }
+
+    </div>
+  </div>
+</section>

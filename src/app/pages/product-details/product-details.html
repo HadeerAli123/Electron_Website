@@ -1,0 +1,389 @@
+<div class="pd-page" dir="rtl">
+
+  @if (isLoading) {
+    <!-- Skeleton Loading -->
+    <div class="pd-inner">
+      <div class="pd-skel-bc"></div>
+      <div class="pd-skel-grid">
+        <div class="pd-skel-gallery">
+          <div class="pd-skel-main"><div class="pd-skel-shimmer"></div></div>
+          <div class="pd-skel-thumbs">
+            @for (i of [1,2,3,4]; track i) {
+              <div class="pd-skel-thumb"><div class="pd-skel-shimmer"></div></div>
+            }
+          </div>
+        </div>
+        <div class="pd-skel-info">
+          <div class="pd-skel-line w70"></div>
+          <div class="pd-skel-line w40"></div>
+          <div class="pd-skel-line w60"></div>
+          <div class="pd-skel-line w90"></div>
+          <div class="pd-skel-line w50"></div>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (!isLoading && product) {
+    <div class="pd-inner">
+
+      <!-- Breadcrumb -->
+      <div class="pd-header-row mb-6 flex items-center justify-between">
+        <nav class="pd-breadcrumb flex items-center gap-2" aria-label="Breadcrumb">
+          <a routerLink="/categories" class="pd-bc-link inline-flex items-center gap-2 text-blue-700">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/>
+            </svg>
+            <span>الرئيسية</span>
+          </a>
+
+          @if (product.class_name) {
+            <svg class="pd-bc-sep w-2.5 h-2.5 text-gray-400" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+            </svg>
+            <span class="pd-bc-text text-gray-700">{{ product.class_name }}</span>
+          }
+
+          @if (product.mark_name) {
+            <svg class="pd-bc-sep w-2.5 h-2.5 text-gray-400" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+            </svg>
+            <span class="pd-bc-text text-gray-700">{{ product.mark_name }}</span>
+          }
+
+          <svg class="pd-bc-sep w-2.5 h-2.5 text-gray-400" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+          </svg>
+          <span class="pd-bc-current text-gray-700">{{ getProductName() }}</span>
+        </nav>
+
+        <app-back-button label="رجوع" fallback="/" class="shrink-0"></app-back-button>
+      </div>
+
+      <!-- Main Grid -->
+      <div class="pd-main-grid">
+
+        <!-- Gallery -->
+        <div class="pd-gallery">
+          <div class="pd-gallery-wrap">
+
+            <!-- Main image -->
+            <div class="pd-main-img-wrap"
+                 (mousemove)="onImageHover($event)"
+                 (mouseleave)="onImageLeave()"
+                 [class.is-zooming]="isZooming">
+
+              @if (selectedImage) {
+                <img
+                  #mainImg
+                  [src]="selectedImage"
+                  [alt]="getProductName()"
+                  class="pd-main-img"
+                  [style.transform-origin]="zoomOrigin"
+                  loading="lazy"
+                />
+              } @else {
+                <div class="pd-main-img-fallback">
+                  <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25z"/>
+                  </svg>
+                </div>
+              }
+
+              @if (product.images && product.images.length > 1) {
+                <div class="pd-img-counter">
+                  <span>{{ currentImageIndex + 1 }}</span>
+                  <span class="pd-img-counter-sep">/</span>
+                  <span>{{ product.images.length }}</span>
+                </div>
+              }
+
+              @if (product.images && product.images.length > 1) {
+                <button (click)="prevImage()" class="pd-nav-btn pd-nav-prev" type="button" aria-label="الصورة السابقة">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+                  </svg>
+                </button>
+                <button (click)="nextImage()" class="pd-nav-btn pd-nav-next" type="button" aria-label="الصورة التالية">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+                  </svg>
+                </button>
+              }
+
+              <div class="pd-zoom-hint">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"/>
+                </svg>
+              </div>
+
+              <div class="pd-img-badges">
+                @if (product.is_new) {
+                  <span class="pd-badge pd-badge-new">جديد</span>
+                }
+                @if (hasDiscount()) {
+                  <span class="pd-badge pd-badge-discount">
+                    -{{ discountPercent() }}%
+                  </span>
+                }
+              </div>
+            </div>
+
+            <!-- Thumbnails -->
+            @if (product.images && product.images.length > 1) {
+              <div class="pd-thumbs">
+                @for (img of product.images; track img.id; let i = $index) {
+                  <button
+                    type="button"
+                    (click)="selectImage(img); currentImageIndex = i"
+                    class="pd-thumb"
+                    [class.active]="selectedImage === img.image_path"
+                    [attr.aria-label]="'عرض الصورة ' + (i+1)"
+                  >
+                    <img [src]="img.image_path" [alt]="getProductName()" loading="lazy"/>
+                  </button>
+                }
+              </div>
+            }
+
+            @if (product.video) {
+              <div class="pd-video-wrap">
+                <video [src]="product.video" controls class="pd-video"></video>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Info Side -->
+        <div class="pd-info">
+
+          <!-- Tags -->
+          <div class="pd-tags-row">
+            @if (product.mark_name) {
+              <span class="pd-tag pd-tag-primary">{{ product.mark_name }}</span>
+            }
+            @if (product.class_name) {
+              <span class="pd-tag">{{ product.class_name }}</span>
+            }
+            @if (product.company_name) {
+              <span class="pd-tag">{{ product.company_name }}</span>
+            }
+          </div>
+
+          <!-- Title -->
+          <h1 class="pd-title">{{ getProductName() }}</h1>
+
+          <!-- Meta -->
+          <div class="pd-meta">
+            @if (product.model) {
+              <div class="pd-meta-item">
+                <span class="pd-meta-label">موديل</span>
+                <span class="pd-meta-val">{{ product.model }}</span>
+              </div>
+            }
+            @if (product.barcode) {
+              <div class="pd-meta-item">
+                <span class="pd-meta-label">باركود</span>
+                <span class="pd-meta-val">{{ product.barcode }}</span>
+              </div>
+            }
+            <div class="pd-meta-item">
+              <span class="pd-meta-label">الحالة</span>
+              <span class="pd-stock-pill">
+                <span class="pd-stock-dot"></span>
+                متوفر
+              </span>
+            </div>
+          </div>
+
+          <!-- Price -->
+          <div class="pd-price-card">
+            <div class="pd-price-label">السعر</div>
+            <div class="pd-price-row">
+              <div class="pd-price-current">
+                <span class="pd-price-num">{{ getDisplayPrice() | priceFormat }}</span>
+                <span class="pd-price-currency">{{ currencySymbol() }}</span>
+              </div>
+
+              @if (hasDiscount()) {
+                <div class="pd-price-old">
+                  {{ getOriginalPrice() | priceFormat }} {{ currencySymbol() }}
+                </div>
+                <span class="pd-savings-pill">
+                  وفر {{ getSavings() | priceFormat }} {{ currencySymbol() }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <!-- Description -->
+          @if (product.description) {
+            <div class="pd-section">
+              <div class="pd-section-header">
+                <span class="pd-section-bar"></span>
+                <h3 class="pd-section-title">وصف المنتج</h3>
+              </div>
+              <div class="pd-desc" [innerHTML]="product.description"></div>
+            </div>
+          }
+
+          <!-- Shipping -->
+          <div class="pd-shipping">
+            @if (hasFreeShipping) {
+              <div class="pd-shipping-free">
+                <div class="pd-shipping-ic-wrap">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9-6.75V6a3 3 0 013-3h12.75a3 3 0 013 3v9.75M6 13.5h2.25m4.5 0H21M6 13.5L7.5 9.75m0 0H21m-13.5 0L9 6m12 7.5l-1.5-3.75M21 13.5v3.75a3 3 0 01-3 3M9.75 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m12 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0"/>
+                  </svg>
+                </div>
+                <div class="pd-shipping-text">
+                  <span class="pd-shipping-title">شحن مجاني!</span>
+                  <span class="pd-shipping-desc">على هذا الطلب 🎉</span>
+                </div>
+              </div>
+            } @else {
+              <div class="pd-shipping-paid">
+                <div class="pd-shipping-ic-wrap pd-shipping-ic-blue">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9-6.75V6a3 3 0 013-3h12.75a3 3 0 013 3v9.75M6 13.5h2.25m4.5 0H21M6 13.5L7.5 9.75m0 0H21m-13.5 0L9 6m12 7.5l-1.5-3.75M21 13.5v3.75a3 3 0 01-3 3M9.75 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m12 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0"/>
+                  </svg>
+                </div>
+                <div class="pd-shipping-text">
+                  <span class="pd-shipping-title">تكلفة الشحن: {{ shippingCost | number: '1.3-3' }} {{ currencySymbol() }}</span>
+                  @if (freeShippingMin > 0) {
+                    <span class="pd-shipping-desc">
+                      شحن مجاني عند الطلب بـ {{ freeShippingMin | number: '1.3-3' }} {{ currencySymbol() }} أو أكثر
+                    </span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Quantity + Add to cart -->
+          <div class="pd-action-bar">
+            <div class="pd-qty">
+              <button (click)="decreaseQuantity()" class="pd-qty-btn" type="button" [disabled]="quantity <= 1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
+                </svg>
+              </button>
+              <span class="pd-qty-num">{{ quantity }}</span>
+              <button (click)="increaseQuantity()" class="pd-qty-btn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="pd-actions-row">
+              <button
+                (click)="addToCart()"
+                [disabled]="isAddingToCart"
+                class="pd-cart-btn"
+                type="button"
+              >
+                <span class="pd-cart-shine"></span>
+                @if (isAddingToCart) {
+                  <svg class="pd-cart-spinner" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3"/>
+                    <path d="M12 2a10 10 0 0110 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                  </svg>
+                  <span>جاري الإضافة...</span>
+                } @else {
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+                  </svg>
+                  <span>أضف للسلة</span>
+                }
+              </button>
+
+              @if (product) {
+                <app-wishlist-button [product]="product" variant="full" size="lg" class="pd-wishlist"></app-wishlist-button>
+              }
+            </div>
+          </div>
+
+          <!-- Share -->
+          <div class="pd-share">
+            <span class="pd-share-label">مشاركة:</span>
+            <div class="pd-share-btns">
+              <button (click)="copyLink()" class="pd-share-btn" [class.copied]="linkCopied" type="button">
+                @if (linkCopied) {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                  </svg>
+                } @else {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/>
+                  </svg>
+                }
+              </button>
+              <a [href]="getWhatsappShareUrl()" target="_blank" class="pd-share-btn pd-share-wa">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.297-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Trust Indicators -->
+      <section class="pd-trust">
+        <div class="pd-trust-grid">
+          <div class="pd-trust-item">
+            <div class="pd-trust-ic">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9-6.75V6a3 3 0 013-3h12.75a3 3 0 013 3v9.75M6 13.5h2.25m4.5 0H21M6 13.5L7.5 9.75m0 0H21m-13.5 0L9 6m12 7.5l-1.5-3.75M21 13.5v3.75a3 3 0 01-3 3"/>
+              </svg>
+            </div>
+            <div class="pd-trust-text">
+              <span class="pd-trust-title">شحن سريع</span>
+              <span class="pd-trust-desc">توصيل خلال 24-48 ساعة</span>
+            </div>
+          </div>
+
+          <div class="pd-trust-item">
+            <div class="pd-trust-ic">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/>
+              </svg>
+            </div>
+            <div class="pd-trust-text">
+              <span class="pd-trust-title">منتج أصلي</span>
+              <span class="pd-trust-desc">ضمان الأصالة 100%</span>
+            </div>
+          </div>
+
+          <div class="pd-trust-item">
+            <div class="pd-trust-ic">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+              </svg>
+            </div>
+            <div class="pd-trust-text">
+              <span class="pd-trust-title">استرجاع سهل</span>
+              <span class="pd-trust-desc">خلال 7 أيام من الاستلام</span>
+            </div>
+          </div>
+
+          <div class="pd-trust-item">
+            <div class="pd-trust-ic">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/>
+              </svg>
+            </div>
+            <div class="pd-trust-text">
+              <span class="pd-trust-title">دفع آمن</span>
+              <span class="pd-trust-desc">طرق دفع متعددة وآمنة</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  }
+
+</div>

@@ -1,0 +1,152 @@
+<section class="svc-section" dir="rtl">
+
+  <!-- Decorative background -->
+  <div class="svc-bg-decoration">
+    <div class="svc-blob svc-blob-1"></div>
+    <div class="svc-blob svc-blob-2"></div>
+    <div class="svc-grid-pattern"></div>
+  </div>
+
+  <div class="svc-container">
+    <div class="svc-grid">
+
+      <!-- ════ Image side ════ -->
+      <div class="svc-img-side">
+
+        <!-- Floating badge: top-right -->
+        <div class="svc-float-badge svc-float-badge-1">
+          <div class="svc-float-icon svc-float-icon-blue">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="svc-float-text">
+            <div class="svc-float-title">تقسيط بدون فوائد</div>
+            <div class="svc-float-sub">على معظم المنتجات</div>
+          </div>
+        </div>
+
+        <!-- Image frame -->
+        <div class="svc-img-frame">
+          <div class="svc-img-bg-circle"></div>
+          <div class="svc-img-glow"></div>
+          <img src="Frame2.png" alt="خدمة الشراء الآن والدفع لاحقاً" class="svc-img"/>
+        </div>
+
+        <!-- Floating badge: bottom-left -->
+        <div class="svc-float-badge svc-float-badge-2">
+          <div class="svc-float-icon svc-float-icon-orange">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div class="svc-float-text">
+            <div class="svc-float-title">موافقة فورية</div>
+            <div class="svc-float-sub">خلال دقائق</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ════ Text side ════ -->
+      <div class="svc-text-side">
+
+        <!-- Badge -->
+        <div class="svc-badge">
+          <span class="svc-badge-dot"></span>
+          <span>نقدم لكم خدمة</span>
+        </div>
+
+        <!-- Title -->
+        <h2 class="svc-title">
+          بدون فوائد
+          <br/>
+          <span class="svc-title-accent">أو رسوم</span>
+        </h2>
+
+        <!-- Description -->
+        <p class="svc-desc">
+          خدمة الشراء الآن والدفع لاحقاً — قسّم مشترياتك إلى أقساط بدون فوائد أو رسوم على الإطلاق!
+        </p>
+
+        <!-- Features -->
+        <div class="svc-features">
+          @for (feature of features; track feature.title; let i = $index) {
+            <div class="svc-feat" [style.animation-delay.ms]="i * 100 + 200">
+
+              <div class="svc-feat-num">
+                <span>{{ i + 1 }}</span>
+              </div>
+
+              <div class="svc-feat-icon">
+                @switch (feature.icon) {
+                  @case ('flexible') {
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  }
+                  @case ('instant') {
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
+                    </svg>
+                  }
+                  @case ('no-fees') {
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  }
+                }
+              </div>
+
+              <div class="svc-feat-body">
+                <div class="svc-feat-title">{{ feature.title }}</div>
+                <div class="svc-feat-desc">{{ feature.description }}</div>
+              </div>
+
+              <div class="svc-feat-check">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Stats strip -->
+        <div class="svc-stats">
+          <div class="svc-stats-glow"></div>
+          @for (stat of stats; track stat.label; let i = $index) {
+            <div class="svc-stat" [style.animation-delay.ms]="i * 100 + 500">
+              <div class="svc-stat-icon">
+                @switch (stat.icon) {
+                  @case ('calendar') {
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                    </svg>
+                  }
+                  @case ('percent') {
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0c1.1.128 1.907 1.077 1.907 2.185zM9.75 9h.008v.008H9.75V9zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm4.125 6h.008v.008h-.008V15zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
+                    </svg>
+                  }
+                  @case ('clock') {
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  }
+                }
+              </div>
+              <div class="svc-stat-num">{{ stat.value }}</div>
+              <div class="svc-stat-lbl">{{ stat.label }}</div>
+            </div>
+            @if (i < stats.length - 1) {
+              <div class="svc-stat-div"></div>
+            }
+          }
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>

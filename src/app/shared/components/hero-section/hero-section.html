@@ -1,0 +1,144 @@
+<section class="hero-sec" dir="rtl">
+
+  <div class="hero-bg-gradient"></div>
+
+  @if (image) {
+    <img [src]="image" alt="" class="hero-bg" aria-hidden="true"/>
+  }
+
+  <!-- Decorative shapes -->
+  <div class="hero-shape hero-shape-1"></div>
+  <div class="hero-shape hero-shape-2"></div>
+  <div class="hero-shape hero-shape-3"></div>
+
+  <!-- Floating sparkles -->
+  <div class="hero-sparkles" aria-hidden="true">
+    <span class="sparkle sparkle-1"></span>
+    <span class="sparkle sparkle-2"></span>
+    <span class="sparkle sparkle-3"></span>
+    <span class="sparkle sparkle-4"></span>
+    <span class="sparkle sparkle-5"></span>
+    <span class="sparkle sparkle-6"></span>
+  </div>
+
+  <!-- Grid lines with perspective -->
+  <div class="hero-grid" aria-hidden="true"></div>
+
+  <!-- Pattern dots -->
+  <div class="hero-pattern"></div>
+
+  <!-- Gradient overlay -->
+  <div class="hero-overlay"></div>
+
+  <!-- Content -->
+  <div class="hero-container">
+    <div class="hero-content">
+
+      <!-- Text block -->
+      <div class="hero-text">
+
+        <!-- Decorative corner accent -->
+        <div class="hero-corner-accent" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </div>
+
+        <!-- Badge -->
+        @if (hero) {
+          <div class="hero-badge">
+            <span class="hero-dot"></span>
+            <span>{{ hero }}</span>
+            <svg class="hero-badge-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+            </svg>
+          </div>
+        }
+
+        <!-- Title -->
+        <h1 class="hero-title">{{ title }}</h1>
+
+        <!-- Accent line -->
+        <div class="hero-line">
+          <span class="hero-line-dot"></span>
+        </div>
+
+        <!-- Description -->
+        @if (description) {
+          <p class="hero-desc">{{ description }}</p>
+        }
+
+      </div>
+
+      <!-- Side decoration with icon -->
+      <div class="hero-side" [class.hero-side-offers]="resolvedIcon === 'offers'">
+        <!-- Outer rotating dashed ring -->
+        <div class="hero-side-ring"></div>
+
+        <!-- Middle decorative dots ring -->
+        <div class="hero-side-dots" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <!-- Inner card with icon -->
+        <div class="hero-side-card">
+          @switch (resolvedIcon) {
+            @case ('categories') {
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
+              </svg>
+            }
+            @case ('offers') {
+              <span class="hero-percent-mark">%</span>
+            }
+            @case ('cart') {
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+              </svg>
+            }
+            @case ('users') {
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+              </svg>
+            }
+            @case ('phone') {
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/>
+              </svg>
+            }
+            @case ('info') {
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+              </svg>
+            }
+            @default {
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/>
+              </svg>
+            }
+          }
+        </div>
+
+        <!-- Glow effect behind icon -->
+        <div class="hero-side-glow" aria-hidden="true"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Multi-layer wave at bottom -->
+  <div class="hero-waves" aria-hidden="true">
+    <svg class="hero-wave hero-wave-1" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,30 C360,0 720,60 1080,30 C1260,15 1380,45 1440,30 L1440,60 L0,60 Z" fill="rgba(240,245,255,.4)"/>
+    </svg>
+    <svg class="hero-wave hero-wave-2" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,40 C360,10 720,50 1080,40 C1260,35 1380,45 1440,40 L1440,60 L0,60 Z" fill="rgba(240,245,255,.7)"/>
+    </svg>
+    <svg class="hero-wave hero-wave-3" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 Z" fill="#f0f5ff"/>
+    </svg>
+  </div>
+
+</section>

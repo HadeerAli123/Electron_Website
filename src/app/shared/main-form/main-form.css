@@ -1,0 +1,272 @@
+
+
+:host {
+  display: block;
+  font-family: 'Cairo', sans-serif;
+}
+
+.cf-wrap {
+  width: 100%;
+  max-width: 720px;            /* form max width */
+  margin: 32px auto;            /* center horizontally + vertical spacing */
+  padding: 0 16px;
+  font-family: 'Cairo', sans-serif;
+}
+
+@media (min-width: 768px) {
+  .cf-wrap {
+    margin: 48px auto;
+    padding: 0 24px;
+  }
+}
+
+/* ────────────────────────────────────────
+   Form card
+   ──────────────────────────────────────── */
+.cf-form {
+  background: white;
+  border: 1.5px solid #e8f0fb;
+  border-radius: 18px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 20px rgba(11, 84, 165, 0.06);
+}
+
+@media (min-width: 768px) {
+  .cf-form {
+    padding: 36px 32px;
+  }
+}
+
+/* ────────────────────────────────────────
+   Header
+   ──────────────────────────────────────── */
+.cf-header {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.cf-title {
+  font-size: 19px;
+  font-weight: 900;
+  color: #0a237a;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 768px) {
+  .cf-title { font-size: 22px; }
+}
+
+.cf-sub {
+  font-size: 12.5px;
+  color: #94a3b8;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* ────────────────────────────────────────
+   Fields grid
+   ──────────────────────────────────────── */
+.cf-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 640px) {
+  .cf-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+.cf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cf-field-message {
+  margin-bottom: 22px;
+}
+
+.cf-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  letter-spacing: -0.01em;
+}
+
+.cf-required {
+  color: #f47920;
+  font-weight: 800;
+}
+
+/* ────────────────────────────────────────
+   Inputs
+   ──────────────────────────────────────── */
+.cf-input,
+.cf-textarea {
+  width: 100%;
+  background: #f8faff;
+  border: 1.5px solid #e8f0fb;
+  border-radius: 11px;
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0a237a;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.cf-input::placeholder,
+.cf-textarea::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.cf-input:focus,
+.cf-textarea:focus {
+  border-color: #1565c0;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
+}
+
+.cf-input-error {
+  border-color: #ef4444 !important;
+  background: #fef2f2 !important;
+}
+
+.cf-input-error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* ────────────────────────────────────────
+   Phone with prefix
+   ──────────────────────────────────────── */
+.cf-phone-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.cf-phone-prefix {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0f5ff;
+  border: 1.5px solid #e8f0fb;
+  color: #1565c0;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 0 12px;
+  border-radius: 11px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.cf-phone-input {
+  flex: 1;
+  min-width: 0;
+  letter-spacing: 0.05em;
+}
+
+/* ────────────────────────────────────────
+   Textarea
+   ──────────────────────────────────────── */
+.cf-textarea-wrap {
+  position: relative;
+}
+
+.cf-textarea {
+  height: 110px;
+  resize: vertical;
+  min-height: 80px;
+  max-height: 200px;
+  padding-bottom: 28px;   /* leave space for counter */
+}
+
+.cf-counter {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #cbd5e1;
+  pointer-events: none;
+}
+
+/* ────────────────────────────────────────
+   Error message
+   ──────────────────────────────────────── */
+.cf-error {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #ef4444;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cf-error::before {
+  content: '⚠';
+  font-size: 11px;
+}
+
+/* ────────────────────────────────────────
+   Submit button
+   ──────────────────────────────────────── */
+.cf-submit {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #1565c0, #0a237a);
+  color: white;
+  border: none;
+  padding: 13px 20px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  box-shadow: 0 4px 14px rgba(21, 101, 192, 0.25);
+  letter-spacing: -0.01em;
+}
+
+.cf-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(21, 101, 192, 0.35);
+}
+
+.cf-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.cf-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.cf-spinner {
+  animation: cfSpin 0.8s linear infinite;
+}
+
+@keyframes cfSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cf-input, .cf-textarea, .cf-submit {
+    transition: none !important;
+  }
+  .cf-spinner {
+    animation: none !important;
+  }
+}

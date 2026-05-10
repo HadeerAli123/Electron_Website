@@ -1,0 +1,122 @@
+<div class="cf-wrap">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    class="cf-form"
+    dir="rtl">
+
+    <!-- Header -->
+    <div class="cf-header">
+      <h3 class="cf-title">أرسل لنا رسالة</h3>
+      <p class="cf-sub">سنرد عليك خلال 24 ساعة</p>
+    </div>
+
+    <!-- Fields grid -->
+    <div class="cf-grid">
+
+      <!-- First Name -->
+      <div class="cf-field">
+        <label class="cf-label">
+          الاسم الأول <span class="cf-required">*</span>
+        </label>
+        <input
+          formControlName="firstName"
+          placeholder="ادخل اسمك الأول"
+          class="cf-input"
+          [class.cf-input-error]="isInvalid('firstName')"/>
+        @if (isInvalid('firstName')) {
+          <p class="cf-error">{{ getError('firstName') }}</p>
+        }
+      </div>
+
+      <!-- Last Name -->
+      <div class="cf-field">
+        <label class="cf-label">
+          الاسم الثاني <span class="cf-required">*</span>
+        </label>
+        <input
+          formControlName="lastName"
+          placeholder="ادخل اسمك الثاني"
+          class="cf-input"
+          [class.cf-input-error]="isInvalid('lastName')"/>
+        @if (isInvalid('lastName')) {
+          <p class="cf-error">{{ getError('lastName') }}</p>
+        }
+      </div>
+
+      <!-- Phone -->
+      <div class="cf-field">
+        <label class="cf-label">
+          رقم الهاتف <span class="cf-required">*</span>
+        </label>
+        <div class="cf-phone-wrap">
+          <span class="cf-phone-prefix">🇰🇼 +965</span>
+          <input
+            type="tel"
+            formControlName="phone"
+            maxlength="8"
+            placeholder="XXXXXXXX"
+            class="cf-input cf-phone-input"
+            [class.cf-input-error]="isInvalid('phone')"/>
+        </div>
+        @if (isInvalid('phone')) {
+          <p class="cf-error">{{ getError('phone') }}</p>
+        }
+      </div>
+
+      <!-- Email -->
+      <div class="cf-field">
+        <label class="cf-label">
+          البريد الإلكتروني <span class="cf-required">*</span>
+        </label>
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="example@email.com"
+          class="cf-input"
+          [class.cf-input-error]="isInvalid('email')"/>
+        @if (isInvalid('email')) {
+          <p class="cf-error">{{ getError('email') }}</p>
+        }
+      </div>
+
+    </div>
+
+    <!-- Message (full width) -->
+    <div class="cf-field cf-field-message">
+      <label class="cf-label">
+        رسالتك <span class="cf-required">*</span>
+      </label>
+      <div class="cf-textarea-wrap">
+        <textarea
+          formControlName="message"
+          placeholder="اكتب رسالتك هنا..."
+          class="cf-textarea"
+          [class.cf-input-error]="isInvalid('message')"></textarea>
+        <span class="cf-counter">{{ messageLength }} / 1000</span>
+      </div>
+      @if (isInvalid('message')) {
+        <p class="cf-error">{{ getError('message') }}</p>
+      }
+    </div>
+
+    <!-- Submit -->
+    <button
+      type="submit"
+      [disabled]="isLoading"
+      class="cf-submit">
+      @if (isLoading) {
+        <svg class="cf-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+        <span>جاري الإرسال...</span>
+      } @else {
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
+        </svg>
+        <span>إرسال الرسالة</span>
+      }
+    </button>
+
+  </form>
+</div>

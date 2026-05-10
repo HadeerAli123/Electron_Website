@@ -1,0 +1,200 @@
+<app-hero-section
+  hero="أحدث العروض"
+  title="العروض الخاصة"
+  description="استمتع بخصم حصري على جميع المنتجات لفترة محدودة!"
+  icon="offers"
+></app-hero-section>
+
+<div class="offers-page" dir="rtl">
+
+  @if (loading) {
+    <!-- ══ Skeleton Loading ══ -->
+    <div class="offers-grid">
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="offer-card-skeleton">
+          <div class="skel-img">
+            <div class="skel-shimmer"></div>
+          </div>
+          <div class="skel-body">
+            <div class="skel-line w70"></div>
+            <div class="skel-line w50"></div>
+          </div>
+          <div class="skel-footer">
+            <div class="skel-line w40"></div>
+            <div class="skel-btn"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (!loading && allOffers.length > 0) {
+    <div class="offers-grid">
+
+      @for (offer of allOffers; track offer.id; let i = $index) {
+        <div
+          class="offer-card"
+          [class.is-featured]="offer.is_featured"
+          [class.is-urgent]="offer.days_left <= 3"
+          [style.animation-delay]="(i * 80) + 'ms'"
+          (click)="router.navigate(['/offers', offer.id])"
+        >
+
+          <!-- ══ Featured Ribbon ══ -->
+          @if (offer.is_featured) {
+            <div class="featured-ribbon">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/>
+              </svg>
+              <span>عرض مميز</span>
+            </div>
+          }
+
+          <!-- ══ Image Section ══ -->
+          <div class="offer-img-wrap">
+            @if (offer.banner_image) {
+              <img
+                [src]="offer.banner_image"
+                [alt]="offer.offer_name"
+                class="offer-img"
+                loading="lazy"
+              />
+            } @else {
+              <div class="offer-img-fallback">
+                <span>{{ offer.offer_name.charAt(0) }}</span>
+              </div>
+            }
+
+            <!-- Image overlay gradient -->
+            <div class="offer-img-overlay"></div>
+
+            <!-- Shine effect on hover -->
+            <div class="offer-shine"></div>
+
+            <!-- ══ Discount Badge — Big Circular ══ -->
+            <div class="discount-badge">
+              <div class="discount-badge-inner">
+                <span class="discount-percent">{{ offer.discount_percent }}<span class="discount-sign">%</span></span>
+                <span class="discount-label">خصم</span>
+              </div>
+            </div>
+
+            <!-- ══ Time Badge ══ -->
+            <div class="time-badge" [class.time-urgent]="offer.days_left <= 3">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="12" cy="12" r="9"/>
+                <path stroke-linecap="round" d="M12 7v5l3 2"/>
+              </svg>
+              <span>متبقي {{ offer.days_left }} يوم</span>
+            </div>
+
+            <!-- ══ Offer Name on image ══ -->
+            <div class="offer-name-overlay">
+              <h3 class="offer-name">{{ offer.offer_name }}</h3>
+            </div>
+          </div>
+
+          <!-- ══ Products Section ══ -->
+          <div class="offer-body">
+            <div class="products-row">
+              @for (product of getFirstTwoProducts(offer); track product.id) {
+                <div class="product-mini">
+                  <div class="product-mini-img">
+                    @if (product.cover_image) {
+                      <img [src]="product.cover_image" [alt]="product.name" loading="lazy"/>
+                    } @else {
+                      <span class="product-mini-letter">{{ product.name?.charAt(0) }}</span>
+                    }
+                  </div>
+                  <div class="product-mini-info">
+                    <p class="product-mini-name">{{ product.name }}</p>
+                    <p class="product-mini-price">
+                      {{ formatPrice(product.discounted_price) }}
+                      <span class="product-mini-currency">د.ك</span>
+                    </p>
+                  </div>
+                </div>
+              }
+
+              @if (offer.products_count > 2) {
+                <div class="products-more">
+                  <span class="products-more-num">+{{ offer.products_count - 2 }}</span>
+                  <span class="products-more-lbl">منتج</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- ══ Footer — Coupon + CTA ══ -->
+          <div class="offer-footer">
+
+            <!-- Coupon Ticket -->
+            <button
+              type="button"
+              class="coupon-ticket"
+              [class.copied]="copiedCode === offer.offer_code"
+              (click)="$event.stopPropagation(); copyCoupon(offer.offer_code)"
+              [attr.aria-label]="'نسخ الكود ' + offer.offer_code"
+            >
+              <span class="coupon-edge coupon-edge-right"></span>
+              <span class="coupon-edge coupon-edge-left"></span>
+
+              <div class="coupon-content">
+                <span class="coupon-label">
+                  @if (copiedCode === offer.offer_code) {
+                    تم النسخ ✓
+                  } @else {
+                    كود الخصم
+                  }
+                </span>
+                <span class="coupon-code">{{ offer.offer_code }}</span>
+              </div>
+
+              <div class="coupon-icon">
+                @if (copiedCode === offer.offer_code) {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                  </svg>
+                } @else {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                  </svg>
+                }
+              </div>
+            </button>
+
+            <!-- CTA Button -->
+            <button
+              type="button"
+              (click)="$event.stopPropagation(); router.navigate(['/offers', offer.id])"
+              class="cta-btn"
+            >
+              <span class="cta-shine"></span>
+              <span class="cta-text">عرض التفاصيل</span>
+              <span class="cta-arrow">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/>
+                </svg>
+              </span>
+            </button>
+          </div>
+
+        </div>
+      }
+
+    </div>
+  }
+
+  @if (!loading && allOffers.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/>
+        </svg>
+      </div>
+      <h3>لا توجد عروض متاحة حالياً</h3>
+      <p>تابعنا للحصول على أحدث العروض والخصومات</p>
+    </div>
+  }
+
+</div>

@@ -1,0 +1,270 @@
+<app-hero-section
+  hero="قدم طلبك الآن"
+  title="الوسطاء"
+  description="فرصتك لتكون وسيطًا معتمدًا لدينا! انضم إلى فريقنا من الوسطاء المحترفين وابدأ في تقديم خدماتك للعملاء الذين يبحثون عن أفضل العروض والمنتجات."
+></app-hero-section>
+
+<section class="bg-gray-100 px-4 py-12 pb-20 min-h-[50vh]" dir="rtl">
+  <div class="max-w-2xl mx-auto">
+
+
+
+    <div *ngIf="submitSuccess"
+      class="bg-white rounded-xl shadow-md p-10 text-center">
+      <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-5">
+        <svg class="w-8 h-8 text-green-600" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-green-800 mb-2">تم إرسال طلبك بنجاح!</h3>
+      <p class="text-gray-500 text-sm leading-relaxed">
+        حسابك قيد المراجعة من قِبل الإدارة.<br>
+        سيتم التواصل معك بعد اعتماد حسابك.
+      </p>
+    </div>
+
+    <div *ngIf="!submitSuccess"
+      class="bg-white rounded-xl shadow-md px-5 py-8 sm:px-8 sm:py-10">
+
+      <div class="text-center mb-8">
+        <span class="inline-block bg-blue-700 text-white font-semibold text-base
+                     px-10 py-2.5 rounded-lg tracking-wide shadow-sm">
+          قدم كوسيط
+        </span>
+      </div>
+
+      <div *ngIf="submitError"
+        class="flex items-center gap-2 bg-red-50 border border-red-200
+               text-red-700 text-sm px-4 py-3 rounded-lg mb-6">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" class="w-4 h-4 shrink-0">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>{{ submitError }}</span>
+      </div>
+
+      <form [formGroup]="brokerForm" (ngSubmit)="onSubmit()" novalidate
+        class="space-y-5">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div class="flex flex-col gap-1.5">
+            <label for="name"
+              class="text-sm font-semibold text-gray-700">
+              الاسم الكامل
+            </label>
+            <input
+              id="name" type="text"
+              formControlName="name"
+              placeholder="الاسم الكامل"
+              dir="rtl"
+              (input)="clearServerError('name')"
+              class="field-input"
+              [class.field-input-error]="isFieldInvalid('name')"
+            />
+            <span *ngIf="isFieldInvalid('name')"
+              class="text-xs text-red-500 mt-0.5">
+              {{ getFieldError('name') }}
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="phone"
+              class="text-sm font-semibold text-gray-700">
+              رقم الهاتف
+            </label>
+            <input
+              id="phone" type="tel"
+              formControlName="phone"
+              placeholder="00000000"
+              dir="ltr"
+              (input)="clearServerError('phone')"
+              class="field-input"
+              [class.field-input-error]="isFieldInvalid('phone')"
+            />
+            <span *ngIf="isFieldInvalid('phone')"
+              class="text-xs text-red-500 mt-0.5">
+              {{ getFieldError('phone') }}
+            </span>
+          </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div class="flex flex-col gap-1.5">
+            <label for="email"
+              class="text-sm font-semibold text-gray-700">
+              البريد الإلكتروني
+            </label>
+            <input
+              id="email" type="email"
+              formControlName="email"
+              placeholder="example@mail.com"
+              dir="ltr"
+              (input)="clearServerError('email')"
+              class="field-input"
+              [class.field-input-error]="isFieldInvalid('email')"
+            />
+            <span *ngIf="isFieldInvalid('email')"
+              class="text-xs text-red-500 mt-0.5">
+              {{ getFieldError('email') }}
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="national_id"
+              class="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              الرقم القومي
+              <span class="text-xs font-normal text-gray-400 bg-gray-100
+                           px-2 py-0.5 rounded-full">
+                اختياري
+              </span>
+            </label>
+            <input
+              id="national_id" type="text"
+              formControlName="national_id"
+              placeholder="000000000000"
+              dir="ltr"
+              maxlength="12"
+              (input)="clearServerError('national_id')"
+              class="field-input"
+              [class.field-input-error]="isFieldInvalid('national_id')"
+            />
+            <span *ngIf="isFieldInvalid('national_id')"
+              class="text-xs text-red-500 mt-0.5">
+              {{ getFieldError('national_id') }}
+            </span>
+          </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div class="flex flex-col gap-1.5">
+            <label for="password"
+              class="text-sm font-semibold text-gray-700">
+              كلمة المرور
+            </label>
+            <div class="flex items-center border rounded-md overflow-hidden
+                        transition-all duration-200 bg-gray-50"
+              [ngClass]="isFieldInvalid('password')
+                ? 'border-red-400 bg-red-50'
+                : 'border-gray-200 focus-within:border-blue-600 focus-within:shadow-[0_0_0_3px_rgba(29,78,216,0.12)] focus-within:bg-white'">
+              <input
+                id="password"
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="8 أحرف على الأقل"
+                dir="ltr"
+                class="flex-1 bg-transparent px-3 py-2.5 text-sm
+                       text-gray-800 outline-none min-w-0"
+              />
+              <button type="button"
+                (click)="showPassword = !showPassword"
+                tabindex="-1"
+                class="px-3 py-2 text-gray-400 hover:text-blue-600
+                       transition-colors shrink-0">
+                <svg *ngIf="!showPassword" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg *ngIf="showPassword" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8
+                           a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1
+                           12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19
+                           m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </button>
+            </div>
+            <span *ngIf="isFieldInvalid('password')"
+              class="text-xs text-red-500 mt-0.5">
+              {{ getFieldError('password') }}
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="password_confirmation"
+              class="text-sm font-semibold text-gray-700">
+              تأكيد كلمة المرور
+            </label>
+            <div class="flex items-center border rounded-md overflow-hidden
+                        transition-all duration-200 bg-gray-50"
+              [ngClass]="(isFieldInvalid('password_confirmation') || passwordMismatch)
+                ? 'border-red-400 bg-red-50'
+                : 'border-gray-200 focus-within:border-blue-600 focus-within:shadow-[0_0_0_3px_rgba(29,78,216,0.12)] focus-within:bg-white'">
+              <input
+                id="password_confirmation"
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                formControlName="password_confirmation"
+                placeholder="أعد إدخال كلمة المرور"
+                dir="ltr"
+                class="flex-1 bg-transparent px-3 py-2.5 text-sm
+                       text-gray-800 outline-none min-w-0"
+              />
+              <button type="button"
+                (click)="showConfirmPassword = !showConfirmPassword"
+                tabindex="-1"
+                class="px-3 py-2 text-gray-400 hover:text-blue-600
+                       transition-colors shrink-0">
+                <svg *ngIf="!showConfirmPassword" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg *ngIf="showConfirmPassword" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8
+                           a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1
+                           12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19
+                           m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </button>
+            </div>
+            <span *ngIf="isFieldInvalid('password_confirmation')"
+              class="text-xs text-red-500 mt-0.5">
+              {{ getFieldError('password_confirmation') }}
+            </span>
+            <span *ngIf="passwordMismatch && !isFieldInvalid('password_confirmation')"
+              class="text-xs text-red-500 mt-0.5">
+              كلمة المرور غير متطابقة
+            </span>
+          </div>
+
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-center pt-2">
+          <button type="submit"
+            [disabled]="isSubmitting"
+            class="flex items-center gap-2 bg-blue-700 hover:bg-blue-800
+                   active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed
+                   text-white font-semibold text-base px-14 py-2.5
+                   rounded-lg transition-all duration-200 shadow-sm">
+            <svg *ngIf="!isSubmitting" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" class="w-5 h-5">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            <svg *ngIf="isSubmitting" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2"
+              class="w-5 h-5 animate-spin">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+            </svg>
+            {{ isSubmitting ? 'جاري الإرسال...' : 'إرسال' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,300 @@
+<div class="min-h-screen flex items-center justify-center py-12 px-4 bg-gray-50" dir="rtl">
+  <div class="max-w-3xl w-full">
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div class="bg-[#0B54A5] text-white text-center py-8 px-6">
+        <div class="w-20 h-20 bg-white rounded-full mx-auto mb-4 flex items-center justify-center">
+          <img src="logo.png" alt="" class="w-20 h-20 object-contain" />
+        </div>
+        <h1 class="text-2xl font-bold mb-2">إنشاء حساب جديد</h1>
+        <p class="text-blue-100 text-sm">انضم إلينا واستمتع بتجربة تسوق مميزة</p>
+      </div>
+
+      <div class="p-8">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم بالكامل</label>
+              <input
+                type="text"
+                formControlName="name"
+                placeholder="أدخل اسمك بالكامل"
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#0B54A5] transition"
+                [class.border-red-500]="
+                  hasError('name', 'required') ||
+                  hasError('name', 'minlength') ||
+                  getServerError('name')
+                "
+              />
+              @if (hasError('name', 'required')) {
+                <p class="text-red-500 text-xs mt-1">الاسم مطلوب</p>
+              }
+              @if (hasError('name', 'minlength')) {
+                <p class="text-red-500 text-xs mt-1">الاسم يجب أن يكون 3 أحرف على الأقل</p>
+              }
+              @if (getServerError('name')) {
+                <p class="text-red-500 text-xs mt-1">{{ getServerError('name') }}</p>
+              }
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2"
+                >البريد الإلكتروني</label
+              >
+              <input
+                type="email"
+                formControlName="email"
+                placeholder="example@email.com"
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#0B54A5] transition"
+                [class.border-red-500]="
+                  hasError('email', 'required') ||
+                  hasError('email', 'email') ||
+                  getServerError('email')
+                "
+              />
+              @if (hasError('email', 'required')) {
+                <p class="text-red-500 text-xs mt-1">البريد الإلكتروني مطلوب</p>
+              }
+              @if (hasError('email', 'email')) {
+                <p class="text-red-500 text-xs mt-1">البريد الإلكتروني غير صحيح</p>
+              }
+              @if (hasError('email', 'pattern')) {
+  <p class="text-red-500 text-xs mt-1">
+    صيغة البريد الإلكتروني غير صحيحة
+  </p>
+}
+              @if (getServerError('email')) {
+                <p class="text-red-500 text-xs mt-1">{{ getServerError('email') }}</p>
+              }
+            </div>
+
+        <div>
+  <label class="block text-sm font-semibold text-gray-700 mb-2">
+    رقم الهاتف
+  </label>
+
+  <input
+    type="tel"
+    formControlName="phone"
+    placeholder="XXXXXXXX"
+    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#0B54A5] transition"
+    [class.border-red-500]="registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched"
+  />
+
+  @if (hasError('phone', 'required')) {
+    <p class="text-red-500 text-xs mt-1">
+      رقم الهاتف مطلوب
+    </p>
+  }
+
+  @if (hasError('phone', 'pattern')) {
+    <p class="text-red-500 text-xs mt-1">
+      رقم الهاتف يجب أن يكون 8 أرقام
+    </p>
+  }
+
+  @if (getServerError('phone')) {
+    <p class="text-red-500 text-xs mt-1">
+      {{ getServerError('phone') }}
+    </p>
+  }
+</div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">الرقم المدنى</label>
+
+              <input
+                type="tel"
+                formControlName="national_id"
+                placeholder="xxxxxxxxxxxx"
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#0B54A5] transition"
+                [class.border-red-500]="
+                  hasError('national_id', 'required') ||
+                  hasError('national_id', 'pattern') ||
+                  getServerError('national_id')
+                "
+              />
+
+              @if (hasError('national_id', 'required')) {
+                <p class="text-red-500 text-xs mt-1">الرقم المدنى مطلوب</p>
+              }
+
+              @if (hasError('national_id', 'pattern')) {
+                <p class="text-red-500 text-xs mt-1">
+                  الرقم المدنى يجب أن يكون 12 رقم ويبدأ بـ 2 أو 3
+                </p>
+              }
+
+              @if (getServerError('national_id')) {
+                <p class="text-red-500 text-xs mt-1">
+                  {{ getServerError('national_id') }}
+                </p>
+              }
+            </div>
+
+      
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">كلمة المرور</label>
+              <div class="relative">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="password"
+                  placeholder="••••••••"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#0B54A5] transition pr-12"
+                  [class.border-red-500]="
+                    hasError('password', 'required') ||
+                    hasError('password', 'minlength') ||
+                    getServerError('password')
+                  "
+                />
+                <button
+                  type="button"
+                  (click)="togglePassword()"
+                  class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    @if (showPassword) {
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    } @else {
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                      />
+                    }
+                  </svg>
+                </button>
+              </div>
+              @if (hasError('password', 'required')) {
+                <p class="text-red-500 text-xs mt-1">كلمة المرور مطلوبة</p>
+              }
+              @if (hasError('password', 'minlength')) {
+                <p class="text-red-500 text-xs mt-1">كلمة المرور يجب أن تكون 8 أحرف على الأقل</p>
+              }
+              @if (getServerError('password')) {
+                <p class="text-red-500 text-xs mt-1">{{ getServerError('password') }}</p>
+              }
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2"
+                >تأكيد كلمة المرور</label
+              >
+              <div class="relative">
+                <input
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  placeholder="••••••••"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#0B54A5] transition pr-12"
+                  [class.border-red-500]="
+                    hasError('confirmPassword', 'required') ||
+                    (registerForm.hasError('passwordMismatch') &&
+                      (registerForm.get('confirmPassword')?.touched ||
+                        registerForm.get('confirmPassword')?.dirty))
+                  "
+                />
+                <button
+                  type="button"
+                  (click)="toggleConfirmPassword()"
+                  class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    @if (showConfirmPassword) {
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    } @else {
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                      />
+                    }
+                  </svg>
+                </button>
+              </div>
+              @if (hasError('confirmPassword', 'required')) {
+                <p class="text-red-500 text-xs mt-1">تأكيد كلمة المرور مطلوب</p>
+              }
+              @if (
+                registerForm.hasError('passwordMismatch') &&
+                (registerForm.get('confirmPassword')?.touched ||
+                  registerForm.get('confirmPassword')?.dirty)
+              ) {
+                <p class="text-red-500 text-xs mt-1">كلمة المرور غير متطابقة</p>
+              }
+            </div>
+          </div>
+
+          <div class="flex flex-col items-center">
+            <button
+              type="submit"
+              [disabled]="isLoading"
+              class="w-full max-w-md bg-[#0B54A5] hover:bg-[#094489] text-white py-3 cursor-pointer px-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              @if (isLoading) {
+                <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <span>جاري التسجيل...</span>
+              } @else {
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                  />
+                </svg>
+                <span>إنشاء حساب</span>
+              }
+            </button>
+
+            <div class="mt-6 text-center">
+              <p class="text-sm text-gray-600">
+                لديك حساب بالفعل؟
+                <a routerLink="/login" class="text-[#0B54A5] font-semibold hover:underline">
+                  تسجيل الدخول
+                </a>
+              </p>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,353 @@
+<!-- Hero Section -->
+<app-hero-section
+  [hero]="viewMode === 'products' ? 'الماركة' : 'الصنف'"
+  [title]="(viewMode === 'products' ? currentMark?.name : currentClass?.name) || 'تفاصيل الصنف'"
+  [description]="getHeroDescription()"
+></app-hero-section>
+
+<div class="cd-page" dir="rtl">
+
+<div class="cd-header-row">
+
+  <!-- 1. Breadcrumb (right side in RTL) -->
+  <nav class="cd-breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/" class="cd-bc-link">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/>
+      </svg>
+      <span>الرئيسية</span>
+    </a>
+
+    <svg class="cd-bc-sep" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+    </svg>
+    <a routerLink="/categories" class="cd-bc-link">
+      <span>الأصناف</span>
+    </a>
+
+    @if (currentClass) {
+      <svg class="cd-bc-sep" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+      </svg>
+
+      @if (viewMode === 'marks') {
+        <span class="cd-bc-current">{{ currentClass.name }}</span>
+      } @else {
+        <a [routerLink]="['/category-details', currentClass.id]" class="cd-bc-link">
+          <span>{{ currentClass.name }}</span>
+        </a>
+      }
+    }
+
+    @if (viewMode === 'products' && currentMark) {
+      <svg class="cd-bc-sep" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+      </svg>
+      <span class="cd-bc-current">{{ currentMark.name }}</span>
+    }
+  </nav>
+
+  <div class="cd-stat">
+    <div class="cd-stat-ic">
+      @if (viewMode === 'marks') {
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"/>
+        </svg>
+      } @else {
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/>
+        </svg>
+      }
+    </div>
+    <span class="cd-stat-val">
+      @if (viewMode === 'marks') {
+        {{ displayMarks.length }} ماركة
+      } @else {
+        {{ displayProducts.length }} منتج
+      }
+    </span>
+  </div>
+
+  <app-back-button label="رجوع" fallback="/categories"></app-back-button>
+</div>
+
+  <div class="cd-tools">
+    <div class="cd-search-wrap">
+      <svg class="cd-search-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+      </svg>
+      <input
+        type="text"
+        [placeholder]="viewMode === 'marks' ? 'ابحث عن ماركة...' : 'ابحث عن منتج أو موديل...'"
+        [ngModel]="searchQuery"
+        (ngModelChange)="onSearch($event)"
+        class="cd-search"
+      />
+      @if (searchQuery) {
+        <button (click)="onSearch('')" class="cd-search-clear" type="button" aria-label="مسح البحث">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      }
+    </div>
+
+    @if (viewMode === 'products') {
+      <button
+        (click)="toggleFilter()"
+        class="cd-filter-btn"
+        [class.active]="isFilterOpen || hasActiveFilters"
+        type="button"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/>
+        </svg>
+        <span>فلتر</span>
+        @if (hasActiveFilters) {
+          <span class="cd-filter-dot"></span>
+        }
+      </button>
+    }
+  </div>
+
+  @if (isFilterOpen && viewMode === 'products') {
+    <div class="cd-filter-panel">
+      <div class="cd-filter-header">
+        <div class="cd-filter-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>نطاق السعر</span>
+        </div>
+      </div>
+
+      <div class="cd-filter-body">
+        <div class="cd-price-input">
+          <label>من</label>
+          <input type="number" [(ngModel)]="minPrice" placeholder="0"/>
+        </div>
+        <div class="cd-price-divider"></div>
+        <div class="cd-price-input">
+          <label>إلى</label>
+          <input type="number" [(ngModel)]="maxPrice" placeholder="∞"/>
+        </div>
+        <div class="cd-filter-actions">
+          <button (click)="resetFilter()" class="cd-btn-reset" type="button">إعادة</button>
+          <button (click)="applyFilter()" class="cd-btn-apply" type="button">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+            </svg>
+            تطبيق
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="cd-grid" [class.cd-grid-marks]="viewMode === 'marks'">
+      @for (i of [1,2,3,4,5,6,7,8]; track i) {
+        @if (viewMode === 'marks') {
+          <div class="cd-mark-skel">
+            <div class="cd-skel-shimmer"></div>
+          </div>
+        } @else {
+          <div class="cd-product-skel">
+            <div class="cd-skel-img"><div class="cd-skel-shimmer"></div></div>
+            <div class="cd-skel-body">
+              <div class="cd-skel-line w70"></div>
+              <div class="cd-skel-line w50"></div>
+              <div class="cd-skel-line w40"></div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  }
+
+  @if (isSearching) {
+    <div class="cd-searching">
+      <div class="cd-spinner"></div>
+      <span>جاري البحث...</span>
+    </div>
+  }
+
+  @if (!isLoading && !isSearching && viewMode === 'marks') {
+
+    @if (displayMarks.length === 0) {
+      <div class="cd-empty">
+        <div class="cd-empty-ic">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+          </svg>
+        </div>
+        <h3>لا توجد ماركات متاحة</h3>
+        <p>{{ hasSearched ? 'لم نجد نتائج لـ "' + searchQuery + '"' : 'هذا الصنف لا يحتوي على ماركات حالياً' }}</p>
+        @if (hasSearched) {
+          <button (click)="onSearch('')" class="cd-empty-btn" type="button">عرض جميع الماركات</button>
+        }
+      </div>
+    } @else {
+      <div class="cd-grid cd-grid-marks">
+        @for (item of paginatedMarks; track item.mark.id; let i = $index) {
+          <div
+            (click)="goToMark(currentClass!.id, item.mark.id)"
+            class="cd-mark-card"
+            [style.animation-delay]="(i * 60) + 'ms'"
+          >
+            <!-- Image -->
+            <div class="cd-mark-img-wrap">
+              @if (item.mark.image) {
+                <img [src]="item.mark.image" [alt]="item.mark.name" class="cd-mark-img" loading="lazy"/>
+              } @else {
+                <div class="cd-mark-img-fallback">
+                  <span>{{ item.mark.name.trim().charAt(0) }}</span>
+                </div>
+              }
+              <div class="cd-mark-overlay"></div>
+              <div class="cd-mark-shine"></div>
+            </div>
+
+            <!-- Content -->
+            <div class="cd-mark-content">
+              <h3 class="cd-mark-name">{{ item.mark.name.trim() }}</h3>
+              <span class="cd-mark-count">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5"/>
+                </svg>
+                {{ item.products.length }} منتج
+              </span>
+            </div>
+
+            <!-- Hover arrow -->
+            <div class="cd-mark-arrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/>
+              </svg>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (totalPagesMarks > 1) {
+        <div class="cd-pagination-wrap">
+          <app-pagination
+            [currentPage]="currentPageMarks"
+            [totalPages]="totalPagesMarks"
+            (pageChange)="onPageChangeMarks($event)"
+          ></app-pagination>
+        </div>
+      }
+    }
+  }
+
+  @if (!isLoading && !isSearching && viewMode === 'products') {
+
+    @if (displayProducts.length === 0) {
+      <div class="cd-empty">
+        <div class="cd-empty-ic">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/>
+          </svg>
+        </div>
+        <h3>لا توجد منتجات متاحة</h3>
+        <p>{{ hasSearched ? 'لم نجد نتائج لـ "' + searchQuery + '"' : 'هذه الماركة لا تحتوي على منتجات حالياً' }}</p>
+        @if (hasSearched || hasActiveFilters) {
+          <button (click)="clearAll()" class="cd-empty-btn" type="button">إلغاء الفلاتر والبحث</button>
+        }
+      </div>
+    } @else {
+      <div class="cd-grid cd-grid-products">
+        @for (product of paginatedProducts; track product.id; let i = $index) {
+          <div
+            (click)="goToProductDetails(product.id)"
+            class="cd-product"
+            [style.animation-delay]="(i * 50) + 'ms'"
+          >
+            <!-- [تعديل] حذف [class.out-of-stock] — المنتج دايمًا متاح -->
+
+            <!-- Image -->
+            <div class="cd-product-img-wrap">
+              @if (getProductImage(product)) {
+                <img [src]="getProductImage(product)" [alt]="getProductName(product)" class="cd-product-img" loading="lazy"/>
+              } @else {
+                <div class="cd-product-img-fallback">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
+                  </svg>
+                </div>
+              }
+
+              <div class="cd-product-shine"></div>
+
+              <div class="cd-product-badges-left">
+                @if (product.offers.length && !product.offers[0].is_expired) {
+                  <span class="cd-badge cd-badge-discount">
+                    -{{ product.offers[0].discount_percent }}%
+                  </span>
+                }
+                @if (product.is_new_product) {
+                  <span class="cd-badge cd-badge-new">جديد</span>
+                }
+              </div>
+
+              <!-- [تعديل] حذف شرط stock — badge "متوفر" يظهر دايمًا بدون شرط -->
+              <span class="cd-badge cd-badge-stock">
+                <span class="cd-stock-dot"></span>
+                متوفر
+              </span>
+
+              <div class="cd-wishlist-overlay" (click)="$event.stopPropagation()">
+                <app-wishlist-button [product]="product" variant="circle" size="md"></app-wishlist-button>
+              </div>
+
+              <div class="cd-quick-view-overlay" (click)="$event.stopPropagation()">
+                <app-quick-view-button [product]="product" variant="overlay"></app-quick-view-button>
+              </div>
+            </div>
+
+            <div class="cd-product-body">
+              <h3 class="cd-product-name">{{ getProductName(product) }}</h3>
+
+              <div class="cd-product-tags">
+                @if (product.model) {
+                  <span class="cd-tag cd-tag-primary">{{ product.model }}</span>
+                }
+                @if (product.mark_name) {
+                  <span class="cd-tag">{{ product.mark_name }}</span>
+                }
+              </div>
+
+              <div class="cd-product-price-row">
+                <div class="cd-product-price">
+                  <span>{{ getDisplayPrice(product) | priceFormat }} {{ currencySymbol() }}</span>
+                </div>
+                <button
+                  (click)="$event.stopPropagation(); goToProductDetails(product.id)"
+                  class="cd-product-cta"
+                  type="button"
+                  aria-label="عرض التفاصيل"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (totalPagesProducts > 1) {
+        <div class="cd-pagination-wrap">
+          <app-pagination
+            [currentPage]="currentPageProducts"
+            [totalPages]="totalPagesProducts"
+            (pageChange)="onPageChangeProducts($event)"
+          ></app-pagination>
+        </div>
+      }
+    }
+  }
+
+</div>

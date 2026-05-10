@@ -1,0 +1,96 @@
+:host {
+  display: inline-block;
+  font-family: 'Cairo', sans-serif;
+}
+
+
+
+.wnb-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #ef4444;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+  flex-shrink: 0;
+}
+
+.wnb-link:hover {
+  background: #fee2e2;
+  transform: scale(1.05);
+}
+
+.wnb-link.wnb-active {
+  background: #fee2e2;
+}
+
+/* Icon wrap */
+.wnb-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.wnb-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  background: #f47920;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid #fff;
+  letter-spacing: -0.02em;
+  animation: wnbBadgePop .25s cubic-bezier(.36,.07,.19,.97);
+}
+
+@keyframes wnbBadgePop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+
+/* ── MOBILE adjustments ── */
+@media (max-width: 1023px) {
+  .wnb-link {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  .wnb-link svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .wnb-badge {
+    top: -5px;
+    right: -5px;
+    min-width: 16px;
+    height: 16px;
+    font-size: 9px;
+    padding: 0 3px;
+    border-width: 1.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wnb-link, .wnb-badge {
+    animation: none !important;
+    transition: none !important;
+  }
+}

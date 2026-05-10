@@ -1,0 +1,38 @@
+/* Base input style — focus & placeholder can't be done cleanly in Tailwind alone */
+
+:host {
+
+  font-family: 'Cairo', sans-serif;
+
+}
+
+.field-input {
+  width: 100%;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.875rem;
+  color: #1f2937;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.field-input::placeholder {
+  color: #9ca3af;
+  font-size: 0.84rem;
+}
+
+.field-input:focus {
+  border-color: #1d4ed8;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
+}
+
+/* Error state */
+.field-input-error {
+  border-color: #f87171 !important;
+  background: #fff5f5 !important;
+}
