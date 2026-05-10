@@ -27,8 +27,11 @@ export class OffersPage implements OnInit {
   isAddingToCart = false;
   copiedCode: string | null = null;
 
+<<<<<<< HEAD
   // ✅ شيلنا selectedVariants و addingProductId - مبقاش في فارينتس
 
+=======
+>>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
   ngOnInit() {
     this.loadOffers();
   }
@@ -97,7 +100,34 @@ export class OffersPage implements OnInit {
     }, 2000);
   }
 
+<<<<<<< HEAD
   // ✅ شيلنا addFeaturedToCart القديمة - مبقاش بنحتاجها
+=======
+  addFeaturedToCart() {
+    const firstProduct = this.getFirstProduct(this.featuredOffer);
+    if (!firstProduct || this.isAddingToCart) return;
+
+    this.isAddingToCart = true;
+
+    this.cartService.addToCart(firstProduct.id, 1).subscribe({
+      next: () => {
+        this.ngZone.run(() => {
+          this.isAddingToCart = false;
+          this.router.navigate(['/cart']);
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => {
+        this.ngZone.run(() => {
+          console.error('❌ Error adding to cart:', err);
+          alert('حدث خطأ أثناء الإضافة');
+          this.isAddingToCart = false;
+          this.cdr.detectChanges();
+        });
+      }
+    });
+  }
+>>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
 
   getFirstProduct(offer: any): any {
     return offer?.products?.length ? offer.products[0] : null;
@@ -108,7 +138,11 @@ export class OffersPage implements OnInit {
   }
 
   formatPrice(price: number): string {
+<<<<<<< HEAD
     // ✅ السعر بييجي كامل من الـ API - بس بنعرضه بـ 3 خانات عشرية
     return Number(price).toFixed(3);
+=======
+    return (price / 1000).toFixed(3);
+>>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
   }
 }

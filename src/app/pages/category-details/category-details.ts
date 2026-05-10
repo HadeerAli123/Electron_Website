@@ -127,6 +127,13 @@ export class CategoryDetails implements OnInit {
     this.cdr.detectChanges();
   }
 
+<<<<<<< HEAD
+=======
+  get showOutOfStock(): boolean {
+    return this.siteSettingService.setting?.all_settings?.show_out_of_stock ?? true;
+  }
+
+>>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
   loadMarks(classId: number) {
     this.isLoading = true;
     this.resetState();
@@ -166,8 +173,11 @@ export class CategoryDetails implements OnInit {
 
     this.categoriesService.getMarksByClass(classId).subscribe({
       next: (data) => {
+<<<<<<< HEAD
               console.log('data:', data); // ← هنا
 
+=======
+>>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
         this.ngZone.run(() => {
           const found = data.find((m) => m.mark.id === markId);
 
@@ -183,8 +193,12 @@ export class CategoryDetails implements OnInit {
               description: p.description,
               price: String(p.price ?? 0),
               net_price: String(p.net_price ?? 0),
+<<<<<<< HEAD
               // [تعديل] المخزون ثابت 10000 دايمًا — لا نعتمد على قيمة المخزون من الـ API
               stock: 10000,
+=======
+              stock: p.stock ?? 0,
+>>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
               cover_image: p.cover_image ?? null,
 
               mark_name: '',
@@ -283,8 +297,16 @@ export class CategoryDetails implements OnInit {
   }
 
   get displayProducts(): CategoryProduct[] {
+<<<<<<< HEAD
     // [تعديل] حذف فلتر showOutOfStock — المخزون دايمًا متوفر ولا نخفي أي منتج
     const source = this.hasSearched ? this.searchedProducts : this.products;
+=======
+    let source = this.hasSearched ? this.searchedProducts : this.products;
+
+    if (!this.showOutOfStock) {
+      source = source.filter(p => p.stock > 0);
+    }
+>>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
 
     if (!this.minPrice && !this.maxPrice) return source;
 
@@ -346,6 +368,7 @@ export class CategoryDetails implements OnInit {
   goToProductDetails(productId: number) {
     this.router.navigate(['/product', productId]);
   }
+<<<<<<< HEAD
   addToCart(product: CategoryProduct) {
     if (!product || this.isAddingToCart) return;
 
@@ -356,6 +379,14 @@ export class CategoryDetails implements OnInit {
       1, 
       product as any          // ← الباراميتر الثالث هو الـ product
     ).subscribe({
+=======
+
+  addToCart(product: CategoryProduct) {
+    if (!product || product.stock === 0 || this.isAddingToCart) return;
+    this.isAddingToCart = true;
+
+    this.cartService.addToCart(product.id, 1, undefined, product as any).subscribe({
+>>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
       next: () => {
         this.ngZone.run(() => {
           this.toastr.success('تم إضافة المنتج للسلة ✅');
@@ -363,10 +394,16 @@ export class CategoryDetails implements OnInit {
           this.cdr.detectChanges();
         });
       },
+<<<<<<< HEAD
       error: (err) => {
         this.ngZone.run(() => {
           console.error(err);
           this.toastr.error(err.error?.message || 'حدث خطأ أثناء الإضافة');
+=======
+      error: () => {
+        this.ngZone.run(() => {
+          this.toastr.error('حدث خطأ أثناء الإضافة');
+>>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
           this.isAddingToCart = false;
           this.cdr.detectChanges();
         });
