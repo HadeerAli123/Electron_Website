@@ -61,18 +61,10 @@
           @for (item of cart()?.cart_items; track item.id; let i = $index) {
             @let backendProduct = getBackendProduct(item.product_id);
 
-<<<<<<< HEAD
             <!-- [تعديل] حذف class out-of-stock و حذف أي شرط مرتبط بالمخزون من الكارد -->
             <article class="cart-item-card"
                      [class.removing]="removingId() === item.id"
                      [style.animation-delay]="(i * 60) + 'ms'">
-=======
-            <article
-              class="cart-item-card"
-              [class.removing]="removingId() === item.id"
-              [style.animation-delay]="i * 60 + 'ms'"
-            >
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
               <div class="cart-item-inner">
                 <div class="cart-item-img-wrap">
                   <img
@@ -87,17 +79,7 @@
                   <div class="cart-item-header">
                     <div class="cart-item-info">
                       <h3 class="cart-item-name">{{ item.product.name }}</h3>
-<<<<<<< HEAD
                       <!-- [تعديل] حذف عرض الفاريانتس بالكامل — لم نعد نعرض قيم الفاريانت -->
-=======
-                      @if (item.variant?.values?.length) {
-                        <div class="cart-item-variants">
-                          @for (val of item.variant!.values; track val.id) {
-                            <span class="cart-item-variant">{{ val?.attribute_value?.value }}</span>
-                          }
-                        </div>
-                      }
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
                     </div>
 
                     <button
@@ -162,7 +144,6 @@
                   <div class="cart-item-footer">
                     <span class="cart-item-qty-label">الكمية:</span>
                     <div class="cart-qty">
-<<<<<<< HEAD
                       <!-- [تعديل] canDecrease بيتحقق من quantity > 1 فقط بدون منطق مخزون -->
                       <button (click)="decreaseQty(item)" [disabled]="!canDecrease(item)" class="cart-qty-btn" type="button" aria-label="تقليل">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/></svg>
@@ -174,70 +155,6 @@
                       </button>
                     </div>
                     <!-- [تعديل] حذف تحذير "الحد الأقصى المتاح" بالكامل — لم نعد نعرضه -->
-=======
-                      <button
-                        (click)="decreaseQty(item)"
-                        [disabled]="!canDecrease(item)"
-                        class="cart-qty-btn"
-                        type="button"
-                        aria-label="تقليل"
-                      >
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="3"
-                        >
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
-                        </svg>
-                      </button>
-                      <span class="cart-qty-num">{{ item.quantity }}</span>
-                      <button
-                        (click)="increaseQty(item)"
-                        [disabled]="!canIncrease(item)"
-                        class="cart-qty-btn"
-                        type="button"
-                        aria-label="زيادة"
-                      >
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="3"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M12 4.5v15m7.5-7.5h-15"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-
-                    @if (!canIncrease(item)) {
-                      <span class="cart-item-max-warn">
-                        <svg
-                          width="11"
-                          height="11"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2.5"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                          />
-                        </svg>
-                        الحد الأقصى المتاح
-                      </span>
-                    }
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
                   </div>
                 </div>
               </div>
@@ -441,12 +358,7 @@
                     </button>
                   </div>
                   <p class="cart-plan-selected-info">
-<<<<<<< HEAD
                     {{ calculatePlanMonthly(selectedPlan()!) | priceFormat }} {{ currencySymbol() }} / شهر · {{ selectedPlan()!.duration_months }} شهر
-=======
-                    {{ calculatePlanMonthly(selectedPlan()!) | priceFormat }}
-                    {{ currencySymbol() }} / شهر · {{ selectedPlan()!.duration_months }} شهر
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
                   </p>
                 </div>
               }
@@ -537,14 +449,7 @@
                 <p class="cart-plan-details-title">تفاصيل خطة: {{ selectedPlan()!.name }}</p>
                 <div class="cart-plan-details-row">
                   <span>القسط الشهري</span>
-<<<<<<< HEAD
                   <span>{{ calculatePlanMonthly(selectedPlan()!) | priceFormat }} {{ currencySymbol() }}</span>
-=======
-                  <span
-                    >{{ calculatePlanMonthly(selectedPlan()!) | priceFormat }}
-                    {{ currencySymbol() }}</span
-                  >
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
                 </div>
                 @if (selectedPlan()!.down_payment > 0) {
                   <div class="cart-plan-details-row">
@@ -765,37 +670,12 @@
           </p>
         } @else {
           @for (plan of installmentPlans(); track plan.id) {
-<<<<<<< HEAD
             <div (click)="selectInstallmentPlan(plan.id)" class="cart-plan-card" [class.selected]="selectedInstallmentPlan() === plan.id">
-=======
-            <div
-              (click)="selectInstallmentPlan(plan.id)"
-              class="cart-plan-card"
-              [class.selected]="selectedInstallmentPlan() === plan.id"
-            >
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
               <div class="cart-plan-card-head">
                 <p class="cart-plan-card-name">{{ plan.name }}</p>
                 @if (selectedInstallmentPlan() === plan.id) {
                   <span class="cart-plan-card-check">
-<<<<<<< HEAD
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-=======
-                    <svg
-                      width="11"
-                      height="11"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M4.5 12.75l6 6 9-13.5"
-                      />
-                    </svg>
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
                     مختار
                   </span>
                 }
@@ -804,13 +684,7 @@
               <div class="cart-plan-grid">
                 <div class="cart-plan-mini">
                   <span class="cart-plan-mini-label">القسط الشهري</span>
-<<<<<<< HEAD
                   <span class="cart-plan-mini-val">{{ calculatePlanMonthly(plan) | priceFormat }} {{ currencySymbol() }}</span>
-=======
-                  <span class="cart-plan-mini-val"
-                    >{{ calculatePlanMonthly(plan) | priceFormat }} {{ currencySymbol() }}</span
-                  >
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
                 </div>
                 <div class="cart-plan-mini">
                   <span class="cart-plan-mini-label">المدة</span>
@@ -819,13 +693,7 @@
                 @if (plan.down_payment > 0) {
                   <div class="cart-plan-mini">
                     <span class="cart-plan-mini-label">الدفعة الأولى</span>
-<<<<<<< HEAD
                     <span class="cart-plan-mini-val">{{ plan.down_payment | priceFormat }} {{ currencySymbol() }}</span>
-=======
-                    <span class="cart-plan-mini-val"
-                      >{{ plan.down_payment | priceFormat }} {{ currencySymbol() }}</span
-                    >
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
                   </div>
                 }
                 @if (plan.interest_rate > 0) {
@@ -837,24 +705,12 @@
                 @if (plan.admin_fee > 0) {
                   <div class="cart-plan-mini">
                     <span class="cart-plan-mini-label">رسوم إدارية</span>
-<<<<<<< HEAD
                     <span class="cart-plan-mini-val">{{ plan.admin_fee | priceFormat }} {{ currencySymbol() }}</span>
-=======
-                    <span class="cart-plan-mini-val"
-                      >{{ plan.admin_fee | priceFormat }} {{ currencySymbol() }}</span
-                    >
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
                   </div>
                 }
                 <div class="cart-plan-mini full">
                   <span class="cart-plan-mini-label">الإجمالي</span>
-<<<<<<< HEAD
                   <span class="cart-plan-mini-val">{{ calculatePlanTotal(plan) | priceFormat }} {{ currencySymbol() }}</span>
-=======
-                  <span class="cart-plan-mini-val"
-                    >{{ calculatePlanTotal(plan) | priceFormat }} {{ currencySymbol() }}</span
-                  >
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
                 </div>
               </div>
             </div>
@@ -1043,10 +899,6 @@
             }
           </div>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
           <div class="cart-form-field">
             <label class="cart-form-label">الشارع <span class="opt">(اختياري)</span></label>
             <input
@@ -1062,10 +914,7 @@
             }
           </div>
 
-<<<<<<< HEAD
          
-=======
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
           <div class="cart-form-field">
             <label class="cart-form-label">رقم البناية <span class="opt">(اختياري)</span></label>
             <input
@@ -1080,7 +929,6 @@
               <p class="cart-form-error">{{ cashFormErrors().shipping_building }}</p>
             }
           </div>
-<<<<<<< HEAD
 
           <div class="cart-form-field">
             <label class="cart-form-label">المنطقة <span class="opt">(اختياري)</span></label>
@@ -1091,23 +939,6 @@
           </div>
 
 
-=======
-          <div class="cart-form-field">
-            <label class="cart-form-label">المنطقه <span class="opt">(اختياري)</span> </label>
-            <input
-              type="text"
-              placeholder="المنطقة"
-              [value]="cashForm().shipping_area"
-              (input)="updateCashForm('shipping_area', $any($event.target).value)"
-              class="cart-form-input"
-              [class.error]="cashFormErrors().shipping_area"
-            />
-            @if (cashFormErrors().shipping_area) {
-              <p class="cart-form-error">{{ cashFormErrors().shipping_area }}</p>
-            }
-          </div>
-
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
           <div class="cart-form-field">
             <label class="cart-form-label">رقم الدور <span class="opt">(اختياري)</span></label>
             <input
@@ -1291,12 +1122,7 @@
             <div>
               <h3 class="cart-modal-plan-name">{{ selectedPlan()!.name }}</h3>
               <p class="cart-modal-plan-info">
-<<<<<<< HEAD
                 {{ calculatePlanMonthly(selectedPlan()!) | priceFormat }} {{ currencySymbol() }} / شهر · {{ selectedPlan()!.duration_months }} شهر
-=======
-                {{ calculatePlanMonthly(selectedPlan()!) | priceFormat }} {{ currencySymbol() }} /
-                شهر · {{ selectedPlan()!.duration_months }} شهر
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
               </p>
             </div>
             <div style="text-align: left">
@@ -1558,14 +1384,7 @@
             <p class="cart-mini-plan-title">الخطة المختارة: {{ selectedPlan()!.name }}</p>
             <div class="cart-mini-plan-row">
               <span>القسط الشهري</span>
-<<<<<<< HEAD
               <span>{{ calculatePlanMonthly(selectedPlan()!) | priceFormat }} {{ currencySymbol() }}</span>
-=======
-              <span
-                >{{ calculatePlanMonthly(selectedPlan()!) | priceFormat }}
-                {{ currencySymbol() }}</span
-              >
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
             </div>
             <div class="cart-mini-plan-row">
               <span>المدة</span>
@@ -1573,14 +1392,7 @@
             </div>
             <div class="cart-mini-plan-row total">
               <span>الإجمالي</span>
-<<<<<<< HEAD
               <span>{{ calculatePlanTotal(selectedPlan()!) | priceFormat }} {{ currencySymbol() }}</span>
-=======
-              <span
-                >{{ calculatePlanTotal(selectedPlan()!) | priceFormat }}
-                {{ currencySymbol() }}</span
-              >
->>>>>>> 0c864542b9495e03a0372b5f12da8982cbee726a
             </div>
           </div>
         }
