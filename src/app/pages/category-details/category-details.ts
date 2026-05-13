@@ -346,34 +346,30 @@ export class CategoryDetails implements OnInit {
   goToProductDetails(productId: number) {
     this.router.navigate(['/product', productId]);
   }
-  addToCart(product: CategoryProduct) {
-    if (!product || this.isAddingToCart) return;
+addingToCartIds = new Set<number>();
+addToCart(product: CategoryProduct, quantity: number = 1) {
+  if (!product || this.addingToCartIds.has(product.id)) return;
 
-    this.isAddingToCart = true;
+  this.addingToCartIds.add(product.id);
+  this.cdr.detectChanges();
 
-    this.cartService.addToCart(
-      product.id, 
-      1, 
-      product as any          // ← الباراميتر الثالث هو الـ product
-    ).subscribe({
-      next: () => {
-        this.ngZone.run(() => {
-          this.toastr.success('تم إضافة المنتج للسلة ✅');
-          this.isAddingToCart = false;
-          this.cdr.detectChanges();
-        });
-      },
-      error: (err) => {
-        this.ngZone.run(() => {
-          console.error(err);
-          this.toastr.error(err.error?.message || 'حدث خطأ أثناء الإضافة');
-          this.isAddingToCart = false;
-          this.cdr.detectChanges();
-        });
-      }
-    });
-  }
-
+  this.cartService.addToCart(product.id, quantity, product as any).subscribe({
+    next: () => {
+      this.ngZone.run(() => {
+        this.toastr.success('تم إضافة المنتج للسلة ✅');
+        this.addingToCartIds.delete(product.id);
+        this.cdr.detectChanges();
+      });
+    },
+    error: (err) => {
+      this.ngZone.run(() => {
+        this.toastr.error(err.error?.message || 'حدث خطأ أثناء الإضافة');
+        this.addingToCartIds.delete(product.id);
+        this.cdr.detectChanges();
+      });
+    },
+  });
+}
   getProductName(product: CategoryProduct): string {
     return this.categoriesService.getProductDisplayName(product);
   }

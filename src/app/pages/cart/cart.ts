@@ -322,12 +322,16 @@ export class CartComponent implements OnInit, OnDestroy {
           }
 
           // [تعديل] حذف available_variants من الـ mapping — لم نعد نحتاج بيانات الفاريانت
-          const cartWithoutVariants = {
-            ...cart,
-            cart_items: cart.cart_items.map((item) => ({
-              ...item,
-            })),
-          };
+         // في الـ logged in flow بعد ما بتجيبي الـ cart
+const cartWithoutVariants = {
+  ...cart,
+  cart_items: cart.cart_items.map((item) => ({
+    ...item,
+    price: this.parsePrice(item.product?.net_price) > 0 
+      ? this.parsePrice(item.product?.net_price) 
+      : item.price,
+  })),
+};
 
           this.cart.set(cartWithoutVariants);
           this.loading.set(false);
@@ -441,14 +445,16 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   getItemDisplayPrice(item: CartItem): number {
+
+       const net = this.parsePrice(item.product?.net_price);
+    if (net > 0) return net;
     const itemFinalPrice = this.parsePrice((item as any).final_price);
     if (itemFinalPrice > 0) return itemFinalPrice;
 
     const itemPrice = this.parsePrice(item.price);
     if (itemPrice > 0) return itemPrice;
 
-    const net = this.parsePrice(item.product?.net_price);
-    if (net > 0) return net;
+ 
 
     const price = this.parsePrice(item.product?.price);
     if (price > 0) return price;
