@@ -144,8 +144,15 @@ export class CartComponent implements OnInit, OnDestroy {
     } else if (str.includes(',')) {
       str = str.replace(/,/g, '');
     } else if (str.includes('.')) {
-      const afterDot = str.split('.')[1];
-      if (afterDot && afterDot.length === 3 && /^\d{3}$/.test(afterDot)) {
+      const parts = str.split('.');
+      const beforeDot = parts[0];
+      const afterDot = parts[1];
+      if (
+        afterDot &&
+        afterDot.length === 3 &&
+        /^\d{3}$/.test(afterDot) &&
+        beforeDot.length > 3
+      ) {
         str = str.replace('.', '');
       }
     }

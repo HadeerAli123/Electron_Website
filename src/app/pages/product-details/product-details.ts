@@ -227,6 +227,7 @@ export class ProductDetails implements OnInit {
   increaseQuantity() {
     this.quantity++;
   }
+
   decreaseQuantity() {
     if (this.quantity > 1) this.quantity--;
   }

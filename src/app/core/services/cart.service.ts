@@ -388,12 +388,12 @@ export class CartService {
   canDecrease(item: CartItem): boolean {
     return item.quantity > 1;
   }
-
   addToCart(
     productId: number,
     quantity: number = 1,
     product?: Product
   ): Observable<CartSummary | null> {
+
     if (!this.isLoggedIn()) {
       if (product) this.addToGuestCart(product, quantity);
       return of(null);
@@ -410,7 +410,6 @@ export class CartService {
         catchError(err => throwError(() => err))
       );
   }
-
   removeCartItem(id: number): Observable<CartSummary> {
     return this.http
       .delete<ApiResponse<any>>(
