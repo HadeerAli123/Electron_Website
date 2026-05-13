@@ -27,6 +27,8 @@ export class OffersPage implements OnInit {
   isAddingToCart = false;
   copiedCode: string | null = null;
 
+  // ✅ شيلنا selectedVariants و addingProductId - مبقاش في فارينتس
+
   ngOnInit() {
     this.loadOffers();
   }
@@ -95,30 +97,7 @@ export class OffersPage implements OnInit {
     }, 2000);
   }
 
-  addFeaturedToCart() {
-    const firstProduct = this.getFirstProduct(this.featuredOffer);
-    if (!firstProduct || this.isAddingToCart) return;
-
-    this.isAddingToCart = true;
-
-    this.cartService.addToCart(firstProduct.id, 1).subscribe({
-      next: () => {
-        this.ngZone.run(() => {
-          this.isAddingToCart = false;
-          this.router.navigate(['/cart']);
-          this.cdr.detectChanges();
-        });
-      },
-      error: (err) => {
-        this.ngZone.run(() => {
-          console.error('❌ Error adding to cart:', err);
-          alert('حدث خطأ أثناء الإضافة');
-          this.isAddingToCart = false;
-          this.cdr.detectChanges();
-        });
-      }
-    });
-  }
+  // ✅ شيلنا addFeaturedToCart القديمة - مبقاش بنحتاجها
 
   getFirstProduct(offer: any): any {
     return offer?.products?.length ? offer.products[0] : null;
@@ -129,6 +108,7 @@ export class OffersPage implements OnInit {
   }
 
   formatPrice(price: number): string {
-    return (price / 1000).toFixed(3);
+    // ✅ السعر بييجي كامل من الـ API - بس بنعرضه بـ 3 خانات عشرية
+    return Number(price).toFixed(3);
   }
 }

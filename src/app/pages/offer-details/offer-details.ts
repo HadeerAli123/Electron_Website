@@ -26,7 +26,8 @@ export class OfferDetails implements OnInit {
   loading = true;
   isAddingToCart = false;
   addingProductId: number | null = null;
-  selectedVariants: { [productId: number]: number } = {};
+
+  // ✅ شيلنا selectedVariants خالص - مبقاش في فارينتس في المشروع
   copiedCode = false;
 
   ngOnInit() {
@@ -54,10 +55,7 @@ export class OfferDetails implements OnInit {
     });
   }
 
-  selectVariant(productId: number, variantId: number) {
-    this.selectedVariants[productId] = variantId;
-    this.cdr.detectChanges();
-  }
+  // ✅ شيلنا selectVariant خالص - مبقاش في فارينتس
 
   /** Copy coupon code to clipboard with feedback */
   copyCoupon(code: string): void {
@@ -94,7 +92,9 @@ export class OfferDetails implements OnInit {
         this.cdr.detectChanges();
       });
     }, 2500);
-  }  addToCart(productId: number) {
+  }
+
+  addToCart(productId: number) {
     if (this.isAddingToCart) return;
 
     const raw = this.offer?.products?.find((p: any) => p.id === productId);
@@ -104,31 +104,30 @@ export class OfferDetails implements OnInit {
       return;
     }
 
-    // إعداد المنتج بطريقة بسيطة
+    // ✅ بناء المنتج بدون أي حاجة متعلقة بالفارينتس
+    // ✅ stock مش بنبعتهوش - المخزون دايمًا 10000 في الـ endpoint فالإضافة هتتم عادي
     const mappedProduct = {
       ...raw,
       price: raw?.discounted_price ?? raw?.original_price ?? 0,
       sale_price: raw?.discounted_price ?? null,
       cover_image: raw?.cover_image ?? '',
-      stock: undefined,        // المخزون دائمًا متوفر
     };
 
     this.isAddingToCart = true;
     this.addingProductId = productId;
 
-    this.cartService.addToCart(
-      productId, 
-      1, 
-      mappedProduct as any
-    ).subscribe({
+    // ✅ بنبعت productId والكمية بس من غير variant
+    this.cartService.addToCart(productId, 1, mappedProduct as any).subscribe({
       next: () => {
         this.ngZone.run(() => {
           this.isAddingToCart = false;
           this.addingProductId = null;
           this.toastr.success('تم إضافة المنتج للسلة ✅');
-   if (this.offer?.offer_code) {
-      sessionStorage.setItem('pendingOfferCoupon', this.offer.offer_code);
-    }
+
+          // ✅ لو في كوبون للعرض بنحطه في sessionStorage عشان الكارت يلاقيه
+          if (this.offer?.offer_code) {
+            sessionStorage.setItem('pendingOfferCoupon', this.offer.offer_code);
+          }
 
           this.router.navigate(['/cart']);
           this.cdr.detectChanges();
@@ -145,9 +144,9 @@ export class OfferDetails implements OnInit {
       }
     });
   }
-formatPrice(price: number): string {
-  if (!price && price !== 0) return '0.000';
-  return Number(price).toFixed(3);
-}
 
+  formatPrice(price: number): string {
+    if (!price && price !== 0) return '0.000';
+    return Number(price).toFixed(3);
+  }
 }

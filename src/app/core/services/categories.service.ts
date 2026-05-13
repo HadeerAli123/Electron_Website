@@ -241,7 +241,7 @@ getMarksByClass(classId: number): Observable<MarkWithProducts[]> {
               image: this.fixImageUrl(item.mark.image)
             },
 
-            products: (item.products ?? []).filter(p => p.is_active === 1)
+products: (item.products ?? []).filter(p => p.is_active)
           }));
       }),
       catchError((err) => {
@@ -263,18 +263,25 @@ getMarksByClass(classId: number): Observable<MarkWithProducts[]> {
       ),
     );
   }
-
-  getProductById(id: number): Observable<ProductFullDetail | undefined> {
-    return this.wrapZone(
-      this.http.get<ProductDetailResponse>(`${this.apiUrl}/products/site/${id}`).pipe(
-        map((r) => r.data as ProductFullDetail),
-        catchError((err) => {
-          console.error(`[CategoriesService] Error fetching product ${id}:`, err);
-          return of(undefined);
-        }),
-      ),
-    );
-  }
+getProductById(id: number): Observable<ProductDetail | undefined> {
+  return this.wrapZone(
+    this.http.get<any>(`${this.apiUrl}/products/site/${id}`).pipe(
+      map((r) => {
+        // لو جاي مباشرة
+        if (r?.id) return r as ProductDetail;
+        // لو جاي جوا data.product
+        if (r?.data?.product) return r.data.product as ProductDetail;
+        // لو جاي جوا data
+        if (r?.data?.id) return r.data as ProductDetail;
+        return undefined;
+      }),
+      catchError((err) => {
+        console.error(`[CategoriesService] Error fetching product ${id}:`, err);
+        return of(undefined);
+      }),
+    ),
+  );
+}
 
 
   getProductDisplayName(product: Product | ProductDetail | CategoryProduct): string {

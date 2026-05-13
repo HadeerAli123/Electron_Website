@@ -166,6 +166,8 @@ export class CategoryDetails implements OnInit {
 
     this.categoriesService.getMarksByClass(classId).subscribe({
       next: (data) => {
+              console.log('data:', data); // ← هنا
+
         this.ngZone.run(() => {
           const found = data.find((m) => m.mark.id === markId);
 

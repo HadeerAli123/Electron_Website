@@ -43,10 +43,7 @@
             <span class="qvm-discount-badge">-{{ discountPercent() }}%</span>
           }
 
-          <!-- Out of stock badge -->
-          @if (!inStock()) {
-            <span class="qvm-stock-badge">نفد المخزون</span>
-          }
+          <!-- ✅ شيلنا badge "نفد المخزون" - المخزون دايمًا متوفر -->
 
           <!-- Gallery nav arrows -->
           @if (hasGallery()) {
@@ -61,7 +58,6 @@
               </svg>
             </button>
 
-            <!-- Image counter -->
             <span class="qvm-img-counter">
               {{ selectedImageIndex() + 1 }} / {{ images().length }}
             </span>
@@ -107,34 +103,27 @@
         }
 
         <!-- Price -->
-      @if (currentPrice() > 0) {
-  <div class="qvm-price-box">
-    <div class="qvm-price-row">
-      <span class="qvm-price-num">{{ currentPrice() | priceFormat }}</span>
-      <span class="qvm-price-currency">{{ currencySymbol() }}</span>
-    </div>
-    @if (hasDiscount()) {
-      <div class="qvm-price-old">
-        <span>{{ originalPrice() | priceFormat }} {{ currencySymbol() }}</span>
-        <span class="qvm-savings">
-          وفّرت {{ savings() | priceFormat }} {{ currencySymbol() }}
-        </span>
-      </div>
-    }
-  </div>
-}
+        @if (currentPrice() > 0) {
+          <div class="qvm-price-box">
+            <div class="qvm-price-row">
+              <span class="qvm-price-num">{{ currentPrice() | priceFormat }}</span>
+              <span class="qvm-price-currency">{{ currencySymbol() }}</span>
+            </div>
+            @if (hasDiscount()) {
+              <div class="qvm-price-old">
+                <span>{{ originalPrice() | priceFormat }} {{ currencySymbol() }}</span>
+                <span class="qvm-savings">
+                  وفّرت {{ savings() | priceFormat }} {{ currencySymbol() }}
+                </span>
+              </div>
+            }
+          </div>
+        }
 
-        <!-- Stock indicator -->
-        <div class="qvm-stock-info" [class.qvm-stock-out]="!inStock()">
-          @if (inStock()) {
-            <span class="qvm-stock-dot"></span>
-            <span>متوفر في المخزون</span>
-          } @else {
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-            </svg>
-            <span>غير متوفر حالياً</span>
-          }
+        <!-- ✅ Stock indicator - دايمًا بيظهر "متوفر في المخزون" -->
+        <div class="qvm-stock-info">
+          <span class="qvm-stock-dot"></span>
+          <span>متوفر في المخزون</span>
         </div>
 
         <!-- Short description -->
@@ -153,55 +142,46 @@
           </div>
         }
 
-        <!-- Quantity + Add to cart -->
-        @if (inStock()) {
-          <div class="qvm-actions">
-            <div class="qvm-qty">
-              <button type="button" class="qvm-qty-btn" (click)="decreaseQty()" [disabled]="quantity() <= 1" aria-label="نقصان">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
-                </svg>
-              </button>
-              <span class="qvm-qty-num">{{ quantity() }}</span>
-              <button type="button" class="qvm-qty-btn" (click)="increaseQty()" aria-label="زيادة">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-                </svg>
-              </button>
-            </div>
-
-            <button
-              type="button"
-              class="qvm-cart-btn"
-              [disabled]="isAddingToCart()"
-              (click)="addToCart()">
-              @if (isAddingToCart()) {
-                <span class="qvm-spinner"></span>
-                <span>جاري الإضافة...</span>
-              } @else {
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
-                </svg>
-                <span>أضف للسلة</span>
-              }
+        <!-- ✅ Quantity + Add to cart - دايمًا ظاهرين من غير أي check على المخزون -->
+        <div class="qvm-actions">
+          <div class="qvm-qty">
+            <button type="button" class="qvm-qty-btn" (click)="decreaseQty()" [disabled]="quantity() <= 1" aria-label="نقصان">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
+              </svg>
             </button>
-
-            <!-- Wishlist heart -->
-            <app-wishlist-button
-              [product]="fullProduct() || product"
-              variant="circle"
-              size="lg"
-              class="qvm-wishlist">
-            </app-wishlist-button>
+            <span class="qvm-qty-num">{{ quantity() }}</span>
+            <button type="button" class="qvm-qty-btn" (click)="increaseQty()" aria-label="زيادة">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+              </svg>
+            </button>
           </div>
-        } @else {
-          <button type="button" class="qvm-cart-btn qvm-cart-disabled" disabled>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-            </svg>
-            <span>غير متوفر حالياً</span>
+
+          <button
+            type="button"
+            class="qvm-cart-btn"
+            [disabled]="isAddingToCart()"
+            (click)="addToCart()">
+            @if (isAddingToCart()) {
+              <span class="qvm-spinner"></span>
+              <span>جاري الإضافة...</span>
+            } @else {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+              </svg>
+              <span>أضف للسلة</span>
+            }
           </button>
-        }
+
+          <!-- Wishlist heart -->
+          <app-wishlist-button
+            [product]="fullProduct() || product"
+            variant="circle"
+            size="lg"
+            class="qvm-wishlist">
+          </app-wishlist-button>
+        </div>
 
         <!-- Full details link -->
         <button type="button" class="qvm-details-link" (click)="goToFullDetails()">

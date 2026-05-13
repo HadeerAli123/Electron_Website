@@ -67,6 +67,7 @@ export class ProductDetails implements OnInit {
     this.isLoading = true;
     this.categoriesService.getProductById(id).subscribe({
       next: (fullDetail) => {
+              console.log('fullDetail:', fullDetail);
         this.ngZone.run(() => {
           if (!fullDetail) {
             this.router.navigate(['/categories']);
@@ -75,7 +76,7 @@ export class ProductDetails implements OnInit {
             return;
           }
 
-          this.product = fullDetail.product;
+          this.product = fullDetail;
 
           // اختيار الصورة الأولى
           if (this.product.images?.length) {

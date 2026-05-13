@@ -72,60 +72,60 @@ export class QuickViewModal implements OnInit, OnDestroy {
     const idx = Math.min(this.selectedImageIndex(), imgs.length - 1);
     return imgs[idx];
   });
-private parsePrice(value: any): number {
-  if (value === null || value === undefined || value === '') return 0;
-  if (typeof value === 'number') return isNaN(value) ? 0 : value;
 
-  let str = String(value).trim();
+  private parsePrice(value: any): number {
+    if (value === null || value === undefined || value === '') return 0;
+    if (typeof value === 'number') return isNaN(value) ? 0 : value;
 
-  if (str.includes(',') && str.includes('.')) {
-    if (str.lastIndexOf('.') < str.lastIndexOf(',')) {
-      str = str.replace(/\./g, '').replace(',', '.');
-    } else {
+    let str = String(value).trim();
+
+    if (str.includes(',') && str.includes('.')) {
+      if (str.lastIndexOf('.') < str.lastIndexOf(',')) {
+        str = str.replace(/\./g, '').replace(',', '.');
+      } else {
+        str = str.replace(/,/g, '');
+      }
+    } else if (str.includes(',')) {
       str = str.replace(/,/g, '');
+    } else if (str.includes('.')) {
+      const afterDot = str.split('.')[1];
+      if (afterDot && afterDot.length === 3 && /^\d{3}$/.test(afterDot)) {
+        str = str.replace('.', '');
+      }
     }
-  } else if (str.includes(',')) {
-    str = str.replace(/,/g, '');
-  } else if (str.includes('.')) {
-    const afterDot = str.split('.')[1];
-    if (afterDot && afterDot.length === 3 && /^\d{3}$/.test(afterDot)) {
-      str = str.replace('.', '');
-    }
+
+    const num = parseFloat(str);
+    return isNaN(num) ? 0 : num;
   }
 
-  const num = parseFloat(str);
-  return isNaN(num) ? 0 : num;
-}
+  originalPrice = computed(() => {
+    const p = this.fullProduct() ?? this.product;
+    return this.parsePrice(p?.price);
+  });
 
-originalPrice = computed(() => {
-  const p = this.fullProduct() ?? this.product;
-  return this.parsePrice(p?.price);
-});
+  currentPrice = computed(() => {
+    const p = this.fullProduct() ?? this.product;
+    if (!p) return 0;
+    const net = this.parsePrice(p.net_price);
+    return net > 0 ? net : this.originalPrice();
+  });
 
-currentPrice = computed(() => {
-  const p = this.fullProduct() ?? this.product;
-  if (!p) return 0;
-  const net = this.parsePrice(p.net_price);
-  return net > 0 ? net : this.originalPrice();
-});
+  hasDiscount = computed(() => {
+    const original = this.originalPrice();
+    const current = this.currentPrice();
+    return original > 0 && current > 0 && current < original;
+  });
 
-hasDiscount = computed(() => {
-  const original = this.originalPrice();
-  const current = this.currentPrice();
-  return original > 0 && current > 0 && current < original;
-});
+  discountPercent = computed(() => {
+    if (!this.hasDiscount()) return 0;
+    const original = this.originalPrice();
+    const current = this.currentPrice();
+    return Math.round(((original - current) / original) * 100);
+  });
 
-discountPercent = computed(() => {
-  if (!this.hasDiscount()) return 0;
-  const original = this.originalPrice();
-  const current = this.currentPrice();
-  return Math.round(((original - current) / original) * 100);
-});
-
-/** قيمة التوفير */
-savings = computed(() => {
-  return Math.max(0, this.originalPrice() - this.currentPrice());
-});
+  savings = computed(() => {
+    return Math.max(0, this.originalPrice() - this.currentPrice());
+  });
 
   productName = computed(() => {
     const p = this.fullProduct() ?? this.product;
@@ -136,16 +136,13 @@ savings = computed(() => {
             'منتج').toString();
   });
 
-  inStock = computed(() => {
-    const p = this.fullProduct() ?? this.product;
-    return (p?.stock ?? 0) > 0;
-  });
+  // ✅ inStock دايمًا true - المخزون دايمًا 10000 في الـ endpoint
+  inStock = computed(() => true);
 
   // ─── Lifecycle ──────────────────────────────────
   ngOnInit(): void {
     document.body.style.overflow = 'hidden';
 
-   
     const host = this.elRef.nativeElement as HTMLElement;
     if (host && host.parentElement !== document.body) {
       document.body.appendChild(host);
@@ -157,7 +154,6 @@ savings = computed(() => {
   ngOnDestroy(): void {
     document.body.style.overflow = '';
 
-    // Clean up: remove the teleported element from body if it's still there
     const host = this.elRef.nativeElement as HTMLElement;
     if (host && host.parentElement === document.body) {
       try {
@@ -173,22 +169,17 @@ savings = computed(() => {
       return;
     }
 
-    // Initialize with what we have
     this.fullProduct.set(this.product);
 
-    // Then fetch full
     this.categoriesService.getProductById(+this.product.id).subscribe({
       next: (response: any) => {
-        // The service returns { product, variants, grouped_attributes }
         const fullData = response?.product ?? response;
         if (fullData) {
-          // Merge: full data takes priority, fall back to passed-in product
           this.fullProduct.set({ ...this.product, ...fullData });
         }
         this.isLoading.set(false);
       },
       error: () => {
-        // Use what we have
         this.isLoading.set(false);
       }
     });
@@ -222,40 +213,37 @@ savings = computed(() => {
 
   // ─── Cart ──────────────────────────────────
   addToCart(): void {
-  if (this.isAddingToCart()) return;
+    if (this.isAddingToCart()) return;
 
-  const p = this.fullProduct() ?? this.product;
-  if (!p?.id) return;
+    const p = this.fullProduct() ?? this.product;
+    if (!p?.id) return;
 
-  this.isAddingToCart.set(true);
+    this.isAddingToCart.set(true);
 
-  const sanitizedProduct = {
-    ...p,
-    price: this.originalPrice(),       
-    net_price: this.parsePrice(p.net_price),
-    sale_price: this.parsePrice(p.sale_price),
-    stock: undefined,   // المخزون دائمًا متوفر
-  };
+    // ✅ بناء المنتج بدون variant وبدون stock check - المخزون دايمًا متوفر
+    const sanitizedProduct = {
+      ...p,
+      price: this.originalPrice(),
+      net_price: this.parsePrice(p.net_price),
+      sale_price: this.parsePrice(p.sale_price),
+    };
 
-  this.cartService
-    .addToCart(
-      p.id, 
-      this.quantity(), 
-      sanitizedProduct as any     // ← بدون variant
-    )
-    .subscribe({
-      next: () => {
-        this.toastr.success('تم إضافة المنتج للسلة ✅');
-        this.isAddingToCart.set(false);
-        setTimeout(() => this.close.emit(), 600);
-      },
-      error: (err) => {
-        console.error(err);
-        this.toastr.error(err?.error?.message || 'حدث خطأ أثناء الإضافة');
-        this.isAddingToCart.set(false);
-      }
-    });
-}
+    // ✅ بنبعت productId والكمية بس من غير variant_id
+    this.cartService
+      .addToCart(p.id, this.quantity(), sanitizedProduct as any)
+      .subscribe({
+        next: () => {
+          this.toastr.success('تم إضافة المنتج للسلة ✅');
+          this.isAddingToCart.set(false);
+          setTimeout(() => this.close.emit(), 600);
+        },
+        error: (err) => {
+          console.error(err);
+          this.toastr.error(err?.error?.message || 'حدث خطأ أثناء الإضافة');
+          this.isAddingToCart.set(false);
+        }
+      });
+  }
 
   // ─── Navigation ──────────────────────────────────
   goToFullDetails(): void {
@@ -276,14 +264,11 @@ savings = computed(() => {
     return this.siteSettings.getCurrencySymbol?.() || 'د.ك';
   }
 
-  /** Strip HTML from description */
   shortDescription = computed(() => {
     const p = this.fullProduct() ?? this.product;
     const desc = p?.description ?? '';
     if (!desc) return '';
-    // Strip HTML
     const stripped = desc.replace(/<[^>]+>/g, '').trim();
-    // Truncate to ~200 chars
     if (stripped.length > 200) {
       return stripped.slice(0, 200) + '...';
     }

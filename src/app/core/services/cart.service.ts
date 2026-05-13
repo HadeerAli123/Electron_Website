@@ -8,10 +8,8 @@ import { HttpHeaders } from '@angular/common/http';
 
 export interface GuestCartItem {
   product_id: number;
-  variant_id?: number;
   quantity: number;
   product: Product;
-  variant?: any;
 }
 
 export interface CartItem {
@@ -23,29 +21,11 @@ export interface CartItem {
   offer_code?: string;
   created_at?: string;
   updated_at?: string;
-  product: Product & { stock?: number };
-  selectedColor?: string;
-  selectedStorage?: string;
+  product: Product;
   paymentMethod?: 'cash' | 'installment';
   installmentMonths?: number;
   final_price?: number;
-  variant?: Variant;
   cover_image?: string;
-}
-
-export interface Variant {
-  id: number;
-  values: VariantValue[];
-}
-
-export interface VariantValue {
-  id: number;
-  variant_id: number;
-  attribute_value_id: number;
-  attribute_value: {
-    id: number;
-    value: string;
-  };
 }
 
 export interface CartSummary {
@@ -122,7 +102,6 @@ export interface CashOrderForm {
   shipping_notes?: string;
   notes?: string;
   full_address?: string;
-
 }
 
 export interface InstallmentOrderForm {
@@ -255,7 +234,7 @@ export class CartService {
     )
   );
 
-  // ── Helper: headers مع Auth token ──────────────────────────────────────────
+  // ── Helper: headers مع Auth token ─────────────────────────────────────────
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token') ?? '';
     return new HttpHeaders({
@@ -265,7 +244,7 @@ export class CartService {
     });
   }
 
-  // ── Helper: headers بدون Auth (للـ public endpoints) ──────────────────────
+  // ── Helper: headers بدون Auth ──────────────────────────────────────────────
   private getPublicHeaders(): HttpHeaders {
     return new HttpHeaders({
       'Content-Type': 'application/json',
@@ -283,12 +262,12 @@ export class CartService {
     }
   }
 
-  // ─── Auth ──────────────────────────────────────────────────────────────────
+  // ─── Auth ─────────────────────────────────────────────────────────────────
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
   }
 
-  // ─── Guest Cart ────────────────────────────────────────────────────────────
+  // ─── Guest Cart ───────────────────────────────────────────────────────────
   getGuestCart(): GuestCartItem[] {
     try {
       const raw = localStorage.getItem(this.GUEST_CART_KEY);
@@ -309,29 +288,18 @@ export class CartService {
     this.guestCountSubject.next(0);
   }
 
-  addToGuestCart(
-    product: Product,
-    quantity: number,
-    variantId?: number,
-    variant?: any
-  ): void {
+  addToGuestCart(product: Product, quantity: number): void {
     const items = this.getGuestCart();
 
-    const existing = items.find(
-      i =>
-        i.product_id === product.id &&
-        (variantId ? i.variant_id === variantId : !i.variant_id)
-    );
+    const existing = items.find(i => i.product_id === product.id);
 
     if (existing) {
       existing.quantity += quantity;
     } else {
       items.push({
         product_id: product.id,
-        variant_id: variantId,
         quantity,
         product,
-        variant: variant ?? null,
       });
     }
 
@@ -345,7 +313,7 @@ export class CartService {
     const requests = guestItems.map(item =>
       this.http.post<ApiResponse<any>>(
         `${this.baseUrl}/cart/add`,
-        { product_id: item.product_id, quantity: item.quantity, variant_id: item.variant_id },
+        { product_id: item.product_id, quantity: item.quantity },
         { headers: this.getAuthHeaders() }
       ).pipe(catchError(() => of(null)))
     );
@@ -358,7 +326,7 @@ export class CartService {
     );
   }
 
-  // ─── Installment Plans (public) ────────────────────────────────────────────
+  // ─── Installment Plans (public) ───────────────────────────────────────────
   getCartInstallmentPlans(
     products: { product_id: number; offer_code?: string }[]
   ) {
@@ -382,7 +350,7 @@ export class CartService {
       );
   }
 
-  // ─── Cart (auth required) ──────────────────────────────────────────────────
+  // ─── Cart (auth required) ─────────────────────────────────────────────────
   getUserCart(): Observable<CartSummary> {
     return this.http
       .get<ApiResponse<CartSummary>>(
@@ -406,15 +374,15 @@ export class CartService {
       if (item.id !== itemId) return item;
       const newQty = item.quantity + delta;
       if (newQty < 1) return item;
-      if (item.product.stock !== undefined && newQty > item.product.stock) return item;
       return { ...item, quantity: newQty };
     });
     this.cartSubject.next({ ...cart, cart_items: items });
     return { success: true };
   }
 
+  // دايمًا true — الاستوك دايمًا متوفر
   canIncrease(item: CartItem): boolean {
-    return item.product.stock === undefined ? true : item.quantity < item.product.stock;
+    return true;
   }
 
   canDecrease(item: CartItem): boolean {
@@ -434,11 +402,7 @@ export class CartService {
     return this.http
       .post<ApiResponse<any>>(
         `${this.baseUrl}/cart/add`,
-        {
-          product_id: productId,
-          quantity: quantity
-          // variant_id تم حذفه تماماً
-        },
+        { product_id: productId, quantity },
         { headers: this.getAuthHeaders() }
       )
       .pipe(
@@ -483,8 +447,7 @@ export class CartService {
     this.cartSubject.next(null);
   }
 
-  // ─── Special Offers ────────────────────────────────────────────────────────
-
+  // ─── Special Offers ───────────────────────────────────────────────────────
   verifyOfferCode(offerCode: string): Observable<VerifyOfferResponse> {
     return this.http.post<VerifyOfferResponse>(
       `${this.baseUrl}/special-offers/verify`,

@@ -9,6 +9,8 @@ import { ToastrService } from 'ngx-toastr';
 import { Ministry } from '../../core/services/cart.service';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { PriceFormatPipe } from '../../shared/components/pipes/price-format.pipe';
+import { ViewChild } from '@angular/core';
+import { OrderInvoiceModal } from '../../shared/order-invoice-modal/order-invoice-modal';
 
 import {
   CartService,
@@ -27,11 +29,12 @@ import {
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, BackButton, PriceFormatPipe],
+  imports: [CommonModule, RouterModule, FormsModule, BackButton, PriceFormatPipe, OrderInvoiceModal],
   templateUrl: './cart.html',
   styleUrls: ['./cart.css'],
 })
 export class CartComponent implements OnInit, OnDestroy {
+  @ViewChild('invoiceModal') invoiceModal!: OrderInvoiceModal;
   private readonly cartService = inject(CartService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -141,8 +144,15 @@ export class CartComponent implements OnInit, OnDestroy {
     } else if (str.includes(',')) {
       str = str.replace(/,/g, '');
     } else if (str.includes('.')) {
-      const afterDot = str.split('.')[1];
-      if (afterDot && afterDot.length === 3 && /^\d{3}$/.test(afterDot)) {
+      const parts = str.split('.');
+      const beforeDot = parts[0];
+      const afterDot = parts[1];
+      if (
+        afterDot &&
+        afterDot.length === 3 &&
+        /^\d{3}$/.test(afterDot) &&
+        beforeDot.length > 3
+      ) {
         str = str.replace('.', '');
       }
     }
@@ -264,6 +274,7 @@ export class CartComponent implements OnInit, OnDestroy {
       const guestCart: CartSummary = {
         id: 0,
         user_id: 0,
+        // ✅ شيلنا variant من الـ mapping - مبقاش موجود في المشروع
         cart_items: guestItems.map((item, index) => {
           const net = this.parsePrice(item.product.net_price);
           const price = this.parsePrice(item.product.price);
@@ -342,7 +353,6 @@ export class CartComponent implements OnInit, OnDestroy {
               });
           }
 
-          // ── تطبيق pending coupon بعد اللوجن ──
           this.applyPendingCouponIfExists();
           this.applyPendingOfferCouponIfExists();
         },
@@ -358,26 +368,23 @@ export class CartComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // ───────────────── PENDING COUPON (بعد redirect من اللوجن) ─────────────────
+  // ───────────────── PENDING COUPON ─────────────────
   private applyPendingCouponIfExists(): void {
     const pendingCoupon = sessionStorage.getItem('pendingCoupon');
     if (!pendingCoupon || !this.cartService.isLoggedIn()) return;
-
     sessionStorage.removeItem('pendingCoupon');
     this.couponCode.set(pendingCoupon);
-
     setTimeout(() => this.applyCoupon(), 400);
   }
 
   private applyPendingOfferCouponIfExists(): void {
-  const pendingCoupon = sessionStorage.getItem('pendingOfferCoupon');
-  if (!pendingCoupon || !this.cartService.isLoggedIn()) return;
+    const pendingCoupon = sessionStorage.getItem('pendingOfferCoupon');
+    if (!pendingCoupon || !this.cartService.isLoggedIn()) return;
+    sessionStorage.removeItem('pendingOfferCoupon');
+    this.couponCode.set(pendingCoupon);
+    setTimeout(() => this.applyCoupon(), 400);
+  }
 
-  sessionStorage.removeItem('pendingOfferCoupon');
-  this.couponCode.set(pendingCoupon);
-
-  setTimeout(() => this.applyCoupon(), 400);
-}
   // ───────────────── QUANTITY ─────────────────
   increaseQty(item: CartItem): void {
     // [تعديل] حذف شرط canIncrease المرتبط بالمخزون — الكمية تزيد دايمًا بدون قيود
@@ -610,16 +617,17 @@ export class CartComponent implements OnInit, OnDestroy {
       .checkout(data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
+        next: (response: any) => {
           this.checkoutLoading.set(false);
           this.showCashModal.set(false);
-          this.showShippingInfoModal.set(true);
           this.cartService.clearCart();
           this.cartService.clearGuestCart();
           this.cart.set(null);
           this.couponCode.set('');
           this.couponSuccess.set(false);
           this.toastr.success('تم إنشاء الطلب بنجاح!');
+          const orderId = response?.data?.id;
+          this.invoiceModal.open(orderId);
         },
         error: (err) => {
           this.checkoutLoading.set(false);
@@ -667,7 +675,7 @@ export class CartComponent implements OnInit, OnDestroy {
       .checkout(data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
+        next: (response: any) => {
           this.checkoutLoading.set(false);
           this.showInstallmentFormModal.set(false);
           this.cartService.clearCart();
@@ -676,7 +684,9 @@ export class CartComponent implements OnInit, OnDestroy {
           this.couponCode.set('');
           this.couponSuccess.set(false);
           this.toastr.success('تم إنشاء الطلب بنجاح!');
-          this.showInstallmentSuccessModal.set(true);
+          this.showInstallmentSuccessModal.set(false);
+          const orderId = response?.data?.id;
+          this.invoiceModal.open(orderId);
         },
         error: (err) => {
           this.checkoutLoading.set(false);
@@ -994,7 +1004,6 @@ export class CartComponent implements OnInit, OnDestroy {
     const interestRate = +(plan.interest_rate ?? 0) / 100;
     const adminFee = +(plan.admin_fee ?? 0);
     const downPayment = +(plan.down_payment ?? 0);
-
     return subtotal + subtotal * interestRate + adminFee + downPayment;
   }
 
@@ -1002,7 +1011,6 @@ export class CartComponent implements OnInit, OnDestroy {
     const total = this.calculatePlanTotal(plan);
     const downPayment = +(plan.down_payment ?? 0);
     const duration = +(plan.duration_months ?? 1);
-
     const remaining = total - downPayment;
     return remaining / duration;
   }
