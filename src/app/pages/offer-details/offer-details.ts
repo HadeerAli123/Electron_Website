@@ -5,6 +5,7 @@ import { OffersService } from '../../core/services/offers.service';
 import { CartService } from '../../core/services/cart.service';
 import { ToastrService } from 'ngx-toastr';
 import { BackButton } from '../../shared/components/back-button/back-button';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-offer-details',
@@ -21,7 +22,7 @@ export class OfferDetails implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
   private toastr = inject(ToastrService);
-
+private authService = inject(AuthService);
   offer: any = null;
   loading = true;
   isAddingToCart = false;
@@ -29,6 +30,10 @@ export class OfferDetails implements OnInit {
 
   // ✅ شيلنا selectedVariants خالص - مبقاش في فارينتس في المشروع
   copiedCode = false;
+
+  get isLoggedIn(): boolean {
+  return this.authService.isLoggedIn();
+}
 
   ngOnInit() {
     const id = this.route.snapshot.params['id'];
@@ -94,7 +99,18 @@ export class OfferDetails implements OnInit {
     }, 2500);
   }
 
+
+  goToLogin(): void {
+  this.router.navigate(['/login'], {
+    queryParams: { returnUrl: this.router.url }
+  });
+}
+
   addToCart(productId: number) {
+
+
+
+
     if (this.isAddingToCart) return;
 
     const raw = this.offer?.products?.find((p: any) => p.id === productId);
@@ -108,8 +124,11 @@ export class OfferDetails implements OnInit {
     // ✅ stock مش بنبعتهوش - المخزون دايمًا 10000 في الـ endpoint فالإضافة هتتم عادي
     const mappedProduct = {
       ...raw,
-      price: raw?.discounted_price ?? raw?.original_price ?? 0,
-      sale_price: raw?.discounted_price ?? null,
+price: this.isLoggedIn
+  ? (raw?.discounted_price ?? raw?.original_price ?? 0)
+  : (raw?.original_price ?? 0),  
+  
+  sale_price: raw?.discounted_price ?? null,
       cover_image: raw?.cover_image ?? '',
     };
 
