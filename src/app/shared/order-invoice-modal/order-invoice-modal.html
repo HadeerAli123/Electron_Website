@@ -214,13 +214,10 @@
                 <strong>خطة التقسيط</strong>
                 <span>{{ order()?.order?.installment_plan?.name }}</span>
               </div>
-              <div class="payment-item">
-                <strong>القسط الشهري</strong>
-                <span
-                  >{{ order()?.order?.installment_plan?.monthly_amount | number: '1.3-3' }}
-                  {{ currency() }}</span
-                >
-              </div>
+<div class="payment-item">
+  <strong>القسط الشهري</strong>
+  <span>{{ (order()?.order?.installment_plan?.monthly_payment ?? order()?.order?.installment_plan?.monthly_amount) | number: '1.3-3' }} {{ currency() }}</span>
+</div>
               <div class="payment-item">
                 <strong>المدة</strong>
                 <span>{{ order()?.order?.installment_plan?.duration_months }} شهر</span>

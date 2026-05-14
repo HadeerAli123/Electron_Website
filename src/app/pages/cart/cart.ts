@@ -129,33 +129,22 @@ export class CartComponent implements OnInit, OnDestroy {
   readonly couponLoading = signal(false);
 
   // ───────────────── PRICE PARSER ─────────────────
-  private parsePrice(value: any): number {
-    if (value === null || value === undefined || value === '') return 0;
-    if (typeof value === 'number') return isNaN(value) ? 0 : value;
+private parsePrice(value: any): number {
+  if (value === null || value === undefined || value === '') return 0;
+  if (typeof value === 'number') return isNaN(value) ? 0 : value;
 
-    let str = String(value).trim();
+  let str = String(value).trim();
 
-    if (str.includes(',') && str.includes('.')) {
-      if (str.lastIndexOf('.') < str.lastIndexOf(',')) {
-        str = str.replace(/\./g, '').replace(',', '.');
-      } else {
-        str = str.replace(/,/g, '');
-      }
-    } else if (str.includes(',')) {
+  if (str.includes(',') && str.includes('.')) {
+    if (str.lastIndexOf('.') < str.lastIndexOf(',')) {
+      str = str.replace(/\./g, '').replace(',', '.');
+    } else {
       str = str.replace(/,/g, '');
-    } else if (str.includes('.')) {
-      const parts = str.split('.');
-      const beforeDot = parts[0];
-      const afterDot = parts[1];
-      if (
-        afterDot &&
-        afterDot.length === 3 &&
-        /^\d{3}$/.test(afterDot) &&
-        beforeDot.length > 3
-      ) {
-        str = str.replace('.', '');
-      }
     }
+  } else if (str.includes(',')) {
+    str = str.replace(/,/g, '');
+  }
+    
 
     const num = parseFloat(str);
     return isNaN(num) ? 0 : num;
@@ -444,30 +433,32 @@ const cartWithoutVariants = {
     return item.quantity > 1;
   }
 
-  getItemDisplayPrice(item: CartItem): number {
-
-       const net = this.parsePrice(item.product?.net_price);
-    if (net > 0) return net;
-    const itemFinalPrice = this.parsePrice((item as any).final_price);
-    if (itemFinalPrice > 0) return itemFinalPrice;
-
-    const itemPrice = this.parsePrice(item.price);
-    if (itemPrice > 0) return itemPrice;
-
- 
-
-    const price = this.parsePrice(item.product?.price);
-    if (price > 0) return price;
-
-    const backendProduct = this.getBackendProduct(item.product_id);
-    const backendFinal = this.parsePrice(backendProduct?.final_price);
-    if (backendFinal > 0) return backendFinal;
-
-    const backendOriginal = this.parsePrice(backendProduct?.original_price);
-    if (backendOriginal > 0) return backendOriginal;
-
-    return 0;
+getItemDisplayPrice(item: CartItem): number {
+  // أول حاجة نشوف لو في خصم مطبق من الكوبون في backendCartData
+  const backendProduct = this.getBackendProduct(item.product_id);
+  if (backendProduct?.discount_applied) {
+    return this.parsePrice(backendProduct.final_price);
   }
+
+  // لو في final_price على الـ item نفسه (بعد الكوبون)
+  const itemFinalPrice = this.parsePrice((item as any).final_price);
+  if (itemFinalPrice > 0) return itemFinalPrice;
+
+  // السعر العادي
+  const net = this.parsePrice(item.product?.net_price);
+  if (net > 0) return net;
+
+  const itemPrice = this.parsePrice(item.price);
+  if (itemPrice > 0) return itemPrice;
+
+  const price = this.parsePrice(item.product?.price);
+  if (price > 0) return price;
+
+  const backendFinal = this.parsePrice(backendProduct?.final_price);
+  if (backendFinal > 0) return backendFinal;
+
+  return 0;
+}
 
   allowOnlyNumbers(event: KeyboardEvent): boolean {
     const charCode = event.key;
@@ -1020,4 +1011,5 @@ const cartWithoutVariants = {
     const remaining = total - downPayment;
     return remaining / duration;
   }
+  
 }

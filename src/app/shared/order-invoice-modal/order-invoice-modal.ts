@@ -48,6 +48,7 @@ export interface InstallmentPlan {
   interest_rate?: number;
   admin_fee?: number;
   down_payment?: number;
+  monthly_payment?: number; // ← أضيفي ده
 }
 
 export interface Order {
